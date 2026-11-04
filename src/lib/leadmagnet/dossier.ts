@@ -65,6 +65,9 @@ export interface BusinessMeta {
   contactCompany: string | null;
   contactPhone?: string | null;
   siteCity?: string | null;
+  siteCityId?: string | null | undefined;
+  siteRegionCode?: string | null | undefined;
+  siteRegionName?: string | null | undefined;
   siteCountry?: string | null;
   /** Explicitly deferred fields; an empty input is not an answered question. */
   undefinedFields?: string[];

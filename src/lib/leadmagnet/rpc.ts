@@ -107,6 +107,7 @@ const MESSAGES: { match: RegExp; message: string }[] = [
 ];
 
 const EXTRA_MESSAGES: { match: RegExp; message: string }[] = [
+  { match: /CITY_SELECTION_REQUIRED/, message: "Sélectionnez à nouveau la ville dans la liste pour confirmer sa région." },
   {
     match: /PART_NUMBER_MISMATCH|EXACT_PART_NUMBER_REQUIRED/,
     message:

@@ -37,6 +37,10 @@ const MESSAGES: { match: RegExp; message: string }[] = [
       "Ce projet a été modifié entre-temps. L'écran vient d'être rechargé : vérifiez la valeur avant de réessayer.",
   },
   {
+    match: /TRANSFER_TERRITORIES_FIRST/,
+    message: "Transférez ou retirez les territoires de cette personne avant de la désactiver ou de changer sa fonction.",
+  },
+  {
     match: /LAST_ADMIN_PROTECTED/,
     message:
       "Ce compte est le dernier administrateur actif : nommez d'abord un autre administrateur.",

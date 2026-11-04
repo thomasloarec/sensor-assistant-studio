@@ -1,5 +1,13 @@
 {
-  "Bêta": ["Beta", "测试版", "Beta", "Beta", "Бета", "Beta", "ベータ版"],
+  "Bêta": [
+    "Beta",
+    "测试版",
+    "Beta",
+    "Beta",
+    "Бета",
+    "Beta",
+    "ベータ版"
+  ],
   " (choix conservé)": [
     " (kept choice)",
     " （保留的选择）",
@@ -36359,5 +36367,473 @@
     "Срок ссылки истёк или она уже использована. Запросите новую ссылку для входа.",
     "Questo link è scaduto o è già stato usato. Richiedi un nuovo link di accesso.",
     "このリンクは期限切れか使用済みです。新しいログインリンクをリクエストしてください。"
+  ],
+  "Photo et territoires": [
+    "Photo and territories",
+    "照片与负责区域",
+    "Foto und Gebiete",
+    "Foto y territorios",
+    "Фото и территории",
+    "Foto e territori",
+    "写真と担当エリア"
+  ],
+  "La gestion des territoires n’est pas encore disponible. Contactez votre administrateur technique.": [
+    "Territory management is not available yet. Contact your IT administrator.",
+    "区域管理尚不可用。请联系技术管理员。",
+    "Die Gebietsverwaltung ist noch nicht verfügbar. Wenden Sie sich an Ihre IT-Administration.",
+    "La gestión de territorios aún no está disponible. Contacte con su administrador técnico.",
+    "Управление территориями пока недоступно. Обратитесь к ИТ-администратору.",
+    "La gestione dei territori non è ancora disponibile. Contattare l’amministratore tecnico.",
+    "担当エリア管理はまだ利用できません。IT管理者に連絡してください。"
+  ],
+  "Modifications enregistrées.": [
+    "Changes saved.",
+    "更改已保存。",
+    "Änderungen gespeichert.",
+    "Cambios guardados.",
+    "Изменения сохранены.",
+    "Modifiche salvate.",
+    "変更を保存しました。"
+  ],
+  "Personne indisponible": [
+    "Person unavailable",
+    "人员不可用",
+    "Person nicht verfügbar",
+    "Persona no disponible",
+    "Сотрудник недоступен",
+    "Persona non disponibile",
+    "担当者を確認できません"
+  ],
+  "Non attribué": [
+    "Unassigned",
+    "未分配",
+    "Nicht zugewiesen",
+    "Sin asignar",
+    "Не назначено",
+    "Non assegnato",
+    "未割り当て"
+  ],
+  "Recharger": [
+    "Reload",
+    "重新加载",
+    "Neu laden",
+    "Recargar",
+    "Обновить",
+    "Ricarica",
+    "再読み込み"
+  ],
+  "Photo de profil": [
+    "Profile photo",
+    "头像",
+    "Profilfoto",
+    "Foto de perfil",
+    "Фото профиля",
+    "Foto del profilo",
+    "プロフィール写真"
+  ],
+  "JPEG, PNG ou WebP, 2 Mo maximum. La photo ajoutée ici est prioritaire sur la photo Microsoft.": [
+    "JPEG, PNG or WebP, up to 2 MB. This photo takes priority over the Microsoft photo.",
+    "JPEG、PNG或WebP，最大2 MB。此照片优先于Microsoft照片。",
+    "JPEG, PNG oder WebP, maximal 2 MB. Dieses Foto hat Vorrang vor dem Microsoft-Foto.",
+    "JPEG, PNG o WebP, máximo 2 MB. Esta foto tiene prioridad sobre la de Microsoft.",
+    "JPEG, PNG или WebP, до 2 МБ. Это фото имеет приоритет над фото Microsoft.",
+    "JPEG, PNG o WebP, massimo 2 MB. Questa foto ha la priorità su quella Microsoft.",
+    "JPEG、PNG、WebP、最大2 MB。この写真がMicrosoftの写真より優先されます。"
+  ],
+  "Retirer la photo ajoutée": [
+    "Remove uploaded photo",
+    "移除上传的照片",
+    "Hochgeladenes Foto entfernen",
+    "Quitar la foto subida",
+    "Убрать загруженное фото",
+    "Rimuovi la foto caricata",
+    "アップロードした写真を削除"
+  ],
+  "Photo Microsoft disponible en remplacement.": [
+    "Microsoft photo available as fallback.",
+    "可使用Microsoft照片作为备用。",
+    "Microsoft-Foto als Ersatz verfügbar.",
+    "Foto de Microsoft disponible como alternativa.",
+    "Фото Microsoft доступно для замены.",
+    "Foto Microsoft disponibile come alternativa.",
+    "代わりにMicrosoftの写真を使用できます。"
+  ],
+  "Sans photo ajoutée, les initiales sont affichées tant que la photo Microsoft n’est pas synchronisée.": [
+    "Without an uploaded photo, initials are shown until the Microsoft photo is synced.",
+    "未上传照片时，在Microsoft照片同步前显示姓名首字母。",
+    "Ohne hochgeladenes Foto werden bis zur Synchronisierung des Microsoft-Fotos Initialen angezeigt.",
+    "Sin foto subida, se muestran las iniciales hasta sincronizar la foto de Microsoft.",
+    "Без загруженного фото отображаются инициалы, пока фото Microsoft не синхронизировано.",
+    "Senza una foto caricata, vengono mostrate le iniziali fino alla sincronizzazione della foto Microsoft.",
+    "写真が未登録の場合、Microsoftの写真が同期されるまでイニシャルを表示します。"
+  ],
+  "Lien de réservation": [
+    "Booking link",
+    "预约链接",
+    "Buchungslink",
+    "Enlace de reserva",
+    "Ссылка для записи",
+    "Link di prenotazione",
+    "予約リンク"
+  ],
+  "Enregistrer le lien": [
+    "Save link",
+    "保存链接",
+    "Link speichern",
+    "Guardar enlace",
+    "Сохранить ссылку",
+    "Salva link",
+    "リンクを保存"
+  ],
+  "Territoires commerciaux": [
+    "Sales territories",
+    "销售负责区域",
+    "Vertriebsgebiete",
+    "Territorios comerciales",
+    "Территории продаж",
+    "Territori commerciali",
+    "営業担当エリア"
+  ],
+  "Pays entier": [
+    "Whole country",
+    "全国",
+    "Ganzes Land",
+    "Todo el país",
+    "Вся страна",
+    "Intero paese",
+    "国全体"
+  ],
+  "Aucun territoire attribué.": [
+    "No territories assigned.",
+    "尚未分配区域。",
+    "Keine Gebiete zugewiesen.",
+    "No hay territorios asignados.",
+    "Территории не назначены.",
+    "Nessun territorio assegnato.",
+    "担当エリアは未割り当てです。"
+  ],
+  "Pays à gérer": [
+    "Country to manage",
+    "管理的国家",
+    "Zu verwaltendes Land",
+    "País que gestionar",
+    "Страна для управления",
+    "Paese da gestire",
+    "管理する国"
+  ],
+  "Responsable du pays": [
+    "Country owner",
+    "国家负责人",
+    "Länderverantwortlicher",
+    "Responsable del país",
+    "Ответственный за страну",
+    "Responsabile del paese",
+    "国の担当者"
+  ],
+  "Ce pays est réparti par région.": [
+    "This country is divided by region.",
+    "该国按地区分配。",
+    "Dieses Land ist nach Regionen aufgeteilt.",
+    "Este país está repartido por regiones.",
+    "Эта страна разделена по регионам.",
+    "Questo paese è suddiviso per regioni.",
+    "この国は地域別に分担されています。"
+  ],
+  "Ce pays n’a pas encore de responsable.": [
+    "This country has no owner yet.",
+    "该国尚无负责人。",
+    "Dieses Land hat noch keinen Verantwortlichen.",
+    "Este país aún no tiene responsable.",
+    "За этой страной пока не закреплён ответственный.",
+    "Questo paese non ha ancora un responsabile.",
+    "この国の担当者は未定です。"
+  ],
+  "Le référentiel des villes de ce pays reste à importer. Une affectation par région nécessitera cette importation.": [
+    "City reference data for this country still needs to be imported for routing by region.",
+    "此国家的城市数据尚待导入。按地区分配需要这些数据。",
+    "Für die regionale Zuordnung müssen die Ortsdaten dieses Landes noch importiert werden.",
+    "Falta importar los datos de ciudades de este país para la asignación por regiones.",
+    "Для распределения по регионам необходимо импортировать справочник городов этой страны.",
+    "Per l’assegnazione per regione occorre importare i dati delle città di questo paese.",
+    "地域別の担当者決定には、この国の都市データのインポートが必要です。"
+  ],
+  "Gérer ce pays par régions": [
+    "Manage this country by region",
+    "按地区管理该国",
+    "Dieses Land nach Regionen verwalten",
+    "Gestionar este país por regiones",
+    "Управлять этой страной по регионам",
+    "Gestisci questo paese per regioni",
+    "この国を地域別に管理"
+  ],
+  "Les régions de ce pays ne sont pas encore disponibles.": [
+    "Regions for this country are not available yet.",
+    "该国的地区数据尚不可用。",
+    "Die Regionen dieses Landes sind noch nicht verfügbar.",
+    "Las regiones de este país aún no están disponibles.",
+    "Регионы этой страны пока недоступны.",
+    "Le regioni di questo paese non sono ancora disponibili.",
+    "この国の地域データはまだ利用できません。"
+  ],
+  "Régions à attribuer ou à retirer": [
+    "Regions to assign or remove",
+    "要分配或移除的地区",
+    "Zuzuweisende oder zu entfernende Regionen",
+    "Regiones que asignar o retirar",
+    "Регионы для назначения или удаления",
+    "Regioni da assegnare o rimuovere",
+    "割り当て・解除する地域"
+  ],
+  "Préparer la répartition": [
+    "Review allocation",
+    "预览分配",
+    "Aufteilung vorbereiten",
+    "Preparar el reparto",
+    "Подготовить распределение",
+    "Prepara la ripartizione",
+    "分担内容を確認"
+  ],
+  "Attribuer le pays entier": [
+    "Assign the whole country",
+    "分配全国",
+    "Ganzes Land zuweisen",
+    "Asignar todo el país",
+    "Назначить всю страну",
+    "Assegna l’intero paese",
+    "国全体を割り当て"
+  ],
+  "Retirer de cette personne": [
+    "Remove from this person",
+    "从此人移除",
+    "Dieser Person entziehen",
+    "Retirar de esta persona",
+    "Снять с этого сотрудника",
+    "Rimuovi da questa persona",
+    "この担当者から解除"
+  ],
+  "Vérifier la répartition": [
+    "Review territory allocation",
+    "检查区域分配",
+    "Gebietsaufteilung prüfen",
+    "Revisar el reparto",
+    "Проверить распределение",
+    "Verifica la ripartizione",
+    "担当エリアの分担を確認"
+  ],
+  "Vérifiez les transferts avant de confirmer. Les autres régions conservent leur responsable.": [
+    "Review transfers before confirming. Other regions keep their current owner.",
+    "确认前请检查转移。其他地区保留原负责人。",
+    "Prüfen Sie die Übertragungen vor der Bestätigung. Andere Regionen behalten ihren bisherigen Verantwortlichen.",
+    "Revise los traspasos antes de confirmar. Las demás regiones conservan su responsable.",
+    "Проверьте передачу перед подтверждением. Остальные регионы сохраняют текущего ответственного.",
+    "Verificare i trasferimenti prima di confermare. Le altre regioni mantengono il responsabile attuale.",
+    "確定前に移管内容を確認してください。他の地域の担当者は変わりません。"
+  ],
+  "Région": [
+    "Region",
+    "地区",
+    "Region",
+    "Región",
+    "Регион",
+    "Regione",
+    "地域"
+  ],
+  "Responsable actuel": [
+    "Current owner",
+    "当前负责人",
+    "Aktueller Verantwortlicher",
+    "Responsable actual",
+    "Текущий ответственный",
+    "Responsabile attuale",
+    "現在の担当者"
+  ],
+  "Après validation": [
+    "After confirmation",
+    "确认后",
+    "Nach Bestätigung",
+    "Tras confirmar",
+    "После подтверждения",
+    "Dopo la conferma",
+    "確定後"
+  ],
+  "Régions sans responsable": [
+    "Unassigned regions",
+    "未分配地区",
+    "Regionen ohne Verantwortlichen",
+    "Regiones sin responsable",
+    "Регионы без ответственного",
+    "Regioni senza responsabile",
+    "担当者未定の地域"
+  ],
+  "Confirmer cette répartition": [
+    "Confirm allocation",
+    "确认分配",
+    "Aufteilung bestätigen",
+    "Confirmar el reparto",
+    "Подтвердить распределение",
+    "Conferma la ripartizione",
+    "この分担を確定"
+  ],
+  "Recherche de votre responsable…": [
+    "Finding your representative…",
+    "正在查找您的负责人…",
+    "Ihr Ansprechpartner wird ermittelt…",
+    "Buscando a su responsable…",
+    "Поиск вашего ответственного…",
+    "Ricerca del responsabile…",
+    "担当者を確認しています…"
+  ],
+  "Standex vérifiera votre secteur et vous recontactera. Aucun créneau n’est réservé à ce stade.": [
+    "Standex will check your territory and contact you. No appointment has been booked yet.",
+    "Standex将核实您的区域并与您联系。目前尚未预约时间。",
+    "Standex prüft Ihr Gebiet und kontaktiert Sie. Es wurde noch kein Termin gebucht.",
+    "Standex verificará su zona y le contactará. Aún no se ha reservado ninguna cita.",
+    "Standex проверит вашу территорию и свяжется с вами. Встреча пока не назначена.",
+    "Standex verificherà la vostra zona e vi ricontatterà. Nessun appuntamento è stato prenotato.",
+    "Standexが担当エリアを確認し、ご連絡します。現時点では予約は確定していません。"
+  ],
+  "Choisissez votre ville dans les résultats pour confirmer sa région.": [
+    "Select your city from the results to confirm its region.",
+    "请从结果中选择城市以确认地区。",
+    "Wählen Sie Ihren Ort aus den Ergebnissen, um die Region zu bestätigen.",
+    "Seleccione su ciudad en los resultados para confirmar la región.",
+    "Выберите город из результатов, чтобы подтвердить регион.",
+    "Selezionare la città dai risultati per confermare la regione.",
+    "検索結果から都市を選択して地域を確認してください。"
+  ],
+  "Recherche en cours…": [
+    "Searching…",
+    "正在搜索…",
+    "Suche läuft…",
+    "Buscando…",
+    "Поиск…",
+    "Ricerca in corso…",
+    "検索中…"
+  ],
+  "Villes proposées": [
+    "Matching cities",
+    "匹配的城市",
+    "Gefundene Orte",
+    "Ciudades sugeridas",
+    "Найденные города",
+    "Città proposte",
+    "候補の都市"
+  ],
+  "Région confirmée": [
+    "Region confirmed",
+    "地区已确认",
+    "Region bestätigt",
+    "Región confirmada",
+    "Регион подтверждён",
+    "Regione confermata",
+    "地域を確認しました"
+  ],
+  "La recherche de villes est indisponible pour ce pays. Vous pouvez envoyer votre projet ; Standex vérifiera son affectation.": [
+    "City search is unavailable for this country. You can submit your project; Standex will check its assignment.",
+    "该国的城市搜索不可用。您仍可提交项目，Standex将核实负责人员。",
+    "Die Ortssuche ist für dieses Land nicht verfügbar. Sie können Ihr Projekt senden; Standex prüft die Zuordnung.",
+    "La búsqueda de ciudades no está disponible para este país. Puede enviar el proyecto; Standex verificará su asignación.",
+    "Поиск городов для этой страны недоступен. Вы можете отправить проект; Standex проверит назначение ответственного.",
+    "La ricerca delle città non è disponibile per questo paese. Potete inviare il progetto; Standex ne verificherà l’assegnazione.",
+    "この国の都市検索は利用できません。プロジェクトは送信できます。Standexが担当者を確認します。"
+  ],
+  "Aucune ville trouvée. Précisez le nom ou conservez votre saisie pour une vérification par Standex.": [
+    "No cities found. Refine the name or keep your entry for Standex to check.",
+    "未找到城市。请完善名称，或保留输入供Standex核实。",
+    "Kein Ort gefunden. Präzisieren Sie den Namen oder lassen Sie Ihre Eingabe von Standex prüfen.",
+    "No se encontraron ciudades. Precise el nombre o conserve su entrada para que Standex la verifique.",
+    "Города не найдены. Уточните название или оставьте введённое значение для проверки Standex.",
+    "Nessuna città trovata. Precisare il nome o mantenere il testo per una verifica da parte di Standex.",
+    "都市が見つかりません。名前を詳しく入力するか、そのまま送信してStandexによる確認をお待ちください。"
+  ],
+  "Votre responsable Standex": [
+    "Your Standex representative",
+    "您的Standex负责人",
+    "Ihr Standex-Ansprechpartner",
+    "Su responsable de Standex",
+    "Ваш ответственный в Standex",
+    "Il vostro responsabile Standex",
+    "Standex担当者"
+  ],
+  "Ce pays est partagé entre plusieurs commerciaux. Confirmez votre ville pour identifier votre responsable.": [
+    "Several salespeople cover this country. Confirm your city to identify your representative.",
+    "该国由多名销售人员负责。请确认城市以确定您的负责人。",
+    "Dieses Land wird von mehreren Vertriebsmitarbeitern betreut. Bestätigen Sie Ihren Ort, um Ihren Ansprechpartner zu ermitteln.",
+    "Varios comerciales cubren este país. Confirme su ciudad para identificar a su responsable.",
+    "Эту страну обслуживают несколько менеджеров. Подтвердите город, чтобы определить ответственного.",
+    "Questo paese è seguito da più commerciali. Confermate la città per identificare il vostro responsabile.",
+    "この国は複数の営業担当者が担当しています。都市を確認して担当者を特定してください。"
+  ],
+  "Référentiel géographique": [
+    "Geographic reference data",
+    "地理参考数据",
+    "Geografische Referenzdaten",
+    "Datos de referencia geográfica",
+    "Географический справочник",
+    "Dati geografici di riferimento",
+    "地理参照データ"
+  ],
+  "Transférez ou retirez les territoires de cette personne avant de la désactiver ou de changer sa fonction.": [
+    "Transfer or remove this person's territories before deactivating them or changing their role.",
+    "停用此人或更改职能前，请先转移或移除其负责区域。",
+    "Übertragen oder entfernen Sie die Gebiete dieser Person, bevor Sie sie deaktivieren oder ihre Funktion ändern.",
+    "Transfiera o retire los territorios de esta persona antes de desactivarla o cambiar su función.",
+    "Перед деактивацией сотрудника или изменением его роли передайте или удалите его территории.",
+    "Trasferire o rimuovere i territori della persona prima di disattivarla o cambiarne la funzione.",
+    "無効化または職種変更の前に、この担当者のエリアを移管または解除してください。"
+  ],
+  "Sélectionnez à nouveau la ville dans la liste pour confirmer sa région.": [
+    "Select the city again from the list to confirm its region.",
+    "请重新从列表中选择城市以确认地区。",
+    "Wählen Sie den Ort erneut aus der Liste, um seine Region zu bestätigen.",
+    "Vuelva a seleccionar la ciudad en la lista para confirmar su región.",
+    "Выберите город из списка повторно, чтобы подтвердить регион.",
+    "Selezionare nuovamente la città dall’elenco per confermare la regione.",
+    "一覧から都市を再選択して地域を確認してください。"
+  ],
+  "La répartition a changé. Rechargez puis vérifiez à nouveau le transfert.": [
+    "The allocation has changed. Reload and review the transfer again.",
+    "分配已更改。请重新加载并再次检查转移。",
+    "Die Aufteilung hat sich geändert. Laden Sie neu und prüfen Sie die Übertragung erneut.",
+    "El reparto ha cambiado. Recargue y revise de nuevo el traspaso.",
+    "Распределение изменилось. Обновите данные и проверьте передачу повторно.",
+    "La ripartizione è cambiata. Ricaricare e verificare nuovamente il trasferimento.",
+    "分担が変更されました。再読み込みして移管内容を再確認してください。"
+  ],
+  "Choisissez une image JPEG, PNG ou WebP de moins de 2 Mo.": [
+    "Choose a JPEG, PNG or WebP image under 2 MB.",
+    "请选择小于2 MB的JPEG、PNG或WebP图像。",
+    "Wählen Sie ein JPEG-, PNG- oder WebP-Bild unter 2 MB.",
+    "Elija una imagen JPEG, PNG o WebP de menos de 2 MB.",
+    "Выберите изображение JPEG, PNG или WebP размером менее 2 МБ.",
+    "Scegliere un’immagine JPEG, PNG o WebP inferiore a 2 MB.",
+    "2 MB未満のJPEG、PNG、WebP画像を選択してください。"
+  ],
+  "Le lien de réservation doit être une adresse HTTPS valide.": [
+    "The booking link must be a valid HTTPS address.",
+    "预约链接必须是有效的HTTPS地址。",
+    "Der Buchungslink muss eine gültige HTTPS-Adresse sein.",
+    "El enlace de reserva debe ser una dirección HTTPS válida.",
+    "Ссылка для записи должна быть действительным HTTPS-адресом.",
+    "Il link di prenotazione deve essere un indirizzo HTTPS valido.",
+    "予約リンクは有効なHTTPSアドレスである必要があります。"
+  ],
+  "Action impossible. Vérifiez votre connexion et vos droits, puis réessayez.": [
+    "Unable to complete the action. Check your connection and permissions, then try again.",
+    "无法完成操作。请检查连接和权限后重试。",
+    "Aktion nicht möglich. Prüfen Sie Verbindung und Berechtigungen und versuchen Sie es erneut.",
+    "No se pudo completar la acción. Compruebe su conexión y permisos e inténtelo de nuevo.",
+    "Не удалось выполнить действие. Проверьте подключение и права доступа и повторите попытку.",
+    "Impossibile completare l’azione. Verificare connessione e autorizzazioni e riprovare.",
+    "操作を完了できません。接続と権限を確認して、もう一度お試しください。"
+  ],
+  "GeoNames": [
+    "GeoNames",
+    "GeoNames",
+    "GeoNames",
+    "GeoNames",
+    "GeoNames",
+    "GeoNames",
+    "GeoNames"
   ]
 }

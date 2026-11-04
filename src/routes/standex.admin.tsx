@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/select";
 import { useCrm } from "@/components/standex/dashboard/crm-context";
 import { useFlash } from "@/components/standex/dashboard/flash";
+import { PersonSalesSettings } from "@/components/leadmagnet/person-sales-settings";
+import { SalesAvatar } from "@/components/leadmagnet/sales-avatar";
 import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
 import {
   CrmUnavailableNotice,
@@ -68,7 +70,7 @@ const SECTIONS = [
 type SectionId = (typeof SECTIONS)[number]["id"];
 
 /** Un seul bloc ouvert à la fois, et par personne. */
-type OpenForm = { personId: string; form: "edit" | "link" | "grant" } | null;
+type OpenForm = { personId: string; form: "edit" | "link" | "grant" | "territories" } | null;
 
 const AUDIT_PAGE = 20;
 
@@ -181,7 +183,7 @@ export function AdminScreen() {
   const activePeople = (overview?.directory ?? []).filter((p) => p.active).length;
   const linkedAccounts = (overview?.directory ?? []).filter((p) => p.userId).length;
 
-  const toggle = (personId: string, form: "edit" | "link" | "grant") =>
+  const toggle = (personId: string, form: "edit" | "link" | "grant" | "territories") =>
     setOpen((o) => (o && o.personId === personId && o.form === form ? null : { personId, form }));
 
   const sectionIndex = SECTIONS.findIndex((s) => s.id === section);
@@ -344,6 +346,7 @@ export function AdminScreen() {
                     <PersonRow
                       key={p.id}
                       person={p}
+                      people={overview.directory}
                       busy={busy}
                       granted={p.userId ? staffByUser.has(p.userId) : false}
                       open={open && open.personId === p.id ? open.form : null}
@@ -524,6 +527,7 @@ function AccountPill({ person, granted }: { person: CrmPerson; granted: boolean 
 
 function PersonRow({
   person: p,
+  people,
   busy,
   granted,
   open,
@@ -540,11 +544,12 @@ function PersonRow({
   closeForm,
 }: {
   person: CrmPerson;
+  people: CrmPerson[];
   busy: boolean;
   granted: boolean;
-  open: "edit" | "link" | "grant" | null;
+  open: "edit" | "link" | "grant" | "territories" | null;
   nudge: boolean;
-  onToggle: (form: "edit" | "link" | "grant") => void;
+  onToggle: (form: "edit" | "link" | "grant" | "territories") => void;
   linkEmail: string;
   onLinkEmail: (value: string) => void;
   edit: { firstName: string; lastName: string; role: "sales" | "fae" } | null;
@@ -563,7 +568,7 @@ function PersonRow({
   return (
     <li className={`panel-block space-y-2${nudge ? " anim-nudge" : ""}`} data-inactive={p.active ? undefined : "true"}>
       <div className="person-row" data-inactive={p.active ? undefined : "true"}>
-        <AvatarInitials name={name} />
+        <SalesAvatar name={name} photo={p.photoPath} microsoftPhoto={p.microsoftPhotoPath} />
         <span className="t-title-s min-w-0">{name}</span>
         <span className="stage-pill">{p.role === "fae" ? "FAE" : t("Commercial")}</span>
         <AccountPill person={p} granted={granted} />
@@ -579,6 +584,7 @@ function PersonRow({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={() => onToggle("territories")}>{t("Photo et territoires")}</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => onToggle("edit")}>{t("Modifier la fiche")}</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => onToggle("link")}>
               {p.userId ? t("Détacher") : t("Rattacher un compte")}
@@ -604,6 +610,7 @@ function PersonRow({
         </DropdownMenu>
       </div>
 
+      {open === "territories" ? <PersonSalesSettings person={p} people={people} onSaved={() => void run(fetchCrmAdminOverview, t("Fiche annuaire mise à jour."))} /> : null}
       {open === "link" ? (
         <div className="anim-rise field-row">
           <div className="field">

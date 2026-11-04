@@ -1,5 +1,18 @@
 # Langage de design Standex DETECT
 
+### Territoires et portraits — 4 novembre 2026
+
+L’annuaire ouvre « Photo et territoires » depuis les actions de la personne.
+Les sélections de pays et de régions utilisent les surfaces remplies du socle,
+des cases natives et des cibles d’au moins 44 px. La confirmation présente la
+répartition avant/après dans une table, avec les responsables non modifiés et
+les zones non attribuées. Les messages de conflit utilisent `notice-warning`.
+Les portraits ronds partagent le même composant entre annuaire et réservation,
+avec repli sur la photo Microsoft puis les initiales. La ville du prospect est
+sélectionnée dans une liste avec région ; une modification efface la résolution.
+La réservation ouvre le lien configuré, sans calendrier de démonstration dans
+le parcours réel. Aucun nouveau jeton ni animation n’est ajouté.
+
 ### Transactional customer emails — 3 November 2026
 
 The Supabase signup and magic-link email uses the official light-background

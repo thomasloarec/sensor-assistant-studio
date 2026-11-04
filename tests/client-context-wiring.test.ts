@@ -67,7 +67,7 @@ describe("réinitialisation du contexte", () => {
   test("un import ou un changement de dossier remet accords, contraintes et partage à zéro", () => {
     const reset = design.slice(
       design.indexOf("const resetServerContext"),
-      design.indexOf("const resetServerContext") + 900,
+      design.indexOf("return contextGenRef.current;", design.indexOf("const resetServerContext")),
     );
     for (const line of [
       "setNda(INITIAL_NDA)",
@@ -75,6 +75,7 @@ describe("réinitialisation du contexte", () => {
       "setPreparedUpload(null)",
       'setExtraConstraints("")',
       "setShareModel(false)",
+      "setBookingCityId(null)",
       "contextGenRef.current += 1",
     ])
       expect(reset).toContain(line);

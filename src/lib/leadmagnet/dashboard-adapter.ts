@@ -148,6 +148,8 @@ function toPerson(raw: unknown): CrmPerson | null {
     : null;
   return {
     id,
+    photoPath: str(r["photo_path"]),
+    microsoftPhotoPath: str(r["microsoft_photo_path"]),
     firstName: str(r["first_name"]) ?? "",
     lastName: str(r["last_name"]) ?? "",
     role,

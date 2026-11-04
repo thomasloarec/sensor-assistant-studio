@@ -55,6 +55,8 @@ export type TaskStakeholder = (typeof TASK_STAKEHOLDERS)[number];
 export type PersonRole = "sales" | "fae";
 
 export interface CrmPerson {
+  photoPath?: string | null;
+  microsoftPhotoPath?: string | null;
   id: string;
   firstName: string;
   lastName: string;

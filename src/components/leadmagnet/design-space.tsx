@@ -1,7 +1,7 @@
 import { currentClientTrace, recordClientTrace } from "@/lib/standex/client-pedagogical";
 import { NeedExamples } from "./need-examples";
+import { SiteLocation } from "./site-location";
 import { BookingDialog } from "./booking-dialog";
-import { COUNTRY_CODES, salesContactFor } from "@/lib/leadmagnet/sales-contact";
 import {
   EXTERNAL_TRANSLATION_ENABLED,
   externalTranslationAllowed,
@@ -671,6 +671,7 @@ export function DesignSpace({
   }, []);
 
   const [ndaDialogOpen, setNdaDialogOpen] = useState(false);
+  const [bookingCityId, setBookingCityId] = useState<string | null>(null);
   const [bookingCountry, setBookingCountry] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [cablePanelOpen, setCablePanelOpen] = useState(false);
@@ -1379,6 +1380,7 @@ export function DesignSpace({
     setNdaDialogOpen(false);
     setBookingOpen(false);
     setBookingCountry(null);
+    setBookingCityId(null);
     setVolumeError(null);
       setPrivacy((p) => ({ ...p, consents: [] }));
       setPreparedUpload(null);
@@ -1743,6 +1745,7 @@ export function DesignSpace({
           setPreparedUpload(null);
           setConsentNotice(null);
           setBookingCountry(input.dossier.business.siteCountry ?? null);
+          setBookingCityId(input.dossier.business.siteCityId ?? null);
           setBookingOpen(true);
           // Le succès n'est PAS un message libre : il décrit la révision
           // exactement confirmée par le serveur. Dès que le brouillon change,
@@ -4517,18 +4520,7 @@ export function DesignSpace({
               <Label htmlFor="contact-phone" className="t-label">{t("Numéro de téléphone")}</Label>
               <Input id="contact-phone" type="tel" autoComplete="tel" maxLength={80} value={dossier.business.contactPhone ?? ""} onChange={(e) => setDossier((d) => ({ ...d, business: { ...d.business, contactPhone: e.target.value || null } }))} />
             </div>
-            <div>
-              <Label htmlFor="site-city" className="t-label">{t("Ville du site")} *</Label>
-              <Input id="site-city" autoComplete="address-level2" required maxLength={160} value={dossier.business.siteCity ?? ""} onChange={e => setDossier(d => ({ ...d, business: { ...d.business, siteCity: e.target.value || null } }))} />
-            </div>
-            <div>
-              <Label htmlFor="site-country" className="t-label">{t("Pays du site")} *</Label>
-              <select id="site-country" required className="t-body min-h-11 w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3" value={dossier.business.siteCountry ?? ""} onChange={e => setDossier(d => ({ ...d, business: { ...d.business, siteCountry: e.target.value || null } }))}>
-                <option value="">{t("Sélectionnez le pays de votre site")}</option>
-                {COUNTRY_CODES.map(code => ({ code, name: new Intl.DisplayNames([getLocale()], { type: "region" }).of(code) ?? code })).sort((a,b) => a.name.localeCompare(b.name, getLocale())).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-              {salesContactFor(dossier.business.siteCountry) ? <p className="t-caption mt-2">{salesContactFor(dossier.business.siteCountry)!.name} · {t(salesContactFor(dossier.business.siteCountry)!.territory)}</p> : null}
-            </div>
+            <SiteLocation business={dossier.business} onChange={patch => setDossier(d => ({ ...d, business: { ...d.business, ...patch } }))} />
             {/* La confidentialité est traitée AVANT : ici ne reste que la
                 dernière action logique, l'envoi. */}
             <hr className="standex-rule" />
@@ -5380,7 +5372,7 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
-      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} />
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (
         <SensorCard
