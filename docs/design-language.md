@@ -53,9 +53,9 @@ surfaces restent identiques ; aucun code de pays enregistré n’est renommé.
 ### Industrie et titre du projet — 4 novembre 2026
 
 Le champ Industrie se place entre Entreprise et E-mail dans Avec Standex. La liste
-native utilise la surface remplie et les libellés Quickbase canoniques. Une suggestion
-non confirmée porte un encart informatif et un bouton explicite ; un choix manuel
-confirme l’industrie. L’aide Claude est présentée avant les questions avec une case
+native utilise la surface remplie et les libellés Quickbase canoniques. Le champ
+reste seul : aucune aide, aucun encart de suggestion, statut ou bouton de confirmation.
+La valeur affichée, préremplie ou choisie, est acceptée lors de l’envoi du formulaire. L’aide Claude est présentée avant les questions avec une case
 de désactivation, sans imposer un nouveau dialogue. Aucun nom technique de clé API
 n’apparaît dans ce parcours. Les responsabilités nationales par industrie utilisent
 les mêmes contrôles et le même récapitulatif avant/après que les territoires.

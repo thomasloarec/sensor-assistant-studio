@@ -11,7 +11,7 @@ import {
   type ContactResult,
 } from "@/lib/leadmagnet/territories";
 import type { BusinessMeta } from "@/lib/leadmagnet/dossier";
-import { hasConfirmedIndustry } from "@/lib/leadmagnet/industries";
+import { isIndustry } from "@/lib/leadmagnet/industries";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,7 @@ export function SiteLocation({
   useEffect(() => {
     let live = true;
     setContact(null);
-    if (business.siteCountry && hasConfirmedIndustry(business))
+    if (business.siteCountry && isIndustry(business.industry))
       void fetchSalesContact(
         business.siteCountry,
         business.siteCityId ?? null,

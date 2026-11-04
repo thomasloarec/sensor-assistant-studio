@@ -123,7 +123,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 1 entry: internal workspace Beta status.
     // + 52 entries: sales territories, city lookup and profile portraits.
     // + 24 entries: industry routing, assisted identity and transfer disclosure.
-    expect(Object.keys(dictionary)).toHaveLength(4128);
+    // + 1 entry: plain required-industry validation without a separate confirmation.
+    expect(Object.keys(dictionary)).toHaveLength(4129);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

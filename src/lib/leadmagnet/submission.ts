@@ -1,4 +1,4 @@
-import { hasConfirmedIndustry } from "./industries";
+import { isIndustry } from "./industries";
 import { validSiteCountry } from "./sales-contact";
 import { isPcbSensor } from "./product-presentation";
 import { requirementAnswer } from "./requirement-answer";
@@ -72,6 +72,12 @@ export interface SubmissionInput {
 export function submissionDto(input: SubmissionInput): ClientDossierDto {
   return toClientDto({
     ...input.dossier,
+    // Sending the form accepts its displayed industry, including a prefilled value.
+    // Keep the server contract and consent hash aligned without mutating the draft.
+    business: {
+      ...input.dossier.business,
+      industryConfirmed: isIndustry(input.dossier.business.industry),
+    },
     freeConstraints: [input.dossier.freeConstraints, input.additionalConstraints]
       .filter((s) => s.trim())
       .join("\n"),
@@ -143,8 +149,8 @@ export type SubmissionCheck = { ok: true } | { ok: false; problems: string[] };
 
 export async function checkSubmission(input: SubmissionInput): Promise<SubmissionCheck> {
   const problems: string[] = [];
-  if (!hasConfirmedIndustry(input.dossier.business))
-    problems.push("Sélectionnez et confirmez l’industrie de l’application finale.");
+  if (!isIndustry(input.dossier.business.industry))
+    problems.push("Choisissez une industrie.");
   if (!input.dossier.business.contactEmail?.trim())
     problems.push("Renseignez un contact pour le retour Standex.");
   if (!input.dossier.business.siteCity?.trim() || !validSiteCountry(input.dossier.business.siteCountry))

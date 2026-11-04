@@ -710,7 +710,7 @@ export function DesignSpace({
   const [pendingSaved, setPendingSaved] = useState<{ id: string; email: string } | null>(null);
   const questionnaireReady = focusIdx >= GUIDED_QUESTIONS.length - 1 || GUIDED_QUESTIONS.every(q =>
     dossier.requirements.some(r => r.key === q.key && r.value.trim()) || (dossier.delegatedDecisions ?? []).includes(delegatedQuestion(q.key)));
-  const identityStatus = useProjectIdentity(dossier, setDossier, visible && questionnaireReady && tab !== "besoin" && !pendingSaved && identityEnabled && !nda.required);
+  useProjectIdentity(dossier, setDossier, visible && questionnaireReady && tab !== "besoin" && !pendingSaved && identityEnabled && !nda.required);
   const pendingIdentityRef = useRef<{ localId: string; email: string; assetKey: string | null; identity: PendingIdentity } | null>(null);
   const pendingIdentity = () => {
     const email = dossier.business.contactEmail?.trim().toLowerCase() ?? "";
@@ -4514,8 +4514,6 @@ export function DesignSpace({
               />
             </div>
             <IndustryField business={dossier.business} onChange={patch => setDossier(d => ({ ...d, business: { ...d.business, ...patch } }))} />
-            {identityStatus === "loading" ? <p className="t-caption" role="status">{t("Préparation du titre et de l’industrie…")}</p> : null}
-            {identityStatus === "unavailable" ? <p className="t-caption">{t("La suggestion automatique est indisponible. Choisissez votre industrie et modifiez le titre si nécessaire.")}</p> : null}
             <div>
               <Label className="t-label">{t("E-mail professionnel")}</Label>
               <Input

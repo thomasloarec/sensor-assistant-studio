@@ -75,16 +75,25 @@ test("provider failure leaves an empty industry for manual selection", async () 
   fireEvent.change(ui.getByLabelText(/Industrie/),{target:{value:"HVAC"}});
   expect(current.business.industryConfirmed).toBe(true);
 });
-test("AI industry needs explicit confirmation, title synthesizes answers, edits invalidate confirmation", async () => {
+test("AI industry stays editable in a plain required dropdown without confirmation controls", async () => {
   const ui = render(<Harness />);
   await waitFor(() => expect(requests).toHaveLength(1));
   requests[0]!.resolve({ title: "Détection de trappe de recharge", industry: "Automotive" });
   await waitFor(() => expect(current.title).toBe("Détection de trappe de recharge"));
   expect(current.business.industryConfirmed).toBe(false);
-  fireEvent.click(ui.getByRole("button", { name: "Confirmer cette industrie" }));
-  expect(current.business.industryConfirmed).toBe(true);
+  const select = ui.getByRole("combobox", { name: /Industrie/ }) as HTMLSelectElement;
+  expect(select.value).toBe("Automotive");
+  expect(select.required).toBe(true);
+  expect(select.hasAttribute("aria-describedby")).toBe(false);
+  expect(ui.queryByRole("button", { name: "Confirmer cette industrie" })).toBeNull();
+  expect(select.parentElement!.querySelectorAll("p, button")).toHaveLength(0);
   fireEvent.click(ui.getByText("Change answers"));
-  await waitFor(() => expect(current.business.industryConfirmed).toBe(false));
+  await waitFor(() => expect(requests).toHaveLength(2));
+  requests[1]!.resolve({ title: "Détection de pompe", industry: "Medical" });
+  await waitFor(() => expect(select.value).toBe("Medical"));
+  fireEvent.change(select, { target: { value: "HVAC" } });
+  expect(current.business.industry).toBe("HVAC");
+  expect(select.parentElement!.querySelectorAll("p, button")).toHaveLength(0);
 });
 test("late provider responses preserve manual industry and title", async () => {
   const ui = render(<Harness />);

@@ -95,7 +95,7 @@ export function customerAccessMessage(error: unknown): string {
   if (code === "EXPIRED")
     return "Cet envoi a expiré. Rouvrez votre projet et confirmez à nouveau son envoi.";
   if (code === "BAD_EMAIL") return "Vérifiez votre adresse email avant de continuer.";
-  if (code === "INDUSTRY_REQUIRED") return "Sélectionnez et confirmez l’industrie de l’application finale.";
+  if (code === "INDUSTRY_REQUIRED") return "Choisissez une industrie.";
   if (code === "BAD_FILE") return "Le fichier 3D doit être un GLB valide de 30 Mo maximum.";
   if (code === "AUTH_REQUIRED") return "Connectez-vous pour retrouver vos projets.";
   if (code === "SEALED_SUBMISSION")
