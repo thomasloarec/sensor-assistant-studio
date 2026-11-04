@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getLocale, t } from "@/lib/i18n/core";
 import { INDUSTRIES } from "@/lib/leadmagnet/industries";
 import { COUNTRY_CODES } from "@/lib/leadmagnet/sales-contact";
+import { countryDisplayName } from "@/lib/leadmagnet/country-labels";
 import type { SalesOverview } from "@/lib/leadmagnet/territories";
 import { personFullName, type CrmPerson } from "@/lib/leadmagnet/crm";
 import { changeIndustryResponsibility } from "@/lib/leadmagnet/territory-adapter";
@@ -30,14 +31,14 @@ export function IndustrySettings({
   } | null>(null);
   useEffect(() => setReview(null), [data]);
   const countryName = (c: string) =>
-    new Intl.DisplayNames([getLocale()], { type: "region" }).of(c) ?? c;
+    countryDisplayName(c, getLocale());
   const ownerName = (id: string | null) => {
     const p = people.find((p) => p.id === id);
     return p ? personFullName(p) : t("Responsable géographique");
   };
   const current = data.industries?.find((i) => i.country === country && i.industry === industry);
   const choices = COUNTRY_CODES.map((code) => ({ code, name: countryName(code) })).sort((a, b) =>
-    a.name.localeCompare(b.name),
+    a.name.localeCompare(b.name, getLocale()),
   );
   const selectClass = "t-body min-h-11 w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3";
   return (

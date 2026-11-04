@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { personFullName, type CrmPerson } from "@/lib/leadmagnet/crm";
 import { COUNTRY_CODES } from "@/lib/leadmagnet/sales-contact";
+import { countryDisplayName } from "@/lib/leadmagnet/country-labels";
 import {
   changeTerritory,
   fetchSalesOverview,
@@ -127,7 +128,7 @@ export function PersonSalesSettings({
         )
       : t("Non attribué");
   const countryName = (code: string) =>
-    new Intl.DisplayNames([getLocale()], { type: "region" }).of(code) ?? code;
+    countryDisplayName(code, getLocale());
   const owned = data.territories.filter(
     (s) => s.owner === person.id || Object.values(s.region_owners).includes(person.id),
   );
@@ -304,7 +305,7 @@ export function PersonSalesSettings({
           >
             <option value="">{t("Pays à gérer")}</option>
             {COUNTRY_CODES.map((code) => ({ code, name: countryName(code) }))
-              .sort((a, b) => a.name.localeCompare(b.name))
+              .sort((a, b) => a.name.localeCompare(b.name, getLocale()))
               .map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.name}

@@ -5,6 +5,7 @@
  *  socle de design.
  */
 import { t } from "@/lib/i18n/core";
+import { countryDisplayName } from "@/lib/leadmagnet/country-labels";
 import { Button } from "@/components/ui/button";
 import { AvatarInitials } from "@/components/standex/dashboard/avatar-initials";
 import {
@@ -162,12 +163,7 @@ export function StageGauge({ stage }: { stage: CrmStage }) {
 export function countryName(code: string | null | undefined, locale: string): string | null {
   const raw = (code ?? "").trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(raw)) return raw || null;
-  try {
-    const names = new Intl.DisplayNames([locale], { type: "region" });
-    return names.of(raw) ?? raw;
-  } catch {
-    return raw;
-  }
+  return countryDisplayName(raw, locale);
 }
 
 /** Drapeau décoratif + NOM du pays lisible : le drapeau seul n'est pas une information. */

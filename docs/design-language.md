@@ -1,5 +1,13 @@
 # Langage de design Standex DETECT
 
+### Pays — 4 novembre 2026
+
+Les sélecteurs de pays partagent les mêmes libellés localisés que le CRM.
+« République tchèque (Tchéquie) » conserve les deux appellations dans une seule
+entrée, classée à R en français. Les 249 codes ISO sont complétés par le Kosovo
+(XK), déjà accepté par le référentiel serveur. Les contrôles natifs et leurs
+surfaces restent identiques ; aucun code de pays enregistré n’est renommé.
+
 ### Industrie et titre du projet — 4 novembre 2026
 
 Le champ Industrie se place entre Entreprise et E-mail dans Avec Standex. La liste

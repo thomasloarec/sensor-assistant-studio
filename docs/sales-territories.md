@@ -16,6 +16,17 @@ Open `/standex/admin`, then the person's actions → **Photo and territories**.
 
 ## Geography and submission
 
+Country-list audit, 4 November 2026: all 249 current ISO 3166-1 entries were
+compared by alpha-2 code against [RIPE NCC's maintained reference](https://www.ripe.net/community/internet-governance/internet-technical-community/the-rir-system/list-of-country-codes-and-rirs/).
+No ISO entry was missing or duplicated. Kosovo (`XK`), already present in the
+server reference, is now selectable as a supplemental entry: 250 choices total.
+Every choice has a distinct readable label in all eight application languages.
+The prospect form, territory editor, industry editor and CRM share the country
+label helper. Czechia is shown as **République tchèque (Tchéquie)** in French,
+and **Czech Republic (Czechia)** in English, while retaining the same `CZ` value.
+All selectable codes exist in the live server reference. Its two historical
+entries `AN` and `CS` remain outside new selections; no stored data was deleted.
+
 Country codes use ISO country identifiers. Subdivision identifiers use **GeoNames ADM1**, consistently for both regions and cities; they must not be confused with ISO 3166-2. France uses its current metropolitan administrative regions; Germany uses its 16 Länder. Overseas territories have their own geographic country entries (for example GP and RE). This is not a postcode-based or custom sales-district system.
 
 The country-scoped search returns populated places with their region and district code. A prospect explicitly selects a result; homonymous cities in different regions remain separate. Changing the city or country clears its previous identifier and region. Search supports normalized names and alternative names from the reference.

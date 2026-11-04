@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { t, getLocale } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { COUNTRY_CODES } from "@/lib/leadmagnet/sales-contact";
+import { countryDisplayName } from "@/lib/leadmagnet/country-labels";
 import { searchCities, fetchSalesContact } from "@/lib/leadmagnet/territory-adapter";
 import {
   cityBusiness,
@@ -71,7 +72,7 @@ export function SiteLocation({
   }, [business.siteCountry, business.siteCityId, business.industry, business.industryConfirmed]);
   const countries = COUNTRY_CODES.map((code) => ({
     code,
-    name: new Intl.DisplayNames([getLocale()], { type: "region" }).of(code) ?? code,
+    name: countryDisplayName(code, getLocale()),
   })).sort((a, b) => a.name.localeCompare(b.name, getLocale()));
   return (
     <div className="space-y-3">
