@@ -19,33 +19,50 @@ export function RoutedBooking({
   country,
   cityId,
   industry,
+  onContactAvailabilityChange,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   country: string | null;
   cityId?: string | null;
   industry?: string | null;
+  onContactAvailabilityChange?: (available: boolean) => void;
 }) {
   useLocale();
-  const [result, setResult] = useState<ContactResult | null>(null),
-    [failed, setFailed] = useState(false);
+  const lookupKey = JSON.stringify([country, cityId ?? null, industry ?? null]);
+  const [result, setResult] = useState<{ lookupKey: string; value: ContactResult } | null>(null);
   useEffect(() => {
     let live = true;
     setResult(null);
-    setFailed(false);
-    if (open && country)
-      void fetchSalesContact(country, cityId ?? null, industry ?? null)
-        .then((r) => {
-          if (live) setResult(r);
-        })
-        .catch(() => {
-          if (live) setFailed(true);
-        });
+    if (!open) return;
+    onContactAvailabilityChange?.(false);
+    if (!country) {
+      onOpenChange(false);
+      return;
+    }
+    void fetchSalesContact(country, cityId ?? null, industry ?? null)
+      .then((r) => {
+        if (!live) return;
+        const known = r.reason === "assigned" && Boolean(r.contact?.id && r.contact?.name);
+        setResult({ lookupKey, value: r });
+        onContactAvailabilityChange?.(known);
+        if (!known) onOpenChange(false);
+      })
+      .catch(() => {
+        if (!live) return;
+        onContactAvailabilityChange?.(false);
+        onOpenChange(false);
+      });
     return () => {
       live = false;
     };
-  }, [open, country, cityId, industry]);
-  const contact = result?.contact;
+  }, [open, country, cityId, industry, lookupKey, onOpenChange, onContactAvailabilityChange]);
+  const contact =
+    result?.lookupKey === lookupKey && result.value.reason === "assigned"
+      ? result.value.contact
+      : null;
+  // Resolve silently before mounting the modal; never show an unassigned or stale contact.
+  if (!open || !contact?.id || !contact.name) return null;
   const url = bookingUrl(contact?.booking_url ?? undefined);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -56,11 +73,6 @@ export function RoutedBooking({
             {t("Votre projet a bien été reçu. Préparons la suite ensemble.")}
           </DialogDescription>
         </DialogHeader>
-        {!result && !failed && country ? (
-          <p role="status" className="t-body">
-            {t("Recherche de votre responsable…")}
-          </p>
-        ) : null}
         {contact ? (
           <div className="flex items-center gap-4">
             <SalesAvatar
@@ -89,12 +101,6 @@ export function RoutedBooking({
           <p className="notice-info t-body">
             {t(
               "La réservation en ligne sera bientôt disponible. Votre responsable Standex vous recontactera pour convenir d’un rendez-vous. Aucun créneau n’est réservé à ce stade.",
-            )}
-          </p>
-        ) : result || failed || !country ? (
-          <p className="notice-info t-body">
-            {t(
-              "Standex vérifiera votre secteur et vous recontactera. Aucun créneau n’est réservé à ce stade.",
             )}
           </p>
         ) : null}

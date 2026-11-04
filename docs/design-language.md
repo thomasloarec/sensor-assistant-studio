@@ -1,5 +1,17 @@
 # Langage de design Standex DETECT
 
+### Localisation et rendez-vous côté prospect — 4 novembre 2026
+
+L’étape Avec Standex conserve la saisie libre de ville lorsque la recherche ne
+donne aucun résultat ou est indisponible. Aucun avertissement sur le référentiel
+ou la répartition commerciale n’apparaît. L’aide de sélection n’est affichée
+que lorsque des résultats existent. L’attribution GeoNames est déplacée dans
+le panneau Documents, hors du formulaire d’envoi.
+Après envoi, la recherche du commercial reste invisible : aucun dialogue ne
+s’ouvre pendant la résolution, en cas d’absence de responsable ou d’erreur.
+Le dialogue et son accès dans le suivi apparaissent uniquement pour un contact
+identifié. Les réponses périmées d’un autre pays, ville ou secteur sont ignorées.
+
 ### Visibilité des responsabilités actives — 4 novembre 2026
 
 Les règles enregistrées apparaissent avant le formulaire dans une section

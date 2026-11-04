@@ -678,6 +678,7 @@ export function DesignSpace({
   const [bookingIndustry, setBookingIndustry] = useState<string | null>(null);
   const [bookingCountry, setBookingCountry] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingAvailable, setBookingAvailable] = useState(false);
   const [cablePanelOpen, setCablePanelOpen] = useState(false);
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
@@ -1378,6 +1379,7 @@ export function DesignSpace({
       setNda(INITIAL_NDA);
     setNdaDialogOpen(false);
     setBookingOpen(false);
+    setBookingAvailable(false);
     setBookingCountry(null);
     setBookingCityId(null);
     setBookingIndustry(null);
@@ -1747,6 +1749,7 @@ export function DesignSpace({
           setBookingCountry(input.dossier.business.siteCountry ?? null);
           setBookingCityId(input.dossier.business.siteCityId ?? null);
           setBookingIndustry(input.dossier.business.industry ?? null);
+          setBookingAvailable(false);
           setBookingOpen(true);
           // Le succès n'est PAS un message libre : il décrit la révision
           // exactement confirmée par le serveur. Dès que le brouillon change,
@@ -4553,7 +4556,7 @@ export function DesignSpace({
                 >
                   {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
                 </Button>
-                {bookingCountry ? (
+                {bookingAvailable ? (
                   <Button
                     variant="outline"
                     className="min-h-11 text-base"
@@ -5369,6 +5372,11 @@ export function DesignSpace({
         description={t("Lecture sur place, en mémoire de cet onglet.")}
       >
         {documentsSection}
+        <p className="t-caption pt-4">
+          {t("Référentiel géographique")} :{" "}
+          <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">{t("GeoNames")}</a>
+          {" · "}<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+        </p>
       </WorkspacePanel>
 
       <WorkspacePanel
@@ -5383,7 +5391,7 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
-      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} />
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} onContactAvailabilityChange={setBookingAvailable} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (
         <SensorCard

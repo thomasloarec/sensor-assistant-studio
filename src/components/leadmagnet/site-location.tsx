@@ -24,16 +24,12 @@ export function SiteLocation({
 }) {
   useLocale();
   const [cities, setCities] = useState<GeoCity[]>([]),
-    [ready, setReady] = useState<boolean | null>(null),
-    [busy, setBusy] = useState(false),
-    [unavailable, setUnavailable] = useState(false);
+    [busy, setBusy] = useState(false);
   const [contact, setContact] = useState<ContactResult | null>(null);
   const seq = useRef(0);
   useEffect(() => {
     const gen = ++seq.current;
     setCities([]);
-    setReady(null);
-    setUnavailable(false);
     setBusy(false);
     if (!business.siteCountry || business.siteCityId) return;
     const timer = setTimeout(() => {
@@ -41,12 +37,11 @@ export function SiteLocation({
       searchCities(business.siteCountry!, business.siteCity ?? "")
         .then((r) => {
           if (gen === seq.current) {
-            setReady(r.ready);
-            setCities(r.cities);
+            setCities(r.ready ? r.cities : []);
           }
         })
         .catch(() => {
-          if (gen === seq.current) setUnavailable(true);
+          if (gen === seq.current) setCities([]);
         })
         .finally(() => {
           if (gen === seq.current) setBusy(false);
@@ -61,7 +56,11 @@ export function SiteLocation({
     let live = true;
     setContact(null);
     if (business.siteCountry && hasConfirmedIndustry(business))
-      void fetchSalesContact(business.siteCountry, business.siteCityId ?? null, business.industry ?? null)
+      void fetchSalesContact(
+        business.siteCountry,
+        business.siteCityId ?? null,
+        business.industry ?? null,
+      )
         .then((r) => {
           if (live) setContact(r);
         })
@@ -113,11 +112,13 @@ export function SiteLocation({
           disabled={!business.siteCountry}
           value={business.siteCity ?? ""}
           onChange={(e) => onChange({ siteCity: e.target.value || null, ...clearCityResolution })}
-          aria-describedby="city-help"
+          aria-describedby={cities.length ? "city-help" : undefined}
         />
-        <p id="city-help" className="t-caption">
-          {t("Choisissez votre ville dans les résultats pour confirmer sa région.")}
-        </p>
+        {cities.length ? (
+          <p id="city-help" className="t-caption">
+            {t("Choisissez votre ville dans les résultats pour confirmer sa région.")}
+          </p>
+        ) : null}
       </div>
       {busy ? (
         <p role="status" className="t-caption">
@@ -149,42 +150,11 @@ export function SiteLocation({
           {t("Région confirmée")} : {business.siteRegionName}
         </p>
       ) : null}
-      {unavailable || ready === false ? (
-        <p className="notice-warning t-body">
-          {t(
-            "La recherche de villes est indisponible pour ce pays. Vous pouvez envoyer votre projet ; Standex vérifiera son affectation.",
-          )}
-        </p>
-      ) : null}
-      {ready &&
-      !busy &&
-      !cities.length &&
-      !business.siteCityId &&
-      (business.siteCity?.length ?? 0) >= 2 ? (
-        <p className="notice-info t-body">
-          {t(
-            "Aucune ville trouvée. Précisez le nom ou conservez votre saisie pour une vérification par Standex.",
-          )}
-        </p>
-      ) : null}
       {contact?.contact ? (
         <p className="t-body">
           {t("Votre responsable Standex")} : {contact.contact.name}
         </p>
-      ) : contact?.reason === "region_required" ? (
-        <p className="notice-info t-body">
-          {t(
-            "Ce pays est partagé entre plusieurs commerciaux. Confirmez votre ville pour identifier votre responsable.",
-          )}
-        </p>
       ) : null}
-      <p className="t-caption">
-        {t("Référentiel géographique")} :{" "}
-        <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">
-          {t("GeoNames")}
-        </a>{" "}
-        · CC BY 4.0
-      </p>
     </div>
   );
 }
