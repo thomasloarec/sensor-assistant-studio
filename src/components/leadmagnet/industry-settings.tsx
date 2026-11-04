@@ -56,7 +56,7 @@ export function IndustrySettings({
             {assigned.map((i) => (
               <li
                 key={i.country + i.industry}
-                className="notice-success flex flex-wrap items-center justify-between gap-3"
+                className="panel-block notice-success flex flex-wrap items-center justify-between gap-3"
               >
                 <div className="space-y-1">
                   <p className="t-title-s">
