@@ -33,7 +33,7 @@ Existing snapshots remain readable and unchanged. Geographic routing is stored i
 3. Generate reference imports, for example:
 
    ```sh
-   node scripts/geography-data.mjs FR DE US CA
+   node scripts/geography-data.mjs FR DE CH US CA
    ```
 
    The script downloads each country's complete GeoNames file and includes active populated places, including small settlements. No API key or third-party request containing a prospect's city is needed at runtime. It writes SQL and a timestamp/SHA-256 manifest under `tmp/geography/` (not tracked).
@@ -66,5 +66,7 @@ The UI test runs separately so its adapter mocks cannot contaminate the main sui
 ## Existing project rollout — 4 November 2026
 
 The migration and reference data were applied to the existing Sensor Studio database. Imported: France (13 metropolitan regions, 81,464 populated places) and Germany (16 Länder, 82,351 populated places), plus the worldwide country/ADM1 reference. Other countries require their city import before regional routing can resolve a prospect. No commercial assignments, portraits or booking links were seeded.
+
+Switzerland was subsequently enabled on the same day: all 26 cantons have populated-place coverage, with 13,189 places imported using `node scripts/geography-data.mjs CH`. Source SHA-256: `2264a3dfed7e43a8913132f7905235a8bea8dad85e1db678170eed798c0cecba`. Live anonymous searches verified Lausanne → CH.VD, Genève → CH.GE, Zürich → CH.ZH, Lugano → CH.TI and Sion → CH.VS. Alternative names are searchable; displayed reference names can use another Swiss language or English. No Swiss commercial assignments were created. Existing regional split/transfer rules apply to cantons without any application redeployment.
 
 Validation: 2,235 main-suite tests and 3 isolated interface tests passed; TypeScript and the production build passed. Live anonymous lookups verified city-to-region resolution and denied access to the internal CRM projection. Local browser checks covered the region-transfer review and homonymous city selection. The authenticated production admin still needs the administrator's normal account to configure actual coverage.
