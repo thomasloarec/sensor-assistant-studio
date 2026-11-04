@@ -1,4 +1,13 @@
 {
+  "Cette responsabilité est déjà attribuée à {0}. Vous n’avez rien à enregistrer.": [
+    "This responsibility is already assigned to {0}. There is nothing to save.",
+    "此职责已分配给 {0}，无需再次保存。",
+    "Diese Zuständigkeit ist bereits {0} zugewiesen. Sie müssen nichts speichern.",
+    "Esta responsabilidad ya está asignada a {0}. No hay nada que guardar.",
+    "Эта ответственность уже назначена {0}. Ничего сохранять не нужно.",
+    "Questa responsabilità è già assegnata a {0}. Non occorre salvare nulla.",
+    "この担当はすでに{0}に割り当てられています。保存する必要はありません。"
+  ],
   "Profil": [
     "Profile",
     "个人资料",

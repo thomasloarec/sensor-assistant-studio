@@ -30,8 +30,7 @@ export function IndustrySettings({
     remove: boolean;
   } | null>(null);
   useEffect(() => setReview(null), [data]);
-  const countryName = (c: string) =>
-    countryDisplayName(c, getLocale());
+  const countryName = (c: string) => countryDisplayName(c, getLocale());
   const ownerName = (id: string | null) => {
     const p = people.find((p) => p.id === id);
     return p ? personFullName(p) : t("Responsable géographique");
@@ -100,22 +99,32 @@ export function IndustrySettings({
       </select>
       {country && industry ? (
         <>
-          <p className="t-body">
-            {t("Responsable actuel")} : {ownerName(current?.owner ?? null)}
-          </p>
+          {current?.owner === person.id ? (
+            <p role="status" className="notice-success t-body">
+              {t(
+                "Cette responsabilité est déjà attribuée à {0}. Vous n’avez rien à enregistrer.",
+              ).replace("{0}", personFullName(person))}
+            </p>
+          ) : (
+            <p className="t-body">
+              {t("Responsable actuel")} : {ownerName(current?.owner ?? null)}
+            </p>
+          )}
           <div className="flex flex-wrap gap-2">
-            <Button
-              disabled={busy || current?.owner === person.id}
-              onClick={() =>
-                setReview({
-                  owner: current?.owner ?? null,
-                  version: current?.version ?? 0,
-                  remove: false,
-                })
-              }
-            >
-              {t("Attribuer cette industrie")}
-            </Button>
+            {current?.owner !== person.id ? (
+              <Button
+                disabled={busy}
+                onClick={() =>
+                  setReview({
+                    owner: current?.owner ?? null,
+                    version: current?.version ?? 0,
+                    remove: false,
+                  })
+                }
+              >
+                {t("Attribuer cette industrie")}
+              </Button>
+            ) : null}
             {current?.owner === person.id ? (
               <Button
                 variant="outline"

@@ -1,5 +1,13 @@
 # Langage de design Standex DETECT
 
+### Industrie déjà attribuée — 4 novembre 2026
+
+Lorsqu’un pays et une industrie sont déjà attribués à la personne affichée,
+un état `notice-success` nomme le responsable et indique qu’aucun enregistrement
+supplémentaire n’est nécessaire. Le bouton d’attribution est remplacé par cet
+état, et le retrait reste disponible avec sa confirmation habituelle. Un autre
+responsable ou une industrie sans exception conserve le parcours d’attribution.
+
 ### Structure des fiches de l’annuaire — 4 novembre 2026
 
 Chaque fiche propose deux boutons visibles : « Profil » et « Responsabilités
