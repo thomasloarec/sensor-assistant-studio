@@ -28,10 +28,12 @@ export function PersonSalesSettings({
   person,
   people,
   onSaved,
+  section = "responsibilities",
 }: {
   person: CrmPerson;
   people: CrmPerson[];
   onSaved: () => void;
+  section?: "profile" | "responsibilities";
 }) {
   useLocale();
   const [data, setData] = useState<SalesOverview | null>(null),
@@ -63,7 +65,7 @@ export function PersonSalesSettings({
         if (active.current)
           setError(
             t(
-              "La gestion des territoires n’est pas encore disponible. Contactez votre administrateur technique.",
+              "Ces réglages ne sont pas encore disponibles. Contactez votre administrateur technique.",
             ),
           );
       });
@@ -127,8 +129,7 @@ export function PersonSalesSettings({
           },
         )
       : t("Non attribué");
-  const countryName = (code: string) =>
-    countryDisplayName(code, getLocale());
+  const countryName = (code: string) => countryDisplayName(code, getLocale());
   const owned = data.territories.filter(
     (s) => s.owner === person.id || Object.values(s.region_owners).includes(person.id),
   );
@@ -155,8 +156,10 @@ export function PersonSalesSettings({
       )
     : [];
   return (
-    <div className="space-y-4 panel-block-lg">
-      <h4 className="t-title-s">{t("Photo et territoires")}</h4>
+    <div className={section === "profile" ? "space-y-4" : "space-y-4 panel-block-lg"}>
+      {section === "responsibilities" ? (
+        <h4 className="t-title-s">{t("Responsabilités commerciales")}</h4>
+      ) : null}
       {error ? (
         <div role="alert" className="notice-warning t-body">
           {error}{" "}
@@ -176,279 +179,294 @@ export function PersonSalesSettings({
           {notice}
         </p>
       ) : null}
-      <div className="flex flex-wrap items-center gap-4">
-        <SalesAvatar
-          name={personFullName(person)}
-          photo={profile?.photo_path}
-          microsoftPhoto={
-            person.userId && profile?.microsoft_user_id === person.userId
-              ? profile?.microsoft_photo_path
-              : null
-          }
-          large
-        />
-        <div className="space-y-2">
-          <Label htmlFor={"portrait-" + person.id} className="t-body">
-            {t("Photo de profil")}
-          </Label>
-          <Input
-            id={"portrait-" + person.id}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            disabled={busy}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = "";
-              if (!file) return;
-              void run(async () => {
-                const path = await uploadPortrait(person.id, file);
-                try {
-                  return await saveSalesProfile(person.id, path, booking, profile?.version ?? 0);
-                } catch (error) {
-                  await removeOrphanPortrait(path);
-                  throw error;
-                }
-              });
-            }}
-          />
-          <p className="t-caption">
-            {t(
-              "JPEG, PNG ou WebP, 2 Mo maximum. La photo ajoutée ici est prioritaire sur la photo Microsoft.",
-            )}
-          </p>
-          {profile?.photo_path ? (
-            <Button
-              type="button"
-              variant="outline"
-              disabled={busy}
-              onClick={() =>
-                void run(() => saveSalesProfile(person.id, null, booking, profile.version))
-              }
-            >
-              {t("Retirer la photo ajoutée")}
-            </Button>
-          ) : null}
-          <p className="t-caption">
-            {profile?.microsoft_photo_path
-              ? t("Photo Microsoft disponible en remplacement.")
-              : t(
-                  "Sans photo ajoutée, les initiales sont affichées tant que la photo Microsoft n’est pas synchronisée.",
-                )}
-          </p>
-        </div>
-      </div>
-      {person.role === "sales" ? (
-        <div className="space-y-2">
-          <Label className="t-body" htmlFor={"booking-" + person.id}>
-            {t("Lien de réservation")}
-          </Label>
-          <Input
-            id={"booking-" + person.id}
-            type="url"
-            value={booking}
-            onChange={(e) => setBooking(e.target.value)}
-            placeholder="https://…"
-          />
-          <Button
-            disabled={busy}
-            variant="outline"
-            onClick={() =>
-              void run(() =>
-                saveSalesProfile(
-                  person.id,
-                  profile?.photo_path ?? null,
-                  booking,
-                  profile?.version ?? 0,
-                ),
-              )
-            }
-          >
-            {t("Enregistrer le lien")}
-          </Button>
-        </div>
-      ) : null}
-      {person.role === "sales" && person.active ? (
+      {section === "profile" ? (
         <>
-          <IndustrySettings person={person} people={people} data={data} busy={busy} run={run} />
-          <h4 className="t-title-s">{t("Territoires commerciaux")}</h4>
-          {owned.length ? (
-            <ul className="space-y-2">
-              {owned.map((s) => (
-                <li key={s.country} className="t-body">
-                  <strong>{countryName(s.country)}</strong> :{" "}
-                  {s.owner === person.id
-                    ? t("Pays entier")
-                    : data.regions
-                        .filter((r) => s.region_owners[r.code] === person.id)
-                        .map((r) => r.name)
-                        .join(", ")}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="t-body">{t("Aucun territoire attribué.")}</p>
-          )}
-          <Label className="t-body" htmlFor={"territory-country-" + person.id}>
-            {t("Pays à gérer")}
-          </Label>
-          <select
-            id={"territory-country-" + person.id}
-            className="t-body min-h-11 w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3"
-            value={country}
-            disabled={busy}
-            onChange={(e) => {
-              setCountry(e.target.value);
-              setSelected([]);
-              setRegional(false);
-              setReview(null);
-            }}
-          >
-            <option value="">{t("Pays à gérer")}</option>
-            {COUNTRY_CODES.map((code) => ({ code, name: countryName(code) }))
-              .sort((a, b) => a.name.localeCompare(b.name, getLocale()))
-              .map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
-                </option>
-              ))}
-          </select>
-          {country ? (
-            <>
-              <p className="t-body">
-                {current.owner
-                  ? t("Responsable du pays") + " : " + ownerName(current.owner)
-                  : Object.keys(current.region_owners).length
-                    ? t("Ce pays est réparti par région.")
-                    : t("Ce pays n’a pas encore de responsable.")}
-              </p>
-              {!data.imports.some((i) => i.country === country) ? (
-                <p className="notice-info t-body">
-                  {t(
-                    "Le référentiel des villes de ce pays reste à importer. Une affectation par région nécessitera cette importation.",
-                  )}
-                </p>
-              ) : null}
-              <label className="t-body flex min-h-11 items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={regional}
-                  disabled={busy || !regions.length}
-                  onChange={(e) => {
-                    setRegional(e.target.checked);
-                    setReview(null);
-                    setSelected([]);
-                  }}
-                />
-                {t("Gérer ce pays par régions")}
-              </label>
-              {!regions.length ? (
-                <p className="notice-info t-body">
-                  {t("Les régions de ce pays ne sont pas encore disponibles.")}
-                </p>
-              ) : null}
-              {regional ? (
-                <fieldset className="max-h-80 overflow-y-auto space-y-1">
-                  <legend className="t-body">{t("Régions à attribuer ou à retirer")}</legend>
-                  {regions.map((r) => {
-                    const owner = current.owner ?? current.region_owners[r.code];
-                    return (
-                      <label key={r.code} className="flex min-h-11 items-center gap-3 t-body">
-                        <input
-                          type="checkbox"
-                          checked={selected.includes(r.code)}
-                          disabled={busy}
-                          onChange={(e) => {
-                            setSelected((s) =>
-                              e.target.checked ? [...s, r.code] : s.filter((c) => c !== r.code),
-                            );
-                            setReview(null);
-                          }}
-                        />
-                        <span>
-                          {r.name} <span className="t-caption">— {ownerName(owner)}</span>
-                        </span>
-                      </label>
-                    );
-                  })}
-                </fieldset>
-              ) : null}
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  disabled={busy || (regional && !selected.length)}
-                  onClick={() => prepare(regional ? "regions" : "country")}
-                >
-                  {regional ? t("Préparer la répartition") : t("Attribuer le pays entier")}
-                </Button>
-                {owned.some((s) => s.country === country) ? (
-                  <Button
-                    variant="outline"
-                    disabled={busy || (regional && (!selected.length || !!current.owner))}
-                    onClick={() => prepare(regional ? "remove_regions" : "remove_country")}
-                  >
-                    {t("Retirer de cette personne")}
-                  </Button>
-                ) : null}
-              </div>
-            </>
-          ) : null}
-          {review ? (
-            <div
-              className="panel-block notice-warning space-y-3"
-              role="region"
-              aria-label={t("Vérifier la répartition")}
-            >
-              <h4 className="t-title-s">{t("Vérifier la répartition")}</h4>
-              <p className="t-body">
+          <div className="flex flex-wrap items-center gap-4">
+            <SalesAvatar
+              name={personFullName(person)}
+              photo={profile?.photo_path}
+              microsoftPhoto={
+                person.userId && profile?.microsoft_user_id === person.userId
+                  ? profile?.microsoft_photo_path
+                  : null
+              }
+              large
+            />
+            <div className="space-y-2">
+              <Label htmlFor={"portrait-" + person.id} className="t-body">
+                {t("Photo de profil")}
+              </Label>
+              <Input
+                id={"portrait-" + person.id}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                disabled={busy}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  void run(async () => {
+                    const path = await uploadPortrait(person.id, file);
+                    try {
+                      return await saveSalesProfile(
+                        person.id,
+                        path,
+                        profile?.booking_url ?? "",
+                        profile?.version ?? 0,
+                      );
+                    } catch (error) {
+                      await removeOrphanPortrait(path);
+                      throw error;
+                    }
+                  });
+                }}
+              />
+              <p className="t-caption">
                 {t(
-                  "Vérifiez les transferts avant de confirmer. Les autres régions conservent leur responsable.",
+                  "JPEG, PNG ou WebP, 2 Mo maximum. La photo ajoutée ici est prioritaire sur la photo Microsoft.",
                 )}
               </p>
-              <div className="max-h-72 overflow-auto">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>{t("Région")}</th>
-                      <th>{t("Responsable actuel")}</th>
-                      <th>{t("Après validation")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reviewRows.map((r) => (
-                      <tr key={r.region.code}>
-                        <td>{r.region.name}</td>
-                        <td>{ownerName(r.old)}</td>
-                        <td>{ownerName(r.next)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="t-body">
-                {t("Régions sans responsable")} : {reviewRows.filter((r) => !r.next).length}
-              </p>
-              <div className="flex gap-2">
+              {profile?.photo_path ? (
                 <Button
+                  type="button"
+                  variant="outline"
                   disabled={busy}
                   onClick={() =>
                     void run(() =>
-                      changeTerritory(
-                        country,
-                        person.id,
-                        review.operation,
-                        review.regions,
-                        review.before.version,
-                      ),
+                      saveSalesProfile(person.id, null, profile.booking_url ?? "", profile.version),
                     )
                   }
                 >
-                  {t("Confirmer cette répartition")}
+                  {t("Retirer la photo ajoutée")}
                 </Button>
-                <Button variant="outline" disabled={busy} onClick={() => setReview(null)}>
-                  {t("Annuler")}
-                </Button>
-              </div>
+              ) : null}
+              <p className="t-caption">
+                {profile?.microsoft_photo_path
+                  ? t("Photo Microsoft disponible en remplacement.")
+                  : t(
+                      "Sans photo ajoutée, les initiales sont affichées tant que la photo Microsoft n’est pas synchronisée.",
+                    )}
+              </p>
             </div>
+          </div>
+          {person.role === "sales" ? (
+            <section className="panel-block space-y-2" aria-label={t("Prise de rendez-vous")}>
+              <h4 className="t-title-s">{t("Prise de rendez-vous")}</h4>
+              <Label className="t-body" htmlFor={"booking-" + person.id}>
+                {t("Lien de réservation")}
+              </Label>
+              <Input
+                id={"booking-" + person.id}
+                type="url"
+                disabled={busy}
+                value={booking}
+                onChange={(e) => setBooking(e.target.value)}
+                placeholder="https://…"
+              />
+              <Button
+                disabled={busy}
+                variant="outline"
+                onClick={() =>
+                  void run(() =>
+                    saveSalesProfile(
+                      person.id,
+                      profile?.photo_path ?? null,
+                      booking,
+                      profile?.version ?? 0,
+                    ),
+                  )
+                }
+              >
+                {t("Enregistrer le lien")}
+              </Button>
+            </section>
           ) : null}
+        </>
+      ) : null}
+      {section === "responsibilities" && person.role === "sales" && person.active ? (
+        <>
+          <section className="panel-block space-y-3" aria-label={t("Territoires commerciaux")}>
+            <h4 className="t-title-s">{t("Territoires commerciaux")}</h4>
+            {owned.length ? (
+              <ul className="space-y-2">
+                {owned.map((s) => (
+                  <li key={s.country} className="t-body">
+                    <strong>{countryName(s.country)}</strong> :{" "}
+                    {s.owner === person.id
+                      ? t("Pays entier")
+                      : data.regions
+                          .filter((r) => s.region_owners[r.code] === person.id)
+                          .map((r) => r.name)
+                          .join(", ")}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="t-body">{t("Aucun territoire attribué.")}</p>
+            )}
+            <Label className="t-body" htmlFor={"territory-country-" + person.id}>
+              {t("Pays à gérer")}
+            </Label>
+            <select
+              id={"territory-country-" + person.id}
+              className="t-body min-h-11 w-full rounded-[var(--r-sm)] bg-[var(--surface-sunken)] p-3"
+              value={country}
+              disabled={busy}
+              onChange={(e) => {
+                setCountry(e.target.value);
+                setSelected([]);
+                setRegional(false);
+                setReview(null);
+              }}
+            >
+              <option value="">{t("Pays à gérer")}</option>
+              {COUNTRY_CODES.map((code) => ({ code, name: countryName(code) }))
+                .sort((a, b) => a.name.localeCompare(b.name, getLocale()))
+                .map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+            </select>
+            {country ? (
+              <>
+                <p className="t-body">
+                  {current.owner
+                    ? t("Responsable du pays") + " : " + ownerName(current.owner)
+                    : Object.keys(current.region_owners).length
+                      ? t("Ce pays est réparti par région.")
+                      : t("Ce pays n’a pas encore de responsable.")}
+                </p>
+                {!data.imports.some((i) => i.country === country) ? (
+                  <p className="notice-info t-body">
+                    {t(
+                      "Le référentiel des villes de ce pays reste à importer. Une affectation par région nécessitera cette importation.",
+                    )}
+                  </p>
+                ) : null}
+                <label className="t-body flex min-h-11 items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={regional}
+                    disabled={busy || !regions.length}
+                    onChange={(e) => {
+                      setRegional(e.target.checked);
+                      setReview(null);
+                      setSelected([]);
+                    }}
+                  />
+                  {t("Gérer ce pays par régions")}
+                </label>
+                {!regions.length ? (
+                  <p className="notice-info t-body">
+                    {t("Les régions de ce pays ne sont pas encore disponibles.")}
+                  </p>
+                ) : null}
+                {regional ? (
+                  <fieldset className="max-h-80 overflow-y-auto space-y-1">
+                    <legend className="t-body">{t("Régions à attribuer ou à retirer")}</legend>
+                    {regions.map((r) => {
+                      const owner = current.owner ?? current.region_owners[r.code];
+                      return (
+                        <label key={r.code} className="flex min-h-11 items-center gap-3 t-body">
+                          <input
+                            type="checkbox"
+                            checked={selected.includes(r.code)}
+                            disabled={busy}
+                            onChange={(e) => {
+                              setSelected((s) =>
+                                e.target.checked ? [...s, r.code] : s.filter((c) => c !== r.code),
+                              );
+                              setReview(null);
+                            }}
+                          />
+                          <span>
+                            {r.name} <span className="t-caption">— {ownerName(owner)}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </fieldset>
+                ) : null}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    disabled={busy || (regional && !selected.length)}
+                    onClick={() => prepare(regional ? "regions" : "country")}
+                  >
+                    {regional ? t("Préparer la répartition") : t("Attribuer le pays entier")}
+                  </Button>
+                  {owned.some((s) => s.country === country) ? (
+                    <Button
+                      variant="outline"
+                      disabled={busy || (regional && (!selected.length || !!current.owner))}
+                      onClick={() => prepare(regional ? "remove_regions" : "remove_country")}
+                    >
+                      {t("Retirer de cette personne")}
+                    </Button>
+                  ) : null}
+                </div>
+              </>
+            ) : null}
+            {review ? (
+              <div
+                className="panel-block notice-warning space-y-3"
+                role="region"
+                aria-label={t("Vérifier la répartition")}
+              >
+                <h4 className="t-title-s">{t("Vérifier la répartition")}</h4>
+                <p className="t-body">
+                  {t(
+                    "Vérifiez les transferts avant de confirmer. Les autres régions conservent leur responsable.",
+                  )}
+                </p>
+                <div className="max-h-72 overflow-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>{t("Région")}</th>
+                        <th>{t("Responsable actuel")}</th>
+                        <th>{t("Après validation")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {reviewRows.map((r) => (
+                        <tr key={r.region.code}>
+                          <td>{r.region.name}</td>
+                          <td>{ownerName(r.old)}</td>
+                          <td>{ownerName(r.next)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="t-body">
+                  {t("Régions sans responsable")} : {reviewRows.filter((r) => !r.next).length}
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    disabled={busy}
+                    onClick={() =>
+                      void run(() =>
+                        changeTerritory(
+                          country,
+                          person.id,
+                          review.operation,
+                          review.regions,
+                          review.before.version,
+                        ),
+                      )
+                    }
+                  >
+                    {t("Confirmer cette répartition")}
+                  </Button>
+                  <Button variant="outline" disabled={busy} onClick={() => setReview(null)}>
+                    {t("Annuler")}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </section>
+          <IndustrySettings person={person} people={people} data={data} busy={busy} run={run} />
         </>
       ) : null}
     </div>

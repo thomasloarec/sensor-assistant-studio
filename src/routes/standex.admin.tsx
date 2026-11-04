@@ -86,9 +86,15 @@ export function AdminScreen() {
   const [open, setOpen] = useState<OpenForm>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [auditShown, setAuditShown] = useState(AUDIT_PAGE);
-  const [person, setPerson] = useState({ firstName: "", lastName: "", role: "sales" as "sales" | "fae" });
+  const [person, setPerson] = useState({
+    firstName: "",
+    lastName: "",
+    role: "sales" as "sales" | "fae",
+  });
   const [linkEmail, setLinkEmail] = useState<Record<string, string>>({});
-  const [edit, setEdit] = useState<Record<string, { firstName: string; lastName: string; role: "sales" | "fae" }>>({});
+  const [edit, setEdit] = useState<
+    Record<string, { firstName: string; lastName: string; role: "sales" | "fae" }>
+  >({});
   const [grantRole, setGrantRole] = useState<Record<string, StaffRole>>({});
   /** Refus de règle : la ligne concernée reçoit `.anim-nudge` une seule fois. */
   const [nudge, setNudge] = useState<string | null>(null);
@@ -162,7 +168,9 @@ export function AdminScreen() {
   if (!capabilities.available)
     return (
       <CrmUnavailableNotice
-        plain={t("L'administration de l'espace de travail n'est pas encore activée sur ce serveur.")}
+        plain={t(
+          "L'administration de l'espace de travail n'est pas encore activée sur ce serveur.",
+        )}
         detail={capabilities.detail}
         isAdmin={legacyRole === "admin"}
       />
@@ -196,7 +204,9 @@ export function AdminScreen() {
         </Link>
         <h2 className="t-title-m">{t("Réglages de la plateforme")}</h2>
         <p className="t-caption">
-          {t("Annuaire des commerciaux et des FAE, comptes et droits d'accès, journal des actions.")}
+          {t(
+            "Annuaire des commerciaux et des FAE, comptes et droits d'accès, journal des actions.",
+          )}
         </p>
       </div>
 
@@ -252,7 +262,12 @@ export function AdminScreen() {
       {overview ? (
         <>
           {section === "directory" ? (
-            <section role="tabpanel" id="panel-directory" aria-labelledby="tab-directory" className="space-y-3">
+            <section
+              role="tabpanel"
+              id="panel-directory"
+              aria-labelledby="tab-directory"
+              className="space-y-3"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="t-title-s">{t("Annuaire métier (commerciaux et FAE)")}</h3>
                 <Button id="add-person-toggle" size="sm" onClick={() => setAddOpen((v) => !v)}>
@@ -260,7 +275,9 @@ export function AdminScreen() {
                 </Button>
               </div>
               <p className="t-caption">
-                {t("Ces fiches sont des identités métier. Elles ne créent aucun compte et n'ouvrent aucun droit : le rattachement à un compte déjà inscrit est une action distincte, ci-dessous.")}
+                {t(
+                  "Ces fiches sont des identités métier. Elles ne créent aucun compte et n'ouvrent aucun droit : le rattachement à un compte déjà inscrit est une action distincte, ci-dessous.",
+                )}
               </p>
 
               {addOpen ? (
@@ -330,7 +347,9 @@ export function AdminScreen() {
                           }, t("Personne ajoutée à l'annuaire."));
                         }}
                       >
-                        {busy ? <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
+                        {busy ? (
+                          <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+                        ) : null}
                         {t("Ajouter à l'annuaire")}
                       </Button>
                     </div>
@@ -374,10 +393,17 @@ export function AdminScreen() {
           ) : null}
 
           {section === "accounts" ? (
-            <section role="tabpanel" id="panel-accounts" aria-labelledby="tab-accounts" className="space-y-3">
+            <section
+              role="tabpanel"
+              id="panel-accounts"
+              aria-labelledby="tab-accounts"
+              className="space-y-3"
+            >
               <h3 className="t-title-s">{t("Comptes Standex et droits")}</h3>
               <p className="t-caption">
-                {t("Le dernier administrateur actif ne peut pas être retiré : le serveur refuse l'opération.")}
+                {t(
+                  "Le dernier administrateur actif ne peut pas être retiré : le serveur refuse l'opération.",
+                )}
               </p>
               {overview.staff.length === 0 ? (
                 <EmptyBlock text={t("Aucun compte Standex.")} />
@@ -445,13 +471,18 @@ export function AdminScreen() {
                                 className={`inline-flex items-center gap-2 ${nudge === s.userId ? "anim-nudge" : ""}`}
                               >
                                 {lastAdmin ? (
-                                  <Lock className="size-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+                                  <Lock
+                                    className="size-4 text-[var(--muted-foreground)]"
+                                    aria-hidden="true"
+                                  />
                                 ) : null}
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   disabled={busy || lastAdmin}
-                                  aria-describedby={lastAdmin ? `last-admin-${s.userId}` : undefined}
+                                  aria-describedby={
+                                    lastAdmin ? `last-admin-${s.userId}` : undefined
+                                  }
                                   onClick={() =>
                                     void run(
                                       () => setStaffRole(s.userId, s.role, !s.active),
@@ -465,7 +496,9 @@ export function AdminScreen() {
                               </span>
                               {lastAdmin ? (
                                 <span className="t-caption block" id={`last-admin-${s.userId}`}>
-                                  {t("Dernier administrateur actif : ce droit ne peut pas être retiré.")}
+                                  {t(
+                                    "Dernier administrateur actif : ce droit ne peut pas être retiré.",
+                                  )}
                                 </span>
                               ) : null}
                             </td>
@@ -480,7 +513,12 @@ export function AdminScreen() {
           ) : null}
 
           {section === "audit" ? (
-            <section role="tabpanel" id="panel-audit" aria-labelledby="tab-audit" className="space-y-3">
+            <section
+              role="tabpanel"
+              id="panel-audit"
+              aria-labelledby="tab-audit"
+              className="space-y-3"
+            >
               <h3 className="t-title-s">{t("Journal des actions")}</h3>
               {overview.audit.length === 0 ? (
                 <EmptyBlock text={t("Aucune action enregistrée.")} />
@@ -566,7 +604,10 @@ function PersonRow({
   const role = edit?.role ?? p.role;
 
   return (
-    <li className={`panel-block space-y-2${nudge ? " anim-nudge" : ""}`} data-inactive={p.active ? undefined : "true"}>
+    <li
+      className={`panel-block space-y-2${nudge ? " anim-nudge" : ""}`}
+      data-inactive={p.active ? undefined : "true"}
+    >
       <div className="person-row" data-inactive={p.active ? undefined : "true"}>
         <SalesAvatar name={name} photo={p.photoPath} microsoftPhoto={p.microsoftPhotoPath} />
         <span className="t-title-s min-w-0">{name}</span>
@@ -584,8 +625,6 @@ function PersonRow({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onSelect={() => onToggle("territories")}>{t("Photo et territoires")}</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => onToggle("edit")}>{t("Modifier la fiche")}</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => onToggle("link")}>
               {p.userId ? t("Détacher") : t("Rattacher un compte")}
             </DropdownMenuItem>
@@ -610,7 +649,39 @@ function PersonRow({
         </DropdownMenu>
       </div>
 
-      {open === "territories" ? <PersonSalesSettings person={p} people={people} onSaved={() => void run(fetchCrmAdminOverview, t("Fiche annuaire mise à jour."))} /> : null}
+      <div className="flex flex-wrap gap-2" aria-label={t("Réglages de la fiche")}>
+        <Button
+          type="button"
+          variant={open === "edit" ? "default" : "outline"}
+          disabled={busy}
+          aria-expanded={open === "edit"}
+          aria-controls={`profile-${p.id}`}
+          onClick={() => onToggle("edit")}
+        >
+          {t("Profil")}
+        </Button>
+        {p.role === "sales" && p.active ? (
+          <Button
+            type="button"
+            variant={open === "territories" ? "default" : "outline"}
+            disabled={busy}
+            aria-expanded={open === "territories"}
+            aria-controls={`responsibilities-${p.id}`}
+            onClick={() => onToggle("territories")}
+          >
+            {t("Responsabilités commerciales")}
+          </Button>
+        ) : null}
+      </div>
+      {open === "territories" ? (
+        <section id={`responsibilities-${p.id}`} aria-label={t("Responsabilités commerciales")}>
+          <PersonSalesSettings
+            person={p}
+            people={people}
+            onSaved={() => void run(fetchCrmAdminOverview, t("Fiche annuaire mise à jour."))}
+          />
+        </section>
+      ) : null}
       {open === "link" ? (
         <div className="anim-rise field-row">
           <div className="field">
@@ -666,7 +737,9 @@ function PersonRow({
       {open === "grant" && p.userId && !granted ? (
         <div className="anim-rise space-y-2">
           <p className="t-caption">
-            {t("Ce compte est rattaché mais n'a encore aucun droit Standex. Choisissez le droit à lui accorder.")}
+            {t(
+              "Ce compte est rattaché mais n'a encore aucun droit Standex. Choisissez le droit à lui accorder.",
+            )}
           </p>
           <div className="field-row">
             <div className="field">
@@ -706,68 +779,89 @@ function PersonRow({
       ) : null}
 
       {open === "edit" ? (
-        <div className="anim-rise field-row">
-          <div className="field">
-            <Label className="t-caption" htmlFor={`first-${p.id}`}>
-              {t("Prénom")}
-            </Label>
-            <Input
-              id={`first-${p.id}`}
-              value={first}
-              onChange={(e) => onEdit({ firstName: e.target.value, lastName: last, role })}
-            />
-            <span />
+        <section
+          id={`profile-${p.id}`}
+          className="anim-rise panel-block-lg space-y-4"
+          aria-label={t("Profil")}
+        >
+          <h4 className="t-title-s">{t("Profil")}</h4>
+          <div className="field-row">
+            <div className="field">
+              <Label className="t-caption" htmlFor={`first-${p.id}`}>
+                {t("Prénom")}
+              </Label>
+              <Input
+                id={`first-${p.id}`}
+                value={first}
+                onChange={(e) => onEdit({ firstName: e.target.value, lastName: last, role })}
+              />
+              <span />
+            </div>
+            <div className="field">
+              <Label className="t-caption" htmlFor={`last-${p.id}`}>
+                {t("Nom")}
+              </Label>
+              <Input
+                id={`last-${p.id}`}
+                value={last}
+                onChange={(e) => onEdit({ firstName: first, lastName: e.target.value, role })}
+              />
+              <span />
+            </div>
+            <div className="field">
+              <Label className="t-caption">{t("Fonction")}</Label>
+              <Select
+                value={role}
+                onValueChange={(v) =>
+                  onEdit({ firstName: first, lastName: last, role: v as "sales" | "fae" })
+                }
+              >
+                <SelectTrigger className="min-h-11 w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sales">{t("Commercial")}</SelectItem>
+                  <SelectItem value="fae">FAE</SelectItem>
+                </SelectContent>
+              </Select>
+              <span />
+            </div>
+            <div className="field-actions">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={busy || !first.trim() || !last.trim()}
+                onClick={() =>
+                  void run(
+                    async () => {
+                      const next = await upsertCrmPerson(
+                        p.id,
+                        first.trim(),
+                        last.trim(),
+                        role,
+                        p.active,
+                      );
+                      clearEdit();
+                      closeForm();
+                      return next;
+                    },
+                    t("Fiche annuaire mise à jour."),
+                    p.id,
+                  )
+                }
+              >
+                {busy ? <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
+                {t("Enregistrer la fiche")}
+              </Button>
+            </div>
           </div>
-          <div className="field">
-            <Label className="t-caption" htmlFor={`last-${p.id}`}>
-              {t("Nom")}
-            </Label>
-            <Input
-              id={`last-${p.id}`}
-              value={last}
-              onChange={(e) => onEdit({ firstName: first, lastName: e.target.value, role })}
-            />
-            <span />
-          </div>
-          <div className="field">
-            <Label className="t-caption">{t("Fonction")}</Label>
-            <Select
-              value={role}
-              onValueChange={(v) => onEdit({ firstName: first, lastName: last, role: v as "sales" | "fae" })}
-            >
-              <SelectTrigger className="min-h-11 w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sales">{t("Commercial")}</SelectItem>
-                <SelectItem value="fae">FAE</SelectItem>
-              </SelectContent>
-            </Select>
-            <span />
-          </div>
-          <div className="field-actions">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={busy || !first.trim() || !last.trim()}
-              onClick={() =>
-                void run(
-                  async () => {
-                    const next = await upsertCrmPerson(p.id, first.trim(), last.trim(), role, p.active);
-                    clearEdit();
-                    closeForm();
-                    return next;
-                  },
-                  t("Fiche annuaire mise à jour."),
-                  p.id,
-                )
-              }
-            >
-              {busy ? <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
-              {t("Enregistrer la fiche")}
-            </Button>
-          </div>
-        </div>
+          <PersonSalesSettings
+            section="profile"
+            person={p}
+            people={people}
+            onSaved={() => void run(fetchCrmAdminOverview, t("Fiche annuaire mise à jour."))}
+          />
+        </section>
       ) : null}
     </li>
   );

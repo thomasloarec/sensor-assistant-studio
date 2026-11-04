@@ -1,5 +1,17 @@
 # Langage de design Standex DETECT
 
+### Structure des fiches de l’annuaire — 4 novembre 2026
+
+Chaque fiche propose deux boutons visibles : « Profil » et « Responsabilités
+commerciales » (pour un commercial actif). Le profil regroupe prénom, nom,
+fonction et photo, puis un encart « Prise de rendez-vous » pour le lien personnel.
+Les responsabilités regroupent les territoires géographiques et les exceptions
+nationales par industrie, dans deux blocs métier distincts. Un seul panneau est
+ouvert à la fois. Les actions de compte et de désactivation restent dans le menu
+secondaire. Les boutons indiquent leur état développé et contrôlent le panneau
+nommé correspondant. Surfaces, typographie et cibles reprennent les jetons existants.
+Cette organisation remplace l’ancien bloc « Photo et territoires ».
+
 ### Pays — 4 novembre 2026
 
 Les sélecteurs de pays partagent les mêmes libellés localisés que le CRM.

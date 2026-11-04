@@ -1,4 +1,49 @@
 {
+  "Profil": [
+    "Profile",
+    "个人资料",
+    "Profil",
+    "Perfil",
+    "Профиль",
+    "Profilo",
+    "プロフィール"
+  ],
+  "Responsabilités commerciales": [
+    "Sales responsibilities",
+    "销售职责",
+    "Vertriebszuständigkeiten",
+    "Responsabilidades comerciales",
+    "Коммерческие обязанности",
+    "Responsabilità commerciali",
+    "営業担当範囲"
+  ],
+  "Réglages de la fiche": [
+    "Directory profile settings",
+    "名录资料设置",
+    "Verzeichnisprofileinstellungen",
+    "Ajustes de la ficha",
+    "Настройки профиля в справочнике",
+    "Impostazioni della scheda",
+    "名簿プロフィールの設定"
+  ],
+  "Prise de rendez-vous": [
+    "Appointment booking",
+    "预约",
+    "Terminbuchung",
+    "Reserva de citas",
+    "Запись на встречу",
+    "Prenotazione appuntamenti",
+    "面談予約"
+  ],
+  "Ces réglages ne sont pas encore disponibles. Contactez votre administrateur technique.": [
+    "These settings are not available yet. Contact your technical administrator.",
+    "这些设置尚不可用。请联系技术管理员。",
+    "Diese Einstellungen sind noch nicht verfügbar. Wenden Sie sich an Ihre technische Administration.",
+    "Estos ajustes aún no están disponibles. Contacte con su administrador técnico.",
+    "Эти настройки пока недоступны. Обратитесь к техническому администратору.",
+    "Queste impostazioni non sono ancora disponibili. Contatta il tuo amministratore tecnico.",
+    "これらの設定はまだ利用できません。技術管理者にお問い合わせください。"
+  ],
   "République tchèque (Tchéquie)": [
     "Czech Republic (Czechia)",
     "捷克共和国（捷克）",

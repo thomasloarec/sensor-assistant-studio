@@ -4,7 +4,7 @@ Sensor Studio's Business directory now manages sales coverage and portraits. A d
 
 ## Administrator workflow
 
-Open `/standex/admin`, then the person's actions → **Photo and territories**.
+Open `/standex/admin`, then use **Profile** for name, role, portrait and appointment link, or **Sales responsibilities** for territories and industry exceptions.
 
 - Select a country and assign the whole country, or enable **Manage this country by region** and select regions.
 - The selection shows each current owner. Review the before/after table, then explicitly confirm.
