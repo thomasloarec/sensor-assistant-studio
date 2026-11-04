@@ -24218,14 +24218,14 @@
     "Nulla da annunciare: nessun riscontro è pubblicato su questo fascicolo.",
     "知らせる内容がありません。このカルテには公開済みの回答がありません。"
   ],
-  "Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre appareil tant que vous ne l'envoyez pas.": [
-    "Nothing to install, no forms to start. Your work remains on your device until you submit it.",
-    "无需安装，无需填写表单即可开始。在您提交之前，您的工作将保存在您的设备上。",
-    "Nichts zu installieren, kein Formular zu Beginn. Ihre Arbeit verbleibt auf Ihrem Gerät, bis Sie sie senden.",
-    "Nada que instalar, ningún formulario para empezar. Su trabajo permanece en su dispositivo mientras no lo envíe.",
-    "Не нужно ничего устанавливать, никаких форм для начала работы. Все данные остаются на вашем устройстве, пока вы их не отправите.",
-    "Niente da installare, nessun modulo per iniziare. Il lavoro rimane sul dispositivo finché non viene inviato.",
-    "インストール不要、フォーム入力なしですぐに開始できます。送信するまで、作業内容はデバイス上に保持されます。"
+  "Rien à installer, aucun formulaire pour commencer. L’aide Claude au titre et à l’industrie est facultative et expliquée avant les questions.": [
+    "Nothing to install, no forms to start. Claude assistance for the title and industry is optional and explained before the questions.",
+    "无需安装，无需填写表单即可开始。Claude 的标题和行业建议功能可自由选择，问答开始前会说明。",
+    "Nichts zu installieren, kein Formular zu Beginn. Die Claude-Hilfe für Titel und Branche ist optional und wird vor den Fragen erklärt.",
+    "Nada que instalar, ningún formulario para empezar. La ayuda de Claude para el título y la industria es opcional y se explica antes de las preguntas.",
+    "Не нужно ничего устанавливать или заполнять формы для начала работы. Помощь Claude с названием и отраслью необязательна; пояснение дано перед вопросами.",
+    "Niente da installare, nessun modulo per iniziare. L’aiuto di Claude per titolo e settore è facoltativo e viene spiegato prima delle domande.",
+    "インストール不要、フォーム入力なしで開始できます。タイトルと業種に関するClaudeの支援は任意で、質問の前に説明されます。"
   ],
   "Rotation dans le plan": [
     "Rotation in the plane",
@@ -28646,14 +28646,14 @@
     "Velocità di riproduzione",
     "再生速度"
   ],
-  "Voici ce que nos ingénieurs recevront. Rien ne part sans votre clic.": [
-    "This is what our engineers will receive. Nothing leaves without your click.",
-    "这是我们工程师将收到的内容。未经您点击，不会发送任何内容。",
-    "Das erhalten unsere Ingenieure. Ohne Ihren Klick wird nichts gesendet.",
-    "Esto es lo que recibirán nuestros ingenieros. Nada se envía sin su clic.",
-    "Вот что получат наши инженеры. Без вашего нажатия ничего не отправляется.",
-    "Ecco cosa riceveranno i nostri ingegneri. Nulla parte senza il vostro clic.",
-    "これがエンジニアに届く内容です。クリックしない限り何も送信されません。"
+  "Voici ce que nos ingénieurs recevront. Le dossier leur sera envoyé uniquement après votre confirmation.": [
+    "This is what our engineers will receive. The dossier will be sent to them only after your confirmation.",
+    "这是我们工程师将收到的内容。只有在您确认后，项目资料才会发送给他们。",
+    "Das erhalten unsere Ingenieure. Das Dossier wird ihnen erst nach Ihrer Bestätigung gesendet.",
+    "Esto es lo que recibirán nuestros ingenieros. El expediente se les enviará únicamente tras su confirmación.",
+    "Вот что получат наши инженеры. Досье будет отправлено им только после вашего подтверждения.",
+    "Ecco cosa riceveranno i nostri ingegneri. Il dossier verrà inviato loro solo dopo la vostra conferma.",
+    "これがエンジニアに届く内容です。お客様の確認後にのみ、資料が送信されます。"
   ],
   "Voici les possibilités de câble et de connecteur pour ce capteur.": [
     "Here are the cable and connector options for this sensor.",

@@ -154,7 +154,7 @@ function HomeRoute() {
                   </button>
                 </div>
                 <p className="t-caption mt-7 max-w-[34rem]">
-                  {t("Rien à installer, aucun formulaire pour commencer. Votre travail reste sur votre appareil tant que vous ne l'envoyez pas.")}
+                  {t("Rien à installer, aucun formulaire pour commencer. L’aide Claude au titre et à l’industrie est facultative et expliquée avant les questions.")}
                 </p>
               </div>
 

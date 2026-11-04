@@ -10,6 +10,8 @@ de désactivation, sans imposer un nouveau dialogue. Aucun nom technique de clé
 n’apparaît dans ce parcours. Les responsabilités nationales par industrie utilisent
 les mêmes contrôles et le même récapitulatif avant/après que les territoires.
 Typographie, surfaces, focus et cibles de 44 px reprennent les jetons existants.
+L’accueil annonce le caractère facultatif de l’aide Claude ; le texte de revue
+réserve la confirmation d’envoi au dossier destiné aux ingénieurs Standex.
 
 ### Territoires et portraits — 4 novembre 2026
 

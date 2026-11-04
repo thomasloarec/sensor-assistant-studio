@@ -4430,7 +4430,7 @@ export function DesignSpace({
       <div>
         <h2 className="t-display-m">{t("Envoyer à Standex pour confirmation.")}</h2>
         <p className="t-body mt-2">
-          {t("Voici ce que nos ingénieurs recevront. Rien ne part sans votre clic.")}
+          {t("Voici ce que nos ingénieurs recevront. Le dossier leur sera envoyé uniquement après votre confirmation.")}
         </p>
       </div>
       <div className="review-grid">
