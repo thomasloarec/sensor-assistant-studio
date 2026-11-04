@@ -1,5 +1,15 @@
 # Langage de design Standex DETECT
 
+### Visibilité des responsabilités actives — 4 novembre 2026
+
+Les règles enregistrées apparaissent avant le formulaire dans une section
+« Responsabilités actives ». Chaque règle a son encart `notice-success`, un
+libellé pays/industrie en `t-title-s` et une mention de sa portée nationale.
+Le bouton « Modifier » sélectionne cette règle dans le formulaire sans écrire
+de données. « Configurer une responsabilité » distingue les champs de saisie
+des règles actives, visibles même lorsqu’aucun pays n’est sélectionné.
+Une liste vide explique explicitement le recours à la géographie.
+
 ### Industrie déjà attribuée — 4 novembre 2026
 
 Lorsqu’un pays et une industrie sont déjà attribués à la personne affichée,

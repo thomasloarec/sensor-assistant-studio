@@ -1,4 +1,40 @@
 {
+  "Responsabilités actives": [
+    "Active responsibilities",
+    "当前生效的职责",
+    "Aktive Zuständigkeiten",
+    "Responsabilidades activas",
+    "Действующие обязанности",
+    "Responsabilità attive",
+    "有効な担当範囲"
+  ],
+  "Configurer une responsabilité": [
+    "Configure a responsibility",
+    "配置职责",
+    "Zuständigkeit konfigurieren",
+    "Configurar una responsabilidad",
+    "Настроить ответственность",
+    "Configurare una responsabilità",
+    "担当範囲を設定"
+  ],
+  "Responsabilité active pour tout le pays": [
+    "Active responsibility for the entire country",
+    "对全国生效的职责",
+    "Aktive Zuständigkeit für das ganze Land",
+    "Responsabilidad activa para todo el país",
+    "Действует на территории всей страны",
+    "Responsabilità attiva per tutto il paese",
+    "国全体に適用される有効な担当"
+  ],
+  "Aucune responsabilité par industrie. La répartition géographique s’applique.": [
+    "No industry responsibility assigned. Geographic routing applies.",
+    "未分配行业职责。将按地理区域分配。",
+    "Keine Branchenzuständigkeit zugewiesen. Es gilt die geografische Zuordnung.",
+    "No hay responsabilidades por industria asignadas. Se aplica la distribución geográfica.",
+    "Отраслевые обязанности не назначены. Применяется географическое распределение.",
+    "Nessuna responsabilità per settore assegnata. Si applica la ripartizione geografica.",
+    "業種別の担当は未設定です。地域に基づく振り分けが適用されます。"
+  ],
   "Cette responsabilité est déjà attribuée à {0}. Vous n’avez rien à enregistrer.": [
     "This responsibility is already assigned to {0}. There is nothing to save.",
     "此职责已分配给 {0}，无需再次保存。",
