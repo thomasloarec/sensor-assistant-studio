@@ -1,4 +1,5 @@
 import { isPcbSensor } from "./product-presentation";
+import { industryDisplayName } from "./industry-labels";
 import { currentClientTrace } from '../standex/client-pedagogical';
 import { workshopGuideRange, GUIDE_SIMULATION_NOTE, illustrativeNoteFor } from "../standex/workshop-guide";
 import { guideIllustrativeMarks, ACTIVATION_GUIDE } from "../standex/activation-guide";
@@ -55,7 +56,7 @@ export function projectReportSections(
   add("Votre projet", [entry("Nom du projet", d.title)], "hero");
   add("Coordonnées et contexte", [
     entry("Entreprise", d.business.contactCompany),
-    entry("Industrie", d.business.industry),
+    entry("Industrie", d.business.industry ? industryDisplayName(d.business.industry, tr) : null),
     entry("Nom", d.business.contactName),
     entry("E-mail professionnel", d.business.contactEmail),
     entry("Numéro de téléphone", d.business.contactPhone),

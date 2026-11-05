@@ -3,9 +3,11 @@ import { GlobalRegistrator } from "@happy-dom/global-registrator";
 GlobalRegistrator.register();
 import { test, expect, mock, afterEach } from "bun:test";
 import React, { useState } from "react";
-const { render, fireEvent, waitFor, cleanup } = await import("@testing-library/react");
+const { render, fireEvent, waitFor, cleanup, act } = await import("@testing-library/react");
 import { createDossier, type DesignDossier } from "../src/lib/leadmagnet/dossier";
-import { setLocale } from "../src/lib/i18n/core";
+import { setLocale, LANGUAGES, t } from "../src/lib/i18n/core";
+import { INDUSTRIES } from "../src/lib/leadmagnet/industries";
+import { industryDisplayName } from "../src/lib/leadmagnet/industry-labels";
 setLocale("fr");
 let requests: { resolve: (v: any) => void; reject: () => void }[] = [];
 mock.module("@/lib/leadmagnet/project-identity-client", () => ({
@@ -63,8 +65,28 @@ function Harness() {
 }
 afterEach(() => {
   cleanup();
+  setLocale("fr");
   requests = [];
   writes = [];
+});
+test("changing locale translates all options while preserving the canonical selected industry", async () => {
+  const business = { ...createDossier().business, industry: "Industrial Applications" as const, industrySource: "ai" as const };
+  const changes: unknown[] = [];
+  const ui = render(<IndustryField business={business} onChange={patch => changes.push(patch)} />);
+  const select = ui.getByRole("combobox") as HTMLSelectElement;
+  for (const { id } of LANGUAGES) {
+    await act(async () => setLocale(id));
+    const options = [...select.options].slice(1);
+    expect(options.map(o => o.value)).toEqual([...INDUSTRIES]);
+    expect(options.map(o => o.textContent)).toEqual(INDUSTRIES.map(i => industryDisplayName(i, s => t(s, id))));
+    expect(select.value).toBe("Industrial Applications");
+    expect(select.selectedOptions[0]!.textContent).toBe(industryDisplayName("Industrial Applications", s => t(s, id)));
+    expect(changes).toHaveLength(0);
+  }
+  await act(async () => setLocale("fr"));
+  expect(select.selectedOptions[0]!.textContent).toBe("Applications industrielles");
+  fireEvent.change(select, { target: { value: "Automotive" } });
+  expect(changes).toEqual([{ industry: "Automotive", industryConfirmed: true, industrySource: "user" }]);
 });
 test("provider failure leaves an empty industry for manual selection", async () => {
   const ui=render(<Harness/>);
@@ -144,6 +166,7 @@ test("admin shows national owner and writes only after transfer review", async (
   fireEvent.change(ui.getByLabelText("Industrie"), { target: { value: "Automotive" } });
   expect(ui.getByText(/Responsable actuel/).textContent).toContain("Gilles Test");
   fireEvent.click(ui.getByText("Attribuer cette industrie"));
+  expect(ui.getByRole("region", { name: "Vérifier la responsabilité" }).textContent).toContain("Automobile");
   expect(writes).toHaveLength(0);
   expect(ui.getByRole("region", { name: "Vérifier la responsabilité" }).textContent).toContain(
     "Thomas Test",

@@ -1,4 +1,193 @@
 {
+  "Électroménager": [
+    "Appliances",
+    "家用电器",
+    "Haushaltsgeräte",
+    "Electrodomésticos",
+    "Бытовая техника",
+    "Elettrodomestici",
+    "家電"
+  ],
+  "Recherche et développement, universités et laboratoires": [
+    "RnD University, Laboratory",
+    "研发、大学与实验室",
+    "Forschung und Entwicklung, Hochschulen und Labore",
+    "Investigación y desarrollo, universidades y laboratorios",
+    "Исследования и разработки, университеты и лаборатории",
+    "Ricerca e sviluppo, università e laboratori",
+    "研究開発・大学・研究所"
+  ],
+  "Écoulement des fluides": [
+    "Fluid Flow",
+    "流体流动",
+    "Fluidströmung",
+    "Flujo de fluidos",
+    "Потоки жидкостей и газов",
+    "Flusso dei fluidi",
+    "流体の流れ"
+  ],
+  "Distributeurs": [
+    "Distributors",
+    "分销商",
+    "Distributoren",
+    "Distribuidores",
+    "Дистрибьюторы",
+    "Distributori",
+    "販売代理店"
+  ],
+  "Énergies alternatives": [
+    "Alternative Energy",
+    "替代能源",
+    "Alternative Energien",
+    "Energías alternativas",
+    "Альтернативная энергетика",
+    "Energie alternative",
+    "代替エネルギー"
+  ],
+  "Sites SME": [
+    "SME Locations",
+    "SME 站点",
+    "SME-Standorte",
+    "Centros SME",
+    "Площадки SME",
+    "Sedi SME",
+    "SME 拠点"
+  ],
+  "Applications industrielles": [
+    "Industrial Applications",
+    "工业应用",
+    "Industrielle Anwendungen",
+    "Aplicaciones industriales",
+    "Промышленные применения",
+    "Applicazioni industriali",
+    "産業用途"
+  ],
+  "Chauffage, ventilation et climatisation": [
+    "HVAC",
+    "暖通空调",
+    "Heizung, Lüftung und Klimatechnik",
+    "Calefacción, ventilación y aire acondicionado",
+    "Отопление, вентиляция и кондиционирование",
+    "Riscaldamento, ventilazione e climatizzazione",
+    "暖房・換気・空調"
+  ],
+  "Essais et mesures": [
+    "Test & Measurement",
+    "测试与测量",
+    "Prüf- und Messtechnik",
+    "Ensayos y medición",
+    "Испытания и измерения",
+    "Prove e misurazioni",
+    "試験・計測"
+  ],
+  "Éclairage": [
+    "Lighting",
+    "照明",
+    "Beleuchtung",
+    "Iluminación",
+    "Освещение",
+    "Illuminazione",
+    "照明"
+  ],
+  "Médical": [
+    "Medical",
+    "医疗",
+    "Medizintechnik",
+    "Medicina",
+    "Медицина",
+    "Medicale",
+    "医療"
+  ],
+  "Équipements agricoles et de construction": [
+    "Agriculture & Construction Equipment",
+    "农业与建筑设备",
+    "Land- und Baumaschinen",
+    "Equipos agrícolas y de construcción",
+    "Сельскохозяйственная и строительная техника",
+    "Macchine agricole e da costruzione",
+    "農業・建設機械"
+  ],
+  "Fabrication sous contrat": [
+    "Contract Manufacturer",
+    "合同制造",
+    "Auftragsfertigung",
+    "Fabricación por contrato",
+    "Контрактное производство",
+    "Produzione conto terzi",
+    "受託製造"
+  ],
+  "Sécurité": [
+    "Security",
+    "安防",
+    "Sicherheitstechnik",
+    "Seguridad",
+    "Системы безопасности",
+    "Sicurezza",
+    "セキュリティ"
+  ],
+  "Automobile": [
+    "Automotive",
+    "汽车",
+    "Automobilindustrie",
+    "Automoción",
+    "Автомобилестроение",
+    "Automotive",
+    "自動車"
+  ],
+  "Défense, aéronautique et spatial": [
+    "Mil-Aero & Space",
+    "国防、航空与航天",
+    "Verteidigung, Luft- und Raumfahrt",
+    "Defensa, aeronáutica y espacio",
+    "Оборона, авиация и космос",
+    "Difesa, aeronautica e spazio",
+    "防衛・航空・宇宙"
+  ],
+  "Compteurs": [
+    "Meters",
+    "计量仪表",
+    "Zähler",
+    "Contadores",
+    "Счётчики",
+    "Contatori",
+    "計量メーター"
+  ],
+  "Représentants": [
+    "Representatives",
+    "销售代表",
+    "Handelsvertreter",
+    "Representantes",
+    "Торговые представители",
+    "Rappresentanti",
+    "営業代理人"
+  ],
+  "Électronique grand public et jouets": [
+    "Consumer Electronics & Toys",
+    "消费电子与玩具",
+    "Unterhaltungselektronik und Spielzeug",
+    "Electrónica de consumo y juguetes",
+    "Бытовая электроника и игрушки",
+    "Elettronica di consumo e giocattoli",
+    "民生用電子機器・玩具"
+  ],
+  "Télécommunications et informatique": [
+    "Telecommunications, IT",
+    "电信与信息技术",
+    "Telekommunikation und IT",
+    "Telecomunicaciones e informática",
+    "Телекоммуникации и ИТ",
+    "Telecomunicazioni e informatica",
+    "通信・情報技術"
+  ],
+  "Transport": [
+    "Transportation",
+    "交通运输",
+    "Verkehr und Transport",
+    "Transporte",
+    "Транспорт",
+    "Trasporti",
+    "輸送"
+  ],
   "Choisissez une industrie.": [
     "Choose an industry.",
     "请选择行业。",

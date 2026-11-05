@@ -1,5 +1,13 @@
 # Langage de design Standex DETECT
 
+### Industries traduites — 5 novembre 2026
+
+Les 21 industries utilisent les mêmes libellés localisés dans le formulaire,
+l’annuaire, les récapitulatifs de responsabilité, la fiche projet et le rapport.
+Un changement de langue actualise les choix et la valeur affichée sans modifier
+la sélection enregistrée. Les identifiants Quickbase restent anglais dans les
+données et le routage. Le champ reste une liste simple, sans aide ni confirmation.
+
 ### Localisation et rendez-vous côté prospect — 4 novembre 2026
 
 L’étape Avec Standex conserve la saisie libre de ville lorsque la recherche ne
@@ -53,7 +61,7 @@ surfaces restent identiques ; aucun code de pays enregistré n’est renommé.
 ### Industrie et titre du projet — 4 novembre 2026
 
 Le champ Industrie se place entre Entreprise et E-mail dans Avec Standex. La liste
-native utilise la surface remplie et les libellés Quickbase canoniques. Le champ
+native utilise la surface remplie et des libellés traduits dans les huit langues. Le champ
 reste seul : aucune aide, aucun encart de suggestion, statut ou bouton de confirmation.
 La valeur affichée, préremplie ou choisie, est acceptée lors de l’envoi du formulaire. L’aide Claude est présentée avant les questions avec une case
 de désactivation, sans imposer un nouveau dialogue. Aucun nom technique de clé API

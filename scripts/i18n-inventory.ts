@@ -381,7 +381,8 @@ export function inventory(): Finding[] {
         } else if (isProse(text)) {
           const parent = node.parent;
           // Module specifiers and object property keys never reach a human.
-          if (ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent)) {
+          if (ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent) ||
+              (ts.isPropertyAssignment(parent) && parent.name === node)) {
             /* skip */
           } else if (inTranslator(node)) {
             if (!known(text)) report(node, text, "missing");

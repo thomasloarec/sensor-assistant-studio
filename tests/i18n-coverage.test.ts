@@ -124,7 +124,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 52 entries: sales territories, city lookup and profile portraits.
     // + 24 entries: industry routing, assisted identity and transfer disclosure.
     // + 1 entry: plain required-industry validation without a separate confirmation.
-    expect(Object.keys(dictionary)).toHaveLength(4129);
+    // + 21 entries: localized industry labels; Quickbase values remain canonical.
+    expect(Object.keys(dictionary)).toHaveLength(4150);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

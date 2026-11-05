@@ -4,6 +4,7 @@ import { ChevronDown, Loader2 } from "lucide-react";
 import { createOwnedLock } from "@/lib/leadmagnet/session-guard";
 import { t, localeTag } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
+import { industryDisplayName } from "@/lib/leadmagnet/industry-labels";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -645,7 +646,7 @@ function TrackingTab({
               onChange={(e) => setField("countryCode", e.target.value)}
             />
             {p.siteCity ? <p className="t-caption">{t("Ville du site")} : {p.siteCity}</p> : <span />}
-            {p.industry ? <p className="t-caption">{t("Industrie")} : {p.industry}</p> : null}
+            {p.industry ? <p className="t-caption">{t("Industrie")} : {industryDisplayName(p.industry)}</p> : null}
             {p.salesContactSuggested ? <p className="t-caption">{t("Échangez avec votre responsable Standex")} : {p.salesContactSuggested}</p> : null}
           </div>
           <div className="field">

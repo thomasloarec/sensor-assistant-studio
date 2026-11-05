@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getLocale, t } from "@/lib/i18n/core";
+import { useLocale } from "@/lib/i18n/react";
+import { industryDisplayName } from "@/lib/leadmagnet/industry-labels";
 import { INDUSTRIES } from "@/lib/leadmagnet/industries";
 import { COUNTRY_CODES } from "@/lib/leadmagnet/sales-contact";
 import { countryDisplayName } from "@/lib/leadmagnet/country-labels";
@@ -22,6 +24,7 @@ export function IndustrySettings({
   busy: boolean;
   run: (action: () => Promise<SalesOverview>) => Promise<void>;
 }) {
+  useLocale();
   const [country, setCountry] = useState("");
   const [industry, setIndustry] = useState("");
   const [review, setReview] = useState<{
@@ -60,7 +63,7 @@ export function IndustrySettings({
               >
                 <div className="space-y-1">
                   <p className="t-title-s">
-                    {countryName(i.country)} · {i.industry}
+                    {countryName(i.country)} · {industryDisplayName(i.industry)}
                   </p>
                   <p className="t-body">{t("Responsabilité active pour tout le pays")}</p>
                 </div>
@@ -123,7 +126,7 @@ export function IndustrySettings({
           <option value="">{t("Choisir une industrie")}</option>
           {INDUSTRIES.map((i) => (
             <option key={i} value={i}>
-              {i}
+              {industryDisplayName(i)}
             </option>
           ))}
         </select>
@@ -177,7 +180,7 @@ export function IndustrySettings({
           >
             <p className="t-body">
               <strong>
-                {countryName(country)} · {industry}
+                {countryName(country)} · {industryDisplayName(industry)}
               </strong>
             </p>
             <p className="t-body">

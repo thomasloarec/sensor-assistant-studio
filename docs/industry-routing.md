@@ -2,7 +2,7 @@
 
 ## Business rules
 
-Industry describes the project's final application, not the supplier's main business. The 21 labels in `industries.ts` match the supplied Quickbase list, with the corrected spelling **Automotive**. Reference labels stay in English in every interface locale; interface instructions are translated into eight languages. No Quickbase synchronization is introduced.
+Industry describes the project's final application, not the supplier's main business. The 21 labels in `industries.ts` match the supplied Quickbase list, with the corrected spelling **Automotive**. Stored reference values remain canonical English Quickbase identifiers. The 21 display labels are translated into all eight interface languages through the shared industry label helper, including prospect/admin selects, active responsibility cards, transfer review, CRM project details and readable project reports. Locale changes never alter a selection, snapshot value or routing key. SME is retained as an acronym rather than expanded speculatively. No Quickbase synchronization is introduced.
 
 Routing order is **country + industry owner**, then **geographic owner** (whole country or selected city's region). There is no regional industry exception. One person may own several industries and retain geographic coverage for other applications. No exception means geographic fallback; uncovered locations stay unresolved. Explicit manually assigned CRM owners and dossier access permissions are preserved: this feature changes the suggested contact, submission routing record and booking contact.
 

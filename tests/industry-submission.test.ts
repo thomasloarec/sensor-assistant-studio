@@ -4,6 +4,8 @@ import { hasConfirmedIndustry } from "../src/lib/leadmagnet/industries";
 import { INITIAL_NDA } from "../src/lib/leadmagnet/nda";
 import { INITIAL_PRIVACY, grantConsent } from "../src/lib/leadmagnet/privacy";
 import { buildSnapshot, checkSubmission, submissionBinding, type SubmissionInput } from "../src/lib/leadmagnet/submission";
+import { projectReportSections } from "../src/lib/leadmagnet/project-report";
+import { t } from "../src/lib/i18n/core";
 
 async function prefilledSubmission(): Promise<SubmissionInput> {
   const dossier = createDossier();
@@ -51,4 +53,14 @@ test("an empty or invalid industry still blocks sending even with an old confirm
     if (!result.ok) expect(result.problems).toContain("Choisissez une industrie.");
     expect(hasConfirmedIndustry((await buildSnapshot(input)).dto.business)).toBe(false);
   }
+});
+
+test("readable industry follows report language while the submitted value stays canonical", async () => {
+  const input = await prefilledSubmission();
+  const entries = (locale: "fr" | "de" | "en") =>
+    projectReportSections(input.dossier, {}, s => t(s, locale)).flatMap(section => section.entries);
+  expect(entries("fr")).toContainEqual({ label: "Industrie", value: "Applications industrielles" });
+  expect(entries("de").some(entry => entry.value === "Industrielle Anwendungen")).toBe(true);
+  expect(entries("en").some(entry => entry.value === "Industrial Applications")).toBe(true);
+  expect((await buildSnapshot(input)).dto.business.industry).toBe("Industrial Applications");
 });
