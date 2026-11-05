@@ -2,7 +2,7 @@
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronRight } from 'lucide-react';
+import { ArrowLeftRight, Check, ChevronRight, MoveRight, RotateCw } from 'lucide-react';
 import { MachineDetectionPlacement } from './machine-detection-placement';
 import { Button } from "@/components/ui/button";
 import { displayMachineNodes } from "@/lib/standex/machine-view";
@@ -299,6 +299,10 @@ export default function MachineGuide({
   const guideRef = useRef<HTMLElement>(null);
   const m = config.machine;
   const [detailedTree, setDetailedTree] = useState(false);
+  const [pendingStep, setPendingStep] = useState<GuideStep | null>(null);
+  const decisionRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (pendingStep) decisionRef.current?.focus(); }, [pendingStep]);
+  useEffect(() => { setPendingStep(null); }, [m?.assetKey]);
   const picking = !!state.pick;
   // Échap annule toute sélection temporaire, sans toucher au montage.
   useEffect(() => {
@@ -320,11 +324,20 @@ export default function MachineGuide({
   const sensor = sensorById(config.sensorId);
   const problem = motionProblem({ ...m, motionStatus: "confirmed" });
   const status = m.motionStatus ?? "confirmed";
-  const go = (step: GuideStep) => {
+  const go = (step: GuideStep, explicit = false) => {
+    if (!explicit && (step === "install" || step === "test") && state.step !== "install" && state.step !== "test" && !usesClip(m) && status !== "confirmed") {
+      setPendingStep(step);
+      return;
+    }
+    setPendingStep(null);
     setTool("navigate");
     setState((s) => guideStepState(s, step));
     const scroller = guideRef.current?.closest(".mw-controls");
     if (scroller) scroller.scrollTop = 0;
+  };
+  const confirmAndGo = (step: GuideStep) => {
+    (onChangeAtTime ?? onChange)({ motionStatus: "confirmed" });
+    go(step, true);
   };
   const startPick = (purpose: NonNullable<GuideState["pick"]>["purpose"]) => {
     setState((s) => ({ ...s, pick: { purpose, points: [] }, notice: null }));
@@ -362,13 +375,17 @@ export default function MachineGuide({
   const stepIndex = STEPS.findIndex(([s]) => s === state.step);
   const positionPreview = (
     <div className="mw-position-preview" data-testid="guide-position-preview">
+      {!clipMode && <div className="mw-guide-row mw-position-ends">
+        <Button className="mw-button mw-secondary" data-testid="guide-see-closed" disabled={!asset || !!problem} onClick={() => { setPlaying(false); setProgress(m.closedAtEnd ? 0.5 : 0); }}>{t("Voir fermé")}</Button>
+        <Button className="mw-button mw-secondary" data-testid="guide-see-open" disabled={!asset || !!problem} onClick={() => { setPlaying(false); setProgress(m.closedAtEnd ? 0 : 0.5); }}>{t("Voir ouvert")}</Button>
+      </div>}
       <label className="mw-select-label">
         {t("Aperçu de la position")}
         <input type="range" min={0} max={clipMode ? 100 : 50} step={clipMode ? 0.1 : 0.5}
-          value={(clipMode ? progress : Math.min(progress, 1 - progress)) * 100}
+          value={(clipMode ? progress : m.closedAtEnd ? 0.5 - Math.min(progress, 1 - progress) : Math.min(progress, 1 - progress)) * 100}
           disabled={!asset || (clipMode ? !sampler : !!problem)}
           aria-label={t("Aperçu de la position")}
-          onChange={e => { setPlaying(false); setProgress(Number(e.target.value) / 100); }} />
+          onChange={e => { setPlaying(false); setProgress(!clipMode && m.closedAtEnd ? 0.5 - Number(e.target.value) / 100 : Number(e.target.value) / 100); }} />
       </label>
       {clipMode && sampler ? <p className="t-body t-metric" data-testid="guide-clip-preview">
         {msg("Temps : {0} s / {1} s", [(u * sampler.duration).toFixed(2), sampler.duration.toFixed(2)])}
@@ -665,77 +682,35 @@ export default function MachineGuide({
                   })
                 }
               >
-                {t(label)}
+                {v === "translation" ? <MoveRight size={20} aria-hidden="true"/> : <RotateCw size={20} aria-hidden="true"/>}{t(label)}
               </Button>
             ))}
           </div>
-            <div className="mw-guide-row" role="group" aria-label={t("Direction rapide")}>
-            {(["X", "Y", "Z"] as const).map((a, i) => (
-                <Button
-                  key={a}
-                  className="mw-button mw-secondary"
-                  data-testid={"guide-axis-" + a}
-                  aria-pressed={!!m.axisVector && m.axisVector.every((v, j) => v === (i === j ? 1 : 0))}
-                  onClick={() => {
-                    const d: Vec3 = [0, 0, 0];
-                    d[i] = 1;
-                    onChange(
-                      m.motion === "translation"
-                        ? { axisVector: d, travel: d.map((v) => v * norm(m.travel)) as Vec3, motionStatus: "draft" }
-                        : { axisVector: d, motionStatus: "draft" },
-                    );
-                  }}
-                >
-                  {msg("Axe {0}", [a])}
-                </Button>
-              ))}
-            </div>
 
-            <p className="t-body">
-            {t(
-              m.motion === "translation"
-                ? "Direction : cliquez une face dont la normale donne le sens d'ouverture, ou deux points le long de la glissière."
-                : "Axe : cliquez deux points sur l'axe de la charnière, ou une face dont la normale est l'axe (le point cliqué devient le pivot).",
-            )}
-          </p>
-          <div className="mw-guide-row">
-            <Button
-              className="mw-button mw-secondary"
-              aria-pressed={state.pick?.purpose === "axis-face"}
-              onClick={() => startPick("axis-face")}
-            >
-              {t("Normale d'une face")}
-            </Button>
-            <Button
-              className="mw-button mw-secondary"
-              aria-pressed={state.pick?.purpose === "axis-points"}
-              data-testid="guide-axis-points"
-              onClick={() => startPick("axis-points")}
-            >
-              {t("Deux points")}
-            </Button>
-            <Button
-              className="mw-button mw-secondary"
-              disabled={!motionDirection(m)}
-              onClick={() => {
-                // Une coulisse ancienne sans vecteur libre s'inverse selon sa course.
-                const d = motionDirection(m);
-                if (!d) return;
-                onChange({
-                  axisVector: d.map((v) => -v) as Vec3,
-                  travel: m.travel.map((v) => -v) as Vec3,
-                  motionStatus: "draft",
-                });
-              }}
-            >
-              {t("Inverser le sens")}
-            </Button>
-          </div>
+
+          <section className="mw-motion-section" aria-label={t("Définir le trajet")}>
+            <h3 className="t-title-s">{t(m.motion === "rotation" ? "Axe de rotation" : "Direction du déplacement")}</h3>
+            <div className="mw-pick-methods">
+              <Button className="mw-button mw-secondary" aria-pressed={state.pick?.purpose === "axis-points"}
+                data-testid="guide-axis-points" onClick={() => startPick("axis-points")}>
+                <span className="t-body">{t("Pointer deux points")}</span>
+                <span className="t-caption">{t(m.motion === "rotation" ? "Le long de la charnière" : "Le long de la glissière")}</span>
+              </Button>
+              <Button className="mw-button mw-secondary" aria-pressed={state.pick?.purpose === "axis-face"}
+                data-testid="guide-axis-face" onClick={() => startPick("axis-face")}>
+                <span className="t-body">{t("Perpendiculaire à une face")}</span>
+                <span className="t-caption">{t("Cliquez une face du modèle")}</span>
+              </Button>
+            </div>
           {state.pick?.purpose === "axis-points" && (
             <p className="notice-info">
               {msg("Point {0} sur 2 : cliquez dans la scène.", [String(state.pick.points.length + 1)])}
             </p>
           )}
+          {state.pick?.purpose === "axis-face" && <p className="notice-info" role="status">{t("Cliquez une face du modèle")}</p>}
+          </section>
+          <section className="mw-motion-section">
+          <h3 className="t-title-s">{t("Amplitude et sens")}</h3>
           {/* i18n-canonical : libellés français traduits au rendu par t(). */}
           {m.motion === "translation" ? (
             <Num
@@ -764,17 +739,54 @@ export default function MachineGuide({
           )}
           {m.motion === "translation" && norm(m.travel) === 0 && (
             <p className="notice-warning" data-testid="guide-zero-stroke">
-              {t("Choisissez X, Y ou Z, puis saisissez une course supérieure à 0 mm et validez le mouvement.")}
+              {t("Définissez la direction, puis une course supérieure à 0 mm.")}
             </p>
           )}
           {m.motion === "translation" && !unit(m.travel) && !m.axisVector && (
             <p className="t-caption">{t("Choisissez d'abord une direction.")}</p>
           )}
-          <p className="t-caption">
-            {t("Position fermée = pose du fichier importé (0 mm / 0°). Le cycle va de la position fermée à l'ouverture complète, puis revient.")}
-          </p>
+          <div className="mw-guide-row">
+            <Button
+              className="mw-button mw-secondary"
+              disabled={!motionDirection(m)}
+              onClick={() => {
+                // Une coulisse ancienne sans vecteur libre s'inverse selon sa course.
+                const d = motionDirection(m);
+                if (!d) return;
+                onChange({
+                  axisVector: d.map((v) => -v) as Vec3,
+                  travel: m.travel.map((v) => -v) as Vec3,
+                  motionStatus: "draft",
+                });
+              }}
+            >
+              {t("Inverser le sens")}
+            </Button>
+          </div>
+          </section>
           <details>
-            <summary>{t("Valeurs précises")}</summary>
+            <summary>{t("Axes du modèle et valeurs précises")}</summary>
+            <div className="mw-guide-row" role="group" aria-label={t("Axes du modèle")}>
+            {(["X", "Y", "Z"] as const).map((a, i) => (
+                <Button
+                  key={a}
+                  className="mw-button mw-secondary"
+                  data-testid={"guide-axis-" + a}
+                  aria-pressed={!!m.axisVector && m.axisVector.every((v, j) => v === (i === j ? 1 : 0))}
+                  onClick={() => {
+                    const d: Vec3 = [0, 0, 0];
+                    d[i] = 1;
+                    onChange(
+                      m.motion === "translation"
+                        ? { axisVector: d, travel: d.map((v) => v * norm(m.travel)) as Vec3, motionStatus: "draft" }
+                        : { axisVector: d, motionStatus: "draft" },
+                    );
+                  }}
+                >
+                  {msg("Axe {0}", [a])}
+                </Button>
+              ))}
+            </div>
             {(["X", "Y", "Z"] as const).map((a, i) => (
               <Num
                 key={a}
@@ -811,22 +823,10 @@ export default function MachineGuide({
           </details>
           {positionPreview}
           {problem && <p className="notice-warning">{t(problem)}</p>}
-          <div className="mw-guide-row">
-            <Button
-              className="mw-button"
-              data-testid="guide-validate-motion"
-              disabled={!!problem || status === "confirmed"}
-              onClick={() => onChange({ motionStatus: "confirmed" })}
-            >
-              {t(status === "confirmed" ? "Mouvement validé" : "Valider le mouvement")}
-            </Button>
-          </div>
-          {ready && (
-            <div className="mw-guide-row">
-              <Button className="mw-button mw-secondary" data-testid="guide-see-open" onClick={() => setProgress(0.5)}>{t("Voir ouvert")}</Button>
-              <Button className="mw-button mw-secondary" data-testid="guide-see-closed" onClick={() => setProgress(0)}>{t("Voir fermé")}</Button>
-            </div>
-          )}
+          <Button className="mw-text-button" data-testid="guide-swap-ends" onClick={() => {
+            setPlaying(false);
+            (onChangeAtTime ?? onChange)({ closedAtEnd: !m.closedAtEnd });
+          }}><ArrowLeftRight size={18} aria-hidden="true"/>{t("Permuter ouvert / fermé")}</Button>
           </>
         )}
       </>
@@ -836,26 +836,19 @@ export default function MachineGuide({
         {positionPreview}
         <div className="mw-install-setup">
         {/* i18n-canonical : libellés français traduits au rendu par t(). */}
-        <div className="mw-segmented" role="radiogroup" aria-label={t("Composant à installer")}>
-          {(
-            [
-              ["sensor", "Capteur"],
-              ["magnet", "Aimant"],
-            ] as const
-          ).map(([v, label]) => (
-            <Button
-              key={v}
-              role="radio"
-              aria-checked={target === v}
-              onClick={() => {
-                setTool("navigate");
-                setState((s) => ({ ...s, target: v, pick: null }));
-              }}
-            >
-              {t(label)}
-            </Button>
-          ))}
-        </div>
+        <ol className="mw-install-tasks" aria-label={t("Composants à installer")}>
+          {([ ["sensor", "Capteur"], ["magnet", "Aimant"] ] as const).map(([v, label], i) => {
+            const fixed = !!(v === "sensor" ? m.sensorAttach : m.magnetAttach);
+            return <li key={v}><Button className="mw-install-task" aria-pressed={target === v}
+              data-testid={"guide-target-" + v} onClick={() => {
+                setTool("navigate"); setState(s => ({ ...s, target: v, pick: null }));
+              }}>
+              <span className="mw-task-number t-metric" aria-hidden="true">{fixed ? <Check size={18}/> : i + 1}</span>
+              <span className="mw-task-label"><strong className="t-body">{t(label)}</strong><span className="t-caption">{t(fixed ? "Face choisie" : "À placer")}</span></span>
+              <ChevronRight size={18} aria-hidden="true"/>
+            </Button></li>;
+          })}
+        </ol>
         <div className="mw-segmented" role="radiogroup" aria-label={t("Type de montage")}>
           {(
             [
@@ -1473,6 +1466,14 @@ export default function MachineGuide({
           </li>
         ))}
       </ol>
+      {pendingStep && <div ref={decisionRef} tabIndex={-1} className="notice-warning mw-motion-decision" data-testid="guide-motion-decision" role="region" aria-label={t("Mouvement non validé")}>
+        <p className="t-body"><strong>{t("Mouvement non validé")}</strong></p>
+        <div className="mw-guide-row">
+          <Button className="mw-button" disabled={!!problem || !asset} onClick={() => confirmAndGo(pendingStep)}>{t("Valider et continuer")}</Button>
+          <Button className="mw-text-button" data-testid="guide-skip-validation" onClick={() => go(pendingStep, true)}>{t("Continuer sans valider")}</Button>
+          <Button className="mw-text-button" onClick={() => { setPendingStep(null); go("motion"); }}>{t("Revenir au mouvement")}</Button>
+        </div>
+      </div>}
       <div className="mw-guide-body">
         {state.isolate && (
           <div className="notice-info mw-isolation" data-testid="guide-isolation-status">
@@ -1494,7 +1495,13 @@ export default function MachineGuide({
             {t("← Précédent")}
           </Button>
         )}
-        {stepIndex < STEPS.length - 1 && (
+        {state.step === "motion" && !clipMode ? (
+          <Button className="mw-button" data-testid="guide-validate-motion" disabled={!asset || !!problem}
+            onClick={() => confirmAndGo("install")}>
+            {t(status === "confirmed" ? "Passer à l’installation" : "Valider et passer à l’installation")}
+            <ChevronRight size={18} aria-hidden="true"/>
+          </Button>
+        ) : stepIndex < STEPS.length - 1 && (
           <Button className="mw-button mw-secondary" disabled={state.step === "install" && !ready} onClick={() => go(STEPS[stepIndex + 1]![0])}>
             {t("Suivant →")}
           </Button>

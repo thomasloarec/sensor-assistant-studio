@@ -1,7 +1,12 @@
 {
   "Point {0} sélectionné": [
-    "Point {0} selected", "已选择点 {0}", "Punkt {0} ausgewählt", "Punto {0} seleccionado",
-    "Точка {0} выбрана", "Punto {0} selezionato", "点 {0} を選択済み"
+    "Point {0} selected",
+    "已选择点 {0}",
+    "Punkt {0} ausgewählt",
+    "Punto {0} seleccionado",
+    "Точка {0} выбрана",
+    "Punto {0} selezionato",
+    "点 {0} を選択済み"
   ],
   "Le clip est lu tel qu'il est enregistré, du début à la fin, sans aller-retour ajouté.": [
     "The clip plays as recorded, from start to finish, without an added return trip.",
@@ -37379,5 +37384,203 @@
     "Подбор датчиков и технические расчёты остаются локальными.",
     "La selezione dei sensori e i calcoli tecnici restano locali.",
     "センサーの選定と技術計算は引き続きローカルで行われます。"
+  ],
+  "Axes du modèle": [
+    "Model axes",
+    "模型坐标轴",
+    "Modellachsen",
+    "Ejes del modelo",
+    "Оси модели",
+    "Assi del modello",
+    "モデルの軸"
+  ],
+  "Définir le trajet": [
+    "Define the path",
+    "定义路径",
+    "Bewegungsweg festlegen",
+    "Definir el recorrido",
+    "Задать траекторию",
+    "Definire il percorso",
+    "移動経路を設定"
+  ],
+  "Axe de rotation": [
+    "Rotation axis",
+    "旋转轴",
+    "Drehachse",
+    "Eje de rotación",
+    "Ось вращения",
+    "Asse di rotazione",
+    "回転軸"
+  ],
+  "Direction du déplacement": [
+    "Movement direction",
+    "移动方向",
+    "Bewegungsrichtung",
+    "Dirección del movimiento",
+    "Направление движения",
+    "Direzione del movimento",
+    "移動方向"
+  ],
+  "Pointer deux points": [
+    "Pick two points",
+    "选取两个点",
+    "Zwei Punkte wählen",
+    "Marcar dos puntos",
+    "Указать две точки",
+    "Selezionare due punti",
+    "2点を指定"
+  ],
+  "Le long de la charnière": [
+    "Along the hinge",
+    "沿铰链轴线",
+    "Entlang des Scharniers",
+    "A lo largo de la bisagra",
+    "Вдоль петли",
+    "Lungo la cerniera",
+    "ヒンジに沿って"
+  ],
+  "Le long de la glissière": [
+    "Along the slide",
+    "沿滑轨",
+    "Entlang der Führung",
+    "A lo largo de la guía",
+    "Вдоль направляющей",
+    "Lungo la guida",
+    "レールに沿って"
+  ],
+  "Perpendiculaire à une face": [
+    "Perpendicular to a face",
+    "垂直于表面",
+    "Senkrecht zu einer Fläche",
+    "Perpendicular a una cara",
+    "Перпендикулярно грани",
+    "Perpendicolare a una faccia",
+    "面に垂直"
+  ],
+  "Cliquez une face du modèle": [
+    "Click a face of the model",
+    "点击模型的一个面",
+    "Eine Modellfläche anklicken",
+    "Haga clic en una cara del modelo",
+    "Нажмите на грань модели",
+    "Fare clic su una faccia del modello",
+    "モデルの面をクリック"
+  ],
+  "Amplitude et sens": [
+    "Range and direction",
+    "幅度与方向",
+    "Hub und Richtung",
+    "Amplitud y sentido",
+    "Размах и направление",
+    "Ampiezza e verso",
+    "移動量と向き"
+  ],
+  "Axes du modèle et valeurs précises": [
+    "Model axes and precise values",
+    "模型坐标轴与精确数值",
+    "Modellachsen und genaue Werte",
+    "Ejes del modelo y valores precisos",
+    "Оси модели и точные значения",
+    "Assi del modello e valori precisi",
+    "モデルの軸と詳細な数値"
+  ],
+  "Permuter ouvert / fermé": [
+    "Swap open / closed",
+    "交换打开／关闭",
+    "Offen / geschlossen tauschen",
+    "Intercambiar abierto / cerrado",
+    "Поменять открыто / закрыто",
+    "Scambiare aperto / chiuso",
+    "開／閉を入れ替え"
+  ],
+  "Composants à installer": [
+    "Components to install",
+    "待安装组件",
+    "Zu montierende Komponenten",
+    "Componentes que instalar",
+    "Компоненты для установки",
+    "Componenti da installare",
+    "取り付ける部品"
+  ],
+  "Face choisie": [
+    "Face selected",
+    "已选择表面",
+    "Fläche gewählt",
+    "Cara elegida",
+    "Грань выбрана",
+    "Faccia selezionata",
+    "面を選択済み"
+  ],
+  "À placer": [
+    "To place",
+    "待放置",
+    "Zu platzieren",
+    "Por colocar",
+    "Нужно разместить",
+    "Da posizionare",
+    "未配置"
+  ],
+  "Mouvement non validé": [
+    "Motion not confirmed",
+    "运动尚未确认",
+    "Bewegung nicht bestätigt",
+    "Movimiento sin validar",
+    "Движение не подтверждено",
+    "Movimento non confermato",
+    "動作が未確定"
+  ],
+  "Valider et continuer": [
+    "Confirm and continue",
+    "确认并继续",
+    "Bestätigen und weiter",
+    "Validar y continuar",
+    "Подтвердить и продолжить",
+    "Confermare e continuare",
+    "確定して続行"
+  ],
+  "Continuer sans valider": [
+    "Continue without confirming",
+    "不确认，继续",
+    "Ohne Bestätigung weiter",
+    "Continuar sin validar",
+    "Продолжить без подтверждения",
+    "Continuare senza confermare",
+    "確定せずに続行"
+  ],
+  "Revenir au mouvement": [
+    "Return to motion",
+    "返回运动设置",
+    "Zurück zur Bewegung",
+    "Volver al movimiento",
+    "Вернуться к движению",
+    "Tornare al movimento",
+    "動作設定に戻る"
+  ],
+  "Passer à l’installation": [
+    "Continue to installation",
+    "前往安装",
+    "Weiter zur Montage",
+    "Pasar a la instalación",
+    "Перейти к установке",
+    "Passare all’installazione",
+    "取り付けへ進む"
+  ],
+  "Valider et passer à l’installation": [
+    "Confirm and continue to installation",
+    "确认并前往安装",
+    "Bestätigen und zur Montage",
+    "Validar y pasar a la instalación",
+    "Подтвердить и перейти к установке",
+    "Confermare e passare all’installazione",
+    "確定して取り付けへ進む"
+  ],
+  "Définissez la direction, puis une course supérieure à 0 mm.": [
+    "Set the direction, then a travel greater than 0 mm.",
+    "设置方向，然后输入大于0毫米的行程。",
+    "Richtung festlegen, dann einen Hub größer als 0 mm eingeben.",
+    "Defina la dirección y después un recorrido superior a 0 mm.",
+    "Задайте направление, затем ход больше 0 мм.",
+    "Definire la direzione, poi una corsa maggiore di 0 mm.",
+    "方向を設定し、0 mmより大きい移動量を入力してください。"
   ]
 }

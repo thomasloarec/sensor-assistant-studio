@@ -136,13 +136,14 @@ export function parseAttachment(value: unknown): Attachment | null {
 /** Ouverture du mécanisme au temps t du cycle aller-retour, distincte de
  *  l'écart capteur–aimant. */
 export function openingReading(
-  m: { motion: "translation" | "rotation"; travel: Vec3; openingAngle: number },
+  m: { motion: "translation" | "rotation"; travel: Vec3; openingAngle: number; closedAtEnd?: boolean },
   t: number,
 ): { value: number; unit: "mm" | "°"; phase: "closed" | "opening" | "open" | "return" } {
   const u = t <= 0.5 ? t * 2 : (1 - t) * 2;
   const full = m.motion === "translation" ? Math.hypot(...m.travel) : Math.abs(m.openingAngle);
   const phase = t <= 1e-9 || t >= 1 - 1e-9 ? "closed" : Math.abs(t - 0.5) < 1e-9 ? "open" : t < 0.5 ? "opening" : "return";
-  return { value: full * u, unit: m.motion === "translation" ? "mm" : "°", phase };
+  const reversed = { closed: "open", open: "closed", opening: "return", return: "opening" } as const;
+  return { value: full * (m.closedAtEnd ? 1 - u : u), unit: m.motion === "translation" ? "mm" : "°", phase: m.closedAtEnd ? reversed[phase] : phase };
 }
 
 interface Attachable {

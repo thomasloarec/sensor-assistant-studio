@@ -70,7 +70,7 @@ async function mount() {
 describe("Échap dans l'atelier intégré", () => {
   test("annule le centrage sans fermer le panneau, puis ferme le panneau hors pointage", async () => {
     const { v, closes } = await mount();
-    await act(async () => fireEvent.click(v.getByRole("radio", { name: "Capteur" })));
+    await act(async () => fireEvent.click(v.getByTestId("guide-target-sensor")));
     const through = v.queryByRole("radio", { name: /travers une paroi/ });
     if (through) await act(async () => fireEvent.click(through));
     const btn = await waitFor(() => v.getByTestId("guide-hole-centre"));
@@ -92,7 +92,7 @@ describe("Échap dans l'atelier intégré", () => {
 
   test("pose et déplacement sont regroupés avant recherche, position et rotation repliées", async () => {
     const { v } = await mount();
-    await act(async () => fireEvent.click(v.getByRole("radio", { name: "Aimant" })));
+    await act(async () => fireEvent.click(v.getByTestId("guide-target-magnet")));
     const attach = v.getByTestId("guide-attach");
     const align = v.getByTestId("guide-detection-positions");
     const offset = attach.querySelector('[data-testid="guide-offset"]') ?? v.getByText(/Écart entre face/);

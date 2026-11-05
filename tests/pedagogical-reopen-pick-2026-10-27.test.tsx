@@ -92,7 +92,7 @@ describe("Atelier pédagogique : reprise et pointage réels", () => {
     const v = render(React.createElement(MagneticWorkshop, { pedagogical: true, initialPedagogicalDraft: { config, settings: { ...DEFAULT_EXPERIMENT }, progress: 0 }, onPedagogicalDraftChange: (x: { config: typeof config }) => { draft = x; }, onClose: () => {}, onSave: () => {} }));
     await waitFor(() => expect(v.getByTestId("machine-guide")).toBeTruthy(), { timeout: 10000 });
     await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
-    await act(async () => fireEvent.click(v.getByRole("radio", { name: "Capteur" })));
+    await act(async () => fireEvent.click(v.getByTestId("guide-target-sensor")));
     await act(async () => fireEvent.click(v.getByRole("radio", { name: "À travers une paroi" })));
     await act(async () => fireEvent.click(v.getByRole("button", { name: "Axe d'un trou existant (deux points)", hidden: true })));
     const hits = [

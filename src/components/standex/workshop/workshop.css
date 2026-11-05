@@ -3425,3 +3425,18 @@
   /* Keep both branches and the legend inside the canvas on short viewports. */
   .mw-stage .mw-canvas:has(.mw-changeover-circuit) { min-height: 340px; }
 }
+
+/* Motion choices and the two installation tasks have distinct visual roles. */
+.mw-motion-section, .mw-position-preview { display: grid; gap: 8px; padding: 12px; background: var(--surface-sunken); border-radius: var(--r-md); }
+.mw-motion-section h3 { margin: 0; }
+.mw-pick-methods { display: grid; gap: 8px; }
+.mw-guide .mw-pick-methods > button { display: grid; justify-items: start; text-align: start; gap: 2px; padding: 10px 12px; }
+.mw-guide .mw-segmented button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.mw-position-ends > button { flex: 1 1 100px; }
+.mw-install-tasks { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
+.mw-guide .mw-install-task { display: flex; width: 100%; gap: 12px; padding: 12px; text-align: start; background: var(--surface); color: var(--foreground); border-radius: var(--r-sm); box-shadow: var(--e-1); }
+.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--surface-tint); color: var(--heading); box-shadow: var(--e-2); }
+.mw-task-number { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: var(--r-pill); background: var(--surface-sunken); }
+.mw-task-label { display: grid; gap: 2px; flex: 1; }
+.mw-guide .mw-install-task:focus-visible, .mw-motion-decision:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.mw-guide-nav > .mw-button { flex: 1; white-space: normal; }

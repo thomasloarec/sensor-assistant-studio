@@ -35,6 +35,8 @@ export interface MachineAssembly {
   /** Axe de pivot quelconque. Absent = axe `rotationAxis` du repère. */
   axisVector?: Vec3;
   motionStatus?: MotionStatus;
+  /** Manual motion labels only: the imported pose is open instead of closed. */
+  closedAtEnd?: boolean;
   sensorAttach?: Attachment;
   magnetAttach?: Attachment;
   /** Source du mouvement : saisi (`manual`, défaut) ou animation du fichier. */
@@ -381,6 +383,10 @@ export function parseMachine(value: unknown): MachineAssembly | null {
   if (x["motionStatus"] !== undefined) {
     if (!["unset", "draft", "confirmed"].includes(x["motionStatus"] as string)) return null;
     out.motionStatus = x["motionStatus"] as MotionStatus;
+  }
+  if (x["closedAtEnd"] !== undefined) {
+    if (typeof x["closedAtEnd"] !== "boolean") return null;
+    out.closedAtEnd = x["closedAtEnd"];
   }
   for (const k of ["sensorAttach", "magnetAttach"] as const) {
     if (x[k] === undefined || x[k] === null) continue;

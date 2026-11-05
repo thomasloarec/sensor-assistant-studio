@@ -1,5 +1,23 @@
 # Langage de design Standex DETECT
 
+### Définition du mouvement et tâches de pose — 5 novembre 2026
+
+Le choix exclusif Coulisse / Pivote garde son contrôle segmenté avec pictogrammes.
+Le pointage vient en premier, sous Axe de rotation ou Direction du déplacement :
+Pointer deux points et Perpendiculaire à une face, chacun avec une légende courte.
+Amplitude et sens forment un second groupe ; les axes du modèle et coordonnées
+restent dans un volet replié. Le curseur et Voir fermé / Voir ouvert sont communs
+à Mouvement et Installation. Permuter ouvert / fermé enregistre la convention
+sans déplacer le modèle ni ses attaches ; mesures et événements la suivent.
+
+L'action primaire valide puis ouvre Installation. Un accès direct avec un
+mouvement non validé présente un choix explicite de validation ou de poursuite,
+avec focus accessible. Installation affiche une liste de deux tâches numérotées,
+Capteur et Aimant, avec l'état À placer / Face choisie, distincte d'un choix exclusif.
+Le statut signifie seulement qu'une face est choisie, sans qualifier la détection.
+Surfaces, élévations, typographie et focus utilisent les jetons existants.
+
+
 ### Pointage et installation en mouvement — 5 novembre 2026
 
 Le premier point d’un axe porte un repère numéroté de 28 px dans la scène,

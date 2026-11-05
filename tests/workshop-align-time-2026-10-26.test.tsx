@@ -50,9 +50,11 @@ describe("Positions de détection dans le Workshop intégré", () => {
         const slider=view.getByLabelText('Aperçu de la position') as HTMLInputElement;
         await act(async()=>{slider.value='25';const key=Object.keys(slider).find(k=>k.startsWith('__reactProps$'))!;(slider as any)[key].onChange({target:slider});});
         expect(currentScene.sample.t).toBe(.25);
-        await act(async()=>fireEvent.click(view.getByRole('radio',{name:'Aimant'})));
+        await act(async()=>fireEvent.click(view.getByTestId('guide-target-magnet')));
         await act(async()=>fireEvent.click(view.getByTestId('guide-move')));
         expect(currentScene.tool).toBe('move-magnet');expect(currentScene.sample.t).toBe(.25);
+        await act(async()=>fireEvent.click(view.getByTestId('guide-place')));
+        expect(currentScene.tool).toBe('magnet');expect(currentScene.sample.t).toBe(.25);
         await act(async()=>currentScene.onChange(attachPatch('magnet',{...a,point:[18.2,67,22]},config)));
         expect(currentScene.sample.t).toBe(.25);expect(config.machine.magnetAttach?.point[0]).toBe(18.2);
         await act(async()=>fireEvent.click(view.getByRole('button',{name:'Annuler le dernier réglage'})));
@@ -84,7 +86,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
       const free=view.getByTestId('guide-free-rotation-Z') as HTMLInputElement;
       free.value='90';await act(async()=>fireEvent.blur(free));
       expect(draft.machine.sensorRotation[2]).toBe(90);
-      await act(async()=>fireEvent.click(view.getByRole('radio',{name:'Aimant'})));
+      await act(async()=>fireEvent.click(view.getByTestId('guide-target-magnet')));
       expect(view.getByText('Rotation de l’aimant')).toBeTruthy();
       expect(view.getByTestId('guide-free-rotation-X')).toBeTruthy();
     }finally{view.unmount();}
@@ -102,7 +104,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
       await act(async()=>fireEvent.click(mounted.getByRole('button',{name:'+90°',exact:true})));
       expect(draft.machine.sensorAttach?.spinDeg).toBe(90);
       expect(draft.machine.sensorAttach?.point).toEqual([0,60,6]);
-      await act(async()=>fireEvent.click(mounted.getByRole('radio',{name:'Aimant'})));
+      await act(async()=>fireEvent.click(mounted.getByTestId('guide-target-magnet')));
       await act(async()=>fireEvent.click(mounted.getByText('Rotation de l’aimant')));
       await act(async()=>fireEvent.change(mounted.getByTestId('guide-surface-orientation'),{target:{value:'end'}}));
       expect(draft.machine.magnetAttach?.surfaceOrientation).toBe('end');
@@ -128,7 +130,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
     const v=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
     try{
       await act(async()=>fireEvent.click(v.getByTestId('guide-step-install')));
-      await act(async()=>fireEvent.click(v.getByRole('radio',{name:'Aimant'})));
+      await act(async()=>fireEvent.click(v.getByTestId('guide-target-magnet')));
       await waitFor(()=>expect((v.getByTestId('guide-find-position') as HTMLButtonElement).disabled).toBe(false),{timeout:15000});
       await act(async()=>new Promise(resolve=>setTimeout(resolve,0)));
       const before=structuredClone(draft.machine.magnetAttach);
@@ -193,7 +195,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
     );
     await waitFor(() => expect(v.getByTestId("machine-guide")).toBeTruthy(), { timeout: 8000 });
     await act(async () => fireEvent.click(v.getByTestId("guide-step-install")));
-    await act(async () => fireEvent.click(v.getByRole("radio", { name: "Aimant" })));
+    await act(async () => fireEvent.click(v.getByTestId("guide-target-magnet")));
     const scrubber = () => v.getByLabelText("Position dans le cycle") as HTMLInputElement;
     await waitFor(() => expect(scrubber().disabled).toBe(false), { timeout: 8000 });
     const point = () => v.getAllByTestId("guide-precise-point")[0]!.textContent ?? "";
@@ -219,3 +221,51 @@ describe("Positions de détection dans le Workshop intégré", () => {
     v.unmount();
   }, 30000);
 });
+
+ test('movement validation is explicit, bypass is conscious, and swapped endpoints survive pose, undo and reload',async()=>{
+    const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
+    const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
+    const {DEFAULT_WORKSHOP,parseWorkshopConfig}=await import('../src/lib/standex/magnetic-workshop');
+    const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
+    const {openingReading}=await import('../src/lib/standex/machine-mounting');
+    const {pointAt,cycleU,parseMachine}=await import('../src/lib/standex/machine-assembly');
+    let config={...DEFAULT_WORKSHOP,sensorId:'MK04',magnetModel:'M04',sensitivity:'B',machine:{...structuredClone(DEMO_ASSEMBLIES['builtin:door-v1']!),motionStatus:'draft' as const}} as import('../src/lib/standex/magnetic-workshop').WorkshopConfig;
+    const view=render(<Workshop embedded clientPedagogical initialConfig={config} onDraftChange={c=>config=c} onClose={()=>{}} onSave={async()=>{}}/>);
+    try{
+      await waitFor(()=>expect(currentScene?.asset).toBeTruthy());
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-motion')));
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
+      expect(view.getByTestId('guide-step-motion').getAttribute('aria-current')).toBe('step');
+      expect(view.getByTestId('guide-motion-decision')).toBeTruthy();
+      expect(config.machine!.motionStatus).toBe('draft');
+      await act(async()=>fireEvent.click(view.getByTestId('guide-skip-validation')));
+      expect(view.getByTestId('guide-step-install').getAttribute('aria-current')).toBe('step');
+      expect(config.machine!.motionStatus).toBe('draft');
+      expect(view.getByTestId('guide-target-sensor').getAttribute('role')).not.toBe('radio');
+      expect(view.getByTestId('guide-target-magnet')).toBeTruthy();
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-motion')));
+      // The mobile selector goes through the same deliberate decision.
+      await act(async()=>fireEvent.change(view.getByLabelText('Étape de préparation'),{target:{value:'install'}}));
+      expect(view.getByTestId('guide-motion-decision')).toBeTruthy();
+      await act(async()=>fireEvent.click(view.getByRole('button',{name:'Revenir au mouvement'})));
+      expect(view.queryByTestId('guide-motion-decision')).toBeNull();
+      await act(async()=>fireEvent.click(view.getByTestId('guide-validate-motion')));
+      expect(config.machine!.motionStatus).toBe('confirmed');
+      expect(view.getByTestId('guide-step-install').getAttribute('aria-current')).toBe('step');
+      await act(async()=>fireEvent.click(view.getByTestId('guide-see-open')));
+      expect(currentScene.sample.t).toBe(.5);
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-motion')));
+      const original=structuredClone(config.machine!);
+      await act(async()=>fireEvent.click(view.getByTestId('guide-swap-ends')));
+      expect(config.machine!.closedAtEnd).toBe(true);expect(currentScene.sample.t).toBe(.5);
+      expect(openingReading(config.machine!,.5).value).toBe(0);
+      for(const time of [0,.2,.5,.8,1]) expect(pointAt(config.machine!,original.movingNode,[10,20,30],cycleU(config.machine!,time))).toEqual(pointAt(original,original.movingNode,[10,20,30],cycleU(original,time)));
+      expect(parseWorkshopConfig(JSON.parse(JSON.stringify(config)))!.machine!.closedAtEnd).toBe(true);
+      expect(parseMachine({...original,closedAtEnd:'true'})).toBeNull();
+      await act(async()=>fireEvent.click(view.getByTestId('guide-see-open')));expect(currentScene.sample.t).toBe(0);
+      await act(async()=>fireEvent.click(view.getByTestId('guide-see-closed')));expect(currentScene.sample.t).toBe(.5);
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
+      await act(async()=>fireEvent.click(view.getByRole('button',{name:'Annuler le dernier réglage'})));
+      expect(config.machine!.closedAtEnd).toBeUndefined();expect(currentScene.sample.t).toBe(.5);
+    }finally{view.unmount();currentScene=null;}
+ },20000);

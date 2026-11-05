@@ -600,7 +600,7 @@ export default function MagneticWorkshop({
    * pose modifiée librement libère honnêtement son attache. */
   function machineChange(patch: Partial<MachineAssembly>, opts: { keepTime?: boolean } = {}) {
     if (!machine) return;
-    const keepTime = opts.keepTime ?? ["sensorAttach", "magnetAttach", "sensorPosition", "magnetPosition", "sensorRotation", "magnetRotation"]
+    const keepTime = opts.keepTime ?? ["sensorAttach", "magnetAttach", "sensorPosition", "magnetPosition", "sensorRotation", "magnetRotation", "closedAtEnd"]
       .some(key => key in patch);
     const { freed, ...clean } = freePosePatch(patch);
     // Changement d'unités : repères, attaches et course liés au modèle sont

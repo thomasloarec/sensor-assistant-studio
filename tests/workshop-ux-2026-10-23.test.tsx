@@ -89,6 +89,8 @@ describe("Targeted workshop UX", () => {
   test("installation restores fixed parts without changing any moving selection", () => {
     const v = render(<Guide step="parts" isolation />);
     fireEvent.click(v.getByTestId("guide-step-install"));
+    expect(v.getByTestId("guide-motion-decision")).toBeTruthy();
+    fireEvent.click(v.getByTestId("guide-skip-validation"));
     const state = JSON.parse(v.getByTestId("guide-state").textContent ?? "{}");
     const m = JSON.parse(v.getByTestId("machine-state").textContent ?? "{}");
     expect(state.isolate).toBe(false);
