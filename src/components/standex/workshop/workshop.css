@@ -2652,7 +2652,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
   padding: 6px;
   background: var(--surface);

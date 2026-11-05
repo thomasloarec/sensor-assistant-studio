@@ -17,7 +17,7 @@ import { cylinderField, cylinderSignedDistance } from '../detection-lab/field';
 import { PROFILE, type ReedScenario } from '../detection-lab/profile';
 import { prepareBlockField } from './magnetics/field';
 import { axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
-import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
+import { magnetObb, obstacleOverlap, obstacleCacheData, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 import { CATALOGUE_RESPONSE, catalogueThresholds as classThresholds, catalogueScenarios, catalogueNominalScenario as nominalScenario } from './catalogue-response';
 
@@ -159,7 +159,7 @@ export function catalogueNominalSampler(c:WorkshopConfig,axis:Vec3,frame:Frame,o
  return (center:Vec3)=>{
   if(!validAxis||!center.every(Number.isFinite))return {response:null,blocked:false};
   const magnet:Obb={path:'magnet',c:center,a:frame,h:half};
-  const blocked=bodies.some(o=>obbOverlap(magnet,o));
+  const blocked=bodies.some(o=>obstacleOverlap(magnet,o));
   const e=blocked?null:evaluate(center);
   return {response:e?.ok?e.response:null,blocked};
  };
@@ -171,7 +171,7 @@ export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles
  if(!(Math.hypot(...pose.axis)>0)||!pose.center.every(Number.isFinite))return unavailable('domain');
  const frame=pose.frame??magnetBodyFrame(c,c.magnetAngle);
  const realMagnet:Obb={path:'magnet',c:[...pose.center],a:frame,h:m.magnetBody.map(n=>n/2) as Vec3};
- if(catalogueBodyObbs(c).some(o=>obbOverlap(realMagnet,o))||obstacles.some(o=>obbOverlap(realMagnet,o)))return unavailable('overlap');
+ if(catalogueBodyObbs(c).some(o=>obstacleOverlap(realMagnet,o))||obstacles.some(o=>obstacleOverlap(realMagnet,o)))return unavailable('overlap');
  // Actual pose for both mechanical exclusion and response. No morphology map.
  const nominal=catalogueEvaluate(m,pose,nominalScenario(),frame);
  if(!nominal.ok)return unavailable(nominal.reason==='domain'?'domain':'collision');
@@ -264,7 +264,7 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
   if(zone)cells.push(cell);if(z===planeZ)cut.push(cell);
  }
  const truncated=cells.some(p=>p.i===0||p.i===xs.length-1||p.j===0||p.j===ys.length-1||p.k===0||p.k===zs.length-1||Math.hypot(p.x-model.centre[0],p.y-model.centre[1],p.z-model.centre[2])>=PROFILE.domain.maxCenterMm-Math.sqrt(3));
- return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacles]),cells,cut,field,axis,planeZ,extent:displayedExtent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated};
+ return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacleCacheData(obstacles)]),cells,cut,field,axis,planeZ,extent:displayedExtent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated};
 }
 /** Plane-only cut: the SAME evaluator as the volume, but only the chosen plane is computed —
  * never the whole 3D grid. Used while reading so a paused instant costs one plane, not one volume. */
@@ -313,7 +313,7 @@ export function obstacleBlocked(c:WorkshopConfig,field:VolumeField,frame:[Vec3,V
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
   const idx=(k*ys.length+j)*xs.length+i;if(out[idx])continue;
   const m:Obb={path:'magnet',c:[xs[i]??0,ys[j]??0,zs[k]??0],a,h};
-  if(obstacles.some(o=>obbOverlap(m,o)))out[idx]=true;
+  if(obstacles.some(o=>obstacleOverlap(m,o)))out[idx]=true;
  }
  return out;
 }

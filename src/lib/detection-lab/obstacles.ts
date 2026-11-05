@@ -1,14 +1,13 @@
-/** Conservative mechanical clearance between the FULL pilot magnet body and
- *  bounding boxes of loaded parts. Pure: no Three, no DOM.
- *
- *  Boxes are envelopes, not surfaces: an overlap means "possible overlap, to
- *  verify", never a certain collision (a bore inside a part lies inside its
- *  box). No overlap of the enclosing boxes establishes clearance ONLY within
- *  this approximation. */
+/** Full pilot body clearance. Analytical obstacles retain conservative boxes;
+ * loaded meshes use those boxes only as a broad phase, then test their surfaces
+ * and closed interiors. Pure numeric geometry: no Three or DOM in workers. */
+import { meshIntersects, type MeshObstacle } from './mesh-obstacles';
 import type { Vec3 } from './field';
 import type { MagnetPose } from './pose';
 
-export interface Obb { path: string; c: Vec3; a: [Vec3, Vec3, Vec3]; h: Vec3 }
+export interface Obb { path: string; c: Vec3; a: [Vec3, Vec3, Vec3]; h: Vec3; mesh?: MeshObstacle | undefined }
+/** Compact cache identity: no repeated traversal/serialization of the mesh. */
+export const obstacleCacheData = (obstacles: readonly Obb[]) => obstacles.map(({path,c,a,h,mesh})=>({path,c,a,h,mesh:mesh?.signature}));
 /** Faces in contact within this tolerance (mm) are not an overlap. */
 export const CONTACT_TOLERANCE_MM = 1e-3;
 const dot = (a: Vec3, b: Vec3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -24,6 +23,11 @@ export function obbOverlap(A: Obb, B: Obb, tol = CONTACT_TOLERANCE_MM): boolean 
   for (const a of A.a) for (const b of B.a) { const n = cross(a, b), l = Math.hypot(...n); if (l > 1e-9) axes.push([n[0] / l, n[1] / l, n[2] / l]); }
   return axes.every(n => Math.abs(dot(d, n)) < radius(A, n) + radius(B, n) - tol);
 }
+/** Broad phase followed by loaded surfaces when available. Analytical bodies
+ * keep their conservative boxes; empty spaces in imported meshes stay empty. */
+export function obstacleOverlap(body: Obb, obstacle: Obb, tol = CONTACT_TOLERANCE_MM): boolean {
+  return obbOverlap(body, obstacle, tol) && (!obstacle.mesh || meshIntersects(body, obstacle, obstacle.mesh, tol));
+}
 /** Box enclosing the pilot cylinder (Ø × length along the magnetisation axis). */
 export function magnetObb(diameterMm: number, lengthMm: number, pose: MagnetPose): Obb | null {
   const l = Math.hypot(...pose.axis);
@@ -38,16 +42,16 @@ export function magnetObb(diameterMm: number, lengthMm: number, pose: MagnetPose
 export const REED_CAPSULE_OBB: Obb = { path: 'reed', c: [0, 0, 0], a: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], h: [8.1, 1.1, 1.1] };
 /** Paths of every part envelope possibly overlapped by `body`. */
 export function overlappedPaths(obstacles: readonly Obb[], body: Obb): string[] {
-  return obstacles.filter(o => obbOverlap(o, body)).map(o => o.path);
+  return obstacles.filter(o => obstacleOverlap(body, o)).map(o => o.path);
 }
 export function magnetOverlaps(obstacles: readonly Obb[], diameterMm: number, lengthMm: number, pose: MagnetPose): boolean | null {
   const body = magnetObb(diameterMm, lengthMm, pose);
   if (!body) return null;
-  return obstacles.some(o => obbOverlap(o, body));
+  return obstacles.some(o => obstacleOverlap(body, o));
 }
 /** Reed capsule box displaced by a scenario shift (the reed moves by `shift` in its frame). */
 export const reedCapsuleAt = (shift: Vec3 = [0, 0, 0]): Obb => ({ ...REED_CAPSULE_OBB, c: [shift[0], shift[1], shift[2]] });
 export function reedOverlaps(obstacles: readonly Obb[], shift: Vec3 = [0, 0, 0]): boolean {
   const body = reedCapsuleAt(shift);
-  return obstacles.some(o => obbOverlap(o, body));
+  return obstacles.some(o => obstacleOverlap(body, o));
 }

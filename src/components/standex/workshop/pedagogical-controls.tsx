@@ -5,7 +5,7 @@ import { DEFAULT_EXPERIMENT, EXPERIMENT, FORM_ANOMALIES, documentaryDistances, e
 import { PEDAGOGICAL_CASES, pedagogicalPreset, type PedagogicalFrame, type PedagogicalRemedy } from '@/lib/standex/pedagogical-poses';
 import type { PlacementDiagnosis } from '@/lib/detection-lab/placement-diagnosis';
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
-import type { Obb } from '@/lib/detection-lab/obstacles';
+import { obstacleCacheData, type Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
 import { CATALOGUE_MODEL_VERSION, catalogueModel, catalogueBodyObbs, type PivotPlan } from '@/lib/standex/catalogue-pedagogical';
 import { CATALOGUE_CUT_PLANE_Z } from '@/lib/standex/catalogue-response';
@@ -27,7 +27,7 @@ export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obs
  // face does not alter a nominal orientation field, even in an imported file.
  const volumeConfig=model&&catalogue?{centre:model.centre,lengthMm:model.lengthMm,field:model.field,
    magnetBody:model.magnetBody,className:model.className,bodies:catalogueBodyObbs(catalogue)}:null;
- return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(volumeConfig)+'|'+JSON.stringify(catalogue?body??null:null);
+ return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacleCacheData(obstacles)):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(volumeConfig)+'|'+JSON.stringify(catalogue?body??null:null);
 }
 /** Cut key: fixed flat-face plane for catalogue; instant plane for historical staff mode. */
 export function cutKey(settings:ExperimentSettings,frame:PedagogicalFrame,obstacles:readonly Obb[]|null,catalogue?:WorkshopConfig):string{

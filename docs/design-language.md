@@ -950,3 +950,10 @@ Les cinq étapes restent identiques. Installation regroupe le choix du composant
 Tous les menus natifs de la colonne de gauche portent un chevron orienté selon leur état, sauf ceux ayant déjà leur icône. Surface, rayons, focus et typographie reprennent les jetons existants ; cibles de 44 px et retour à la ligne conservés.
 
 La recherche sur face échantillonne plus finement les lobes. Elle privilégie le seuil prudent et accepte, à défaut, une position au seuil de la lampe illustrative ; ce second cas est explicitement signalé. Les collisions, limites de face et critères physiques ne sont pas assouplis.
+
+
+### Import et contrôle du montage — 5 novembre 2026
+
+La barre principale aligne les actions sur le haut des boutons. La légende GLB reste sous le bouton d’import sans décaler les autres commandes ; le retour à la ligne et les cibles de 44 px sont conservés. Aucun nouveau jeton.
+
+Dans un modèle importé, les boîtes englobantes servent de premier filtre de collision. Le contrôle vérifie ensuite les surfaces triangulées et les volumes fermés du fichier : un intérieur vide ou l’espace autour d’une porte inclinée ne devient plus un obstacle plein. L’appui sur la face reste autorisé, une pénétration reste indisponible. La recherche, le point courant et la chronologie partagent ce contrôle ; le circuit est calculé pendant Installation comme pendant Essai. Les corps catalogue restent des enveloppes conservatrices, sans changement des lobes, des seuils ni du modèle magnétique.
