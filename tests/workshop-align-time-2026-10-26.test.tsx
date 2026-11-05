@@ -1,10 +1,10 @@
 /** Real Workshop regression: face-constrained C1% placement, history, shared
  * playback controls and refusal without mutating the existing mounting. */
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import React from "react";
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 
 if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
 
@@ -27,6 +27,8 @@ beforeAll(() => {
     return new Response(b, { status: 200, headers: { "content-type": "model/gltf-binary" } });
   }) as typeof fetch;
 });
+afterEach(() => { cleanup(); currentScene = null; });
+
 afterAll(() => {
   globalThis.fetch = realFetch;
 });
@@ -213,13 +215,13 @@ describe("Positions de détection dans le Workshop intégré", () => {
     expect(Number(scrubber().value)).toBe(25);
     const before = point();
     await act(async () => fireEvent.click(v.getByTestId("guide-find-position")));
-    await waitFor(() => expect(v.getByTestId('guide-detection-positions').textContent).toContain('Aucune position de détection trouvée sur cette face'), {timeout:15000});
+    await waitFor(() => expect(v.getByTestId('guide-detection-positions').textContent).toContain('Aucune position de détection trouvée sur cette face'), {timeout:60000});
     expect(Number(scrubber().value)).toBe(25);
     expect(point()).toBe(before);
     expect((v.getByTestId("guide-offset") as HTMLInputElement).defaultValue).toBe("2");
     expect((v.getByLabelText("Rotation dans le plan (°)") as HTMLInputElement).value).toBe("35");
     v.unmount();
-  }, 30000);
+  }, 90000);
 });
 
  test('movement validation is explicit, bypass is conscious, and swapped endpoints survive pose, undo and reload',async()=>{

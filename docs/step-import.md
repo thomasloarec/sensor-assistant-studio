@@ -1,0 +1,11 @@
+# STEP import
+
+The workshop accepts standalone .step/.stp files and existing GLB files (30 MiB input limit). CAD source units are read by pinned occt-import-js 0.0.23 / OCCT; triangulation is 0.05 mm absolute linear deflection and 0.25 rad angular deflection. The deterministic internal GLB uses metres, preserving positioned solid meshes, the returned assembly hierarchy, names, normals and face colours. It is a viewing/simulation representation, not an editable parametric CAD document. CAD constraints, PMI and motion are not imported.
+
+A dedicated disposable worker loads WASM only on STEP import. Cancellation, replacement and unmount terminate native work; a 120-second deadline bounds unresponsive imports. Native diagnostics are suppressed, and error messages never include file contents. Explicit STEP references to external STEP files are refused rather than silently importing a partial assembly. Empty, invalid, oversized or over-detailed outputs are refused; existing 30 MiB GLB, 1.5 million vertex and 0.1 mm–20 m limits remain. Large industrial assemblies should be exported as the relevant mechanism.
+
+The validated GLB goes through the existing SHA-256 memory/device store and transactional installer. The original source name remains in the montage; identical conversion bytes restore identical paths and attachment references. No original STEP is uploaded or retained by this adapter. Explicit existing user sharing sends the converted GLB under a -converted.glb name. The raw STEP header, author data and native CAD history are not embedded.
+
+Tests use the pinned package's original STEP fixtures: AP203 and AP214 assemblies with 18 solids, mm/m/inch equivalents, a rounded BRep, finite mounting faces, stable reimport paths, memory isolation, worker cancellation, failures and malformed/external-file rejection. A compiled browser preview was manually checked: 200 × 150 × 84 mm assembly, separate rod selected, 30 mm translation, sensor on plate, magnet on moving rod, and completed playback cycle.
+
+Third-party notices and licenses: /licenses/STEP-reader.txt, /licenses/occt-import-js-LGPL-2.1.txt, /licenses/LICENSE_LGPL_21.txt, /licenses/OCCT_LGPL_EXCEPTION.txt. The unmodified library dependency is pinned by bun.lock. Upstream source/build instructions are linked in the notice.

@@ -128,7 +128,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 2 entries: accepted 3D import format and self-contained file requirements.
     // + 2 entries: visible picked point and installation at the current clip pose.
     // + 2 entries: playback rate and rotation-enabled same-face search.
-    expect(Object.keys(dictionary)).toHaveLength(4178);
+    expect(Object.keys(dictionary)).toHaveLength(4193);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

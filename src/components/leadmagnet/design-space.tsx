@@ -223,7 +223,7 @@ import {
   renderMarkdown,
   type ViewerDocument,
 } from "@/components/leadmagnet/document-viewer";
-import { memoryAssetBytes } from "@/lib/standex/machine-assets";
+import { memoryAssetBytes, machineTransferFileName } from "@/lib/standex/machine-assets";
 import {
   draftFromHousing,
   terminationFromHousing,
@@ -1473,11 +1473,12 @@ export function DesignSpace({
         setSubmitMessageTone("danger");
         return;
       }
+      const transferName = machineTransferFileName(dossier.workshopAsset.fileName);
       let dossierId = serverDossierId;
       let uploaded: UploadedFile;
       if (CUSTOMER_EMAIL_ACCESS && !backend?.authenticated && !nda.required) {
         const identity = pendingIdentity();
-        const response = await preparePendingFile(identity, dossier.business.contactEmail, bytes, dossier.workshopAsset.fileName);
+        const response = await preparePendingFile(identity, dossier.business.contactEmail, bytes, transferName);
         if (!response.file) throw new Error("BAD_FILE");
         dossierId = identity.id;
         uploaded = { ...response.file, verified: true, verificationError: null };
@@ -1492,7 +1493,7 @@ export function DesignSpace({
       }
       uploaded = await uploadDesignFile(
         dossierId,
-        { name: dossier.workshopAsset.fileName, data: new Uint8Array(bytes) },
+        { name: transferName, data: new Uint8Array(bytes) },
         "design_model",
         {
           kind: "supabase_files",
@@ -4000,7 +4001,7 @@ export function DesignSpace({
               />
               {dossier.workshopAsset
                 ? msg("Je partage aussi le fichier 3D « {0} » avec l'équipe en charge.", [
-                    dossier.workshopAsset.fileName,
+                    machineTransferFileName(dossier.workshopAsset.fileName),
                   ])
                 : t("Aucun fichier 3D importé : rien à partager.")}
             </label>

@@ -5,6 +5,7 @@ import { COFFEE_ASSET } from "./machine-assembly";
 import type { Vec3 } from "./magnetic-workshop";
 import { analyzeAnimations } from "./machine-animation";
 import type { MachineAnimation } from "./machine-clip-registry";
+import type { ModelImportOptions } from "./machine-step-runner";
 
 export interface MachinePart {
   path: string;
@@ -66,12 +67,25 @@ export function assetStorageModeOf(key: string): AssetStorageMode | null {
   return assetProvenance.get(key) ?? null;
 }
 
-export async function storeMachineFileInMemory(file: File): Promise<string> {
+async function prepareModelFile(file: File, options: ModelImportOptions): Promise<ArrayBuffer> {
+  if (options.signal?.aborted) throw new DOMException("Chargement annulé.", "AbortError");
   if (file.size > 30 * 1024 * 1024)
-    throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
-  const data = await file.arrayBuffer();
+    throw new Error("Choisissez un fichier GLB ou STEP de moins de 30 Mo.");
+  let data = await file.arrayBuffer();
+  if (/\.(step|stp)$/i.test(file.name)) {
+    const { convertStep } = await import("./machine-step-runner");
+    data = await convertStep(data, options);
+  }
+  if (options.signal?.aborted) throw new DOMException("Chargement annulé.", "AbortError");
+  options.onPhase?.("validate");
   validateGlb(data);
+  return data;
+}
+
+export async function storeMachineFileInMemory(file: File, options: ModelImportOptions = {}): Promise<string> {
+  const data = await prepareModelFile(file, options);
   const key = await keyFor(data);
+  if (options.signal?.aborted) throw new DOMException("Chargement annulé.", "AbortError");
   memoryFiles.set(key, data);
   assetProvenance.set(key, "memory");
   return key;
@@ -81,22 +95,21 @@ export async function storeMachineFileInMemory(file: File): Promise<string> {
 export async function storeMachineFileWithMode(
   file: File,
   mode: AssetStorageMode,
+  options: ModelImportOptions = {},
 ): Promise<string> {
-  return mode === "memory" ? storeMachineFileInMemory(file) : storeMachineFile(file);
+  return mode === "memory" ? storeMachineFileInMemory(file, options) : storeMachineFile(file, options);
 }
 export function clearMemoryMachineFiles() {
   memoryFiles.clear();
 }
-export async function storeMachineFile(file: File): Promise<string> {
-  if (file.size > 30 * 1024 * 1024)
-    throw new Error("Choisissez un GLB autonome de moins de 30 Mo.");
-  const data = await file.arrayBuffer();
-  validateGlb(data);
+export async function storeMachineFile(file: File, options: ModelImportOptions = {}): Promise<string> {
+  const data = await prepareModelFile(file, options);
   const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)))
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
-  const key = "sha256:" + hash,
-    db = await database();
+  const key = "sha256:" + hash;
+  if (options.signal?.aborted) throw new DOMException("Chargement annulé.", "AbortError");
+  const db = await database();
   try {
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction("files", "readwrite");
@@ -160,7 +173,7 @@ async function readFile(key: string, mode: AssetStorageMode): Promise<ArrayBuffe
   // silencieusement sur l'appareil : on s'arrête ici, sans ouvrir IndexedDB.
   if (mode === "memory" || assetProvenance.get(key) === "memory")
     throw new Error(
-      "Le fichier 3D n'est plus en mémoire de cet onglet. Réimportez le même GLB pour retrouver le montage.",
+      "Le fichier 3D n'est plus en mémoire de cet onglet. Réimportez le même fichier 3D pour retrouver le montage.",
     );
   const db = await database();
 
@@ -172,7 +185,7 @@ async function readFile(key: string, mode: AssetStorageMode): Promise<ArrayBuffe
           ? resolve(r.result)
           : reject(
               new Error(
-                "Le fichier 3D n'est pas présent dans ce navigateur. Réimportez le même GLB pour retrouver le montage.",
+                "Le fichier 3D n'est pas présent dans ce navigateur. Réimportez le même fichier 3D pour retrouver le montage.",
               ),
             );
       r.onerror = () => reject(r.error);
@@ -331,4 +344,9 @@ export async function parseMachineAsset(
 /** Octets d'une ressource 3D présente EN MÉMOIRE de cet onglet, sans repli sur l'appareil. */
 export function memoryAssetBytes(key: string): ArrayBuffer | null {
   return memoryFiles.get(key) ?? null;
+}
+
+/** Shared model bytes are always the validated internal GLB, including STEP imports. */
+export function machineTransferFileName(sourceName: string): string {
+  return /\.(step|stp)$/i.test(sourceName) ? sourceName.replace(/\.(step|stp)$/i, "-converted.glb") : sourceName;
 }

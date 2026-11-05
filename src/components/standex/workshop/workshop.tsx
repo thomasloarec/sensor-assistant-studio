@@ -351,7 +351,7 @@ export default function MagneticWorkshop({
   const effectiveExperiment = clientPedagogical && !exploring ? clientAdapter.settings : experiment;
   function endExploration() {
     const original=originalConfig.current;if(!original)return;
-    importSeqRef.current++;setPendingUnits(null);freshImportRef.current=null;
+    cancelModelImport();setPendingUnits(null);freshImportRef.current=null;
     if(originalUi.current){setTool(originalUi.current.tool);setGuideState(originalUi.current.guide);historyRef.current=originalUi.current.history;}
     setPlaying(false);setConfig(original);setProgress(originalProgress.current);
     setExploring(false);setSuggestion(null);setPlacementUndo(null);originalConfig.current=null;
@@ -470,6 +470,12 @@ export default function MagneticWorkshop({
   });
   const [, setHistoryTick] = useState(0);
   const importSeqRef = useRef(0);
+  const importAbortRef = useRef<AbortController | null>(null);
+  const [importPhase, setImportPhase] = useState<"prepare" | "convert" | "validate" | null>(null);
+  const cancelModelImport = () => {
+    importSeqRef.current++; importAbortRef.current?.abort(); importAbortRef.current = null; setImportPhase(null);
+  };
+  useEffect(() => () => { importSeqRef.current++; importAbortRef.current?.abort(); }, []);
   const preloadedRef = useRef<{ key: string; scale: number; asset: MachineAsset } | null>(null);
   /** Set ONLY by a new, not-yet-positioned import: reopening, reloading or resuming
    *  a draft (clip or not) never moves explicit component positions. */
@@ -711,7 +717,7 @@ export default function MagneticWorkshop({
     if (key === "builtin:coffee-v1" && !clientPedagogical) return exampleMachine();
     const demo = DEMO_ASSEMBLIES[key];
     if (!demo) return;
-    importSeqRef.current++;
+    cancelModelImport();
     setPendingUnits(null);
     freshImportRef.current = null;
     setPlaying(false);
@@ -739,6 +745,7 @@ export default function MagneticWorkshop({
     setTool(next);
   }
   function exampleMachine() {
+    cancelModelImport();
     if (clientPedagogical) {
       openDemo('builtin:coffee-v1');
       return;
@@ -766,18 +773,24 @@ export default function MagneticWorkshop({
    *  Seul le dernier import demandé est appliqué. */
   async function importMachine(file: File | undefined) {
     if (!file) return;
+    cancelModelImport();
+    const abort = new AbortController();
+    importAbortRef.current = abort;
+    setImportPhase("prepare");
     setError(null);
     setPendingUnits(null);
     const seq = ++importSeqRef.current;
     try {
       const { storeMachineFileWithMode } = await import("@/lib/standex/machine-assets");
-      const assetKey = await storeMachineFileWithMode(file, storageMode);
+      const assetKey = await storeMachineFileWithMode(file, storageMode, { signal: abort.signal, onPhase: phase => { if (seq === importSeqRef.current) setImportPhase(phase); } });
       if (seq !== importSeqRef.current) return;
       const same = machine?.assetKey === assetKey;
-      await installMachine(assetKey, file.name, same ? machine!.unitScale : COFFEE_ASSEMBLY.unitScale, seq);
+      await installMachine(assetKey, file.name, same ? machine!.unitScale : COFFEE_ASSEMBLY.unitScale, seq, abort.signal);
     } catch (e) {
       if (seq !== importSeqRef.current) return;
       setError(e instanceof Error ? e.message : t("Import impossible."));
+    } finally {
+      if (seq === importSeqRef.current) { setImportPhase(null); importAbortRef.current = null; }
     }
   }
   /** Nouvel essai explicite d'un fichier refusé pour son échelle, avec les
@@ -795,7 +808,7 @@ export default function MagneticWorkshop({
       setError(e instanceof Error ? e.message : t("Import impossible."));
     }
   }
-  async function installMachine(assetKey: string, fileName: string, scale: number, seq: number) {
+  async function installMachine(assetKey: string, fileName: string, scale: number, seq: number, signal?: AbortSignal) {
     const { loadMachineAsset } = await import("@/lib/standex/machine-assets");
     const same = machine?.assetKey === assetKey && machine.unitScale === scale;
     if (same && machineAsset) {
@@ -804,8 +817,10 @@ export default function MagneticWorkshop({
     }
     let asset: MachineAsset;
     try {
-      asset = await loadMachineAsset(assetKey, scale, storageMode);
+      asset = await loadMachineAsset(assetKey, scale, storageMode, signal);
     } catch (e) {
+      if ((e as { code?: string }).code === "scale" && /\.(step|stp)$/i.test(fileName))
+        throw new Error(t("Dimensions STEP hors limites : le modèle doit mesurer entre 0,1 mm et 20 m."));
       if (seq === importSeqRef.current && (e as { code?: string }).code === "scale")
         setPendingUnits({
           assetKey,
@@ -1177,6 +1192,8 @@ export default function MagneticWorkshop({
   }
   async function importFile(file: File | undefined) {
     if (!file) return;
+    cancelModelImport();
+    setPendingUnits(null);
     try {
       if (file.size > WORKSHOP_IMPORT_LIMIT) throw new Error(t("Le fichier de montage est trop volumineux."));
       const envelope = JSON.parse(await file.text());
@@ -1191,7 +1208,7 @@ export default function MagneticWorkshop({
       setConfig(clientPedagogical?clientDiscoveryConfig(parsed):parsed);
       setSaved(null);
       setError(null);
-      setImportNotice(t(storageMode==="memory"?"Montage importé en mémoire de cet onglet ; GLB à réimporter si absent.":"Montage importé. Il est enregistré automatiquement dans votre projet."));
+      setImportNotice(t(storageMode==="memory"?"Montage importé en mémoire de cet onglet ; modèle 3D à réimporter si absent.":"Montage importé. Il est enregistré automatiquement dans votre projet."));
     } catch (e) {
       setError(e instanceof Error ? e.message : t("Fichier illisible."));
     }
@@ -2455,10 +2472,10 @@ export default function MagneticWorkshop({
             {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{renderPlayButton()}{renderSpeedControl()}</div>}
             <div className="mw-model-import">
               <label className="mw-file-label">
-                {machine ? machine.fileName : t("Importer mon modèle 3D (.glb)")}
+                {machine ? machine.fileName : t("Importer mon modèle 3D")}
                 <input
                   type="file"
-                  accept=".glb,model/gltf-binary"
+                  accept=".glb,.step,.stp,model/gltf-binary,model/step"
                   aria-describedby={importHelpId}
                   onChange={(e) => {
                     void importMachine(e.target.files?.[0]);
@@ -2467,9 +2484,13 @@ export default function MagneticWorkshop({
                 />
               </label>
               <p id={importHelpId} className="t-caption">
-                {t("GLB uniquement (.glb) · 30 Mo max · textures incluses.")}
+                {t("GLB ou STEP (.step, .stp) · 30 Mo max.")}
               </p>
             </div>
+            {importPhase && <div className="mw-model-import" aria-busy="true">
+              <p className="t-caption" role="status">{t(importPhase === "prepare" ? "Préparation du modèle…" : importPhase === "convert" ? "Conversion STEP…" : "Vérification du modèle…")}</p>
+              <button className="mw-button mw-secondary" onClick={cancelModelImport}>{t("Annuler l'import")}</button>
+            </div>}
             {pendingUnits && (
               <div className="mw-units-retry notice-warning" role="group" data-testid="units-retry"
                 aria-label={t("Unités du nouveau fichier")}>

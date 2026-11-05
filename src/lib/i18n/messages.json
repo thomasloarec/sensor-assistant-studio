@@ -37600,5 +37600,140 @@
     "Скорость",
     "Velocità",
     "速度"
+  ],
+  "Le fichier 3D n'est pas présent dans ce navigateur. Réimportez le même fichier 3D pour retrouver le montage.": [
+    "The 3D file is not in this browser. Import the same GLB/STEP again to restore the assembly.",
+    "此浏览器中没有该 3D 文件。重新导入同一 GLB/STEP 以恢复装配。",
+    "3D-Datei fehlt in diesem Browser. Dieselbe GLB/STEP erneut importieren.",
+    "El archivo 3D no está en este navegador. Reimporte el mismo GLB/STEP para recuperar el montaje.",
+    "3D-файла нет в браузере. Импортируйте тот же GLB/STEP для восстановления.",
+    "Il file 3D non è nel browser. Reimporta lo stesso GLB/STEP per ripristinare il montaggio.",
+    "このブラウザーに3Dファイルがありません。同じGLB/STEPを再読み込みすると構成を復元できます。"
+  ],
+  "Le fichier 3D n'est plus en mémoire de cet onglet. Réimportez le même fichier 3D pour retrouver le montage.": [
+    "The 3D file is no longer in this tab's memory. Re-import the same GLB/STEP to recover the mounting.",
+    "此标签页的内存中已无该 3D 文件。请重新导入相同的 GLB/STEP 以恢复装配。",
+    "Die 3D-Datei befindet sich nicht mehr im Speicher dieses Tabs. Importieren Sie dieselbe GLB/STEP-Datei erneut, um die Montage wiederherzustellen.",
+    "El archivo 3D ya no está en la memoria de esta pestaña. Vuelva a importar el mismo GLB/STEP para recuperar el montaje.",
+    "3D-файл больше не хранится в памяти этой вкладки. Повторно импортируйте тот же GLB/STEP, чтобы восстановить монтаж.",
+    "Il file 3D non è più presente nella memoria di questa scheda. Reimportare lo stesso GLB/STEP per recuperare il montaggio.",
+    "3D ファイルはこのタブのメモリに残っていません。取り付け状態を復元するには、同じ GLB/STEP を再インポートしてください。"
+  ],
+  "Ce fichier ne contient qu'un seul bloc : aucune pièce ne peut bouger séparément. Réexportez le modèle depuis votre CAO avec la pièce mobile comme corps ou composant séparé (GLB ou STEP, une pièce par composant).": [
+    "This file contains a single block: no part can move separately. Re-export the model from your CAD with the moving part as a separate body or component (GLB/STEP, one part per node).",
+    "该文件只有一个整体：没有零件可以单独运动。请从 CAD 重新导出，将运动件作为独立实体或组件（GLB/STEP，每个节点一个零件）。",
+    "Diese Datei enthält nur einen Block: Kein Teil kann sich getrennt bewegen. Exportieren Sie das Modell aus Ihrem CAD erneut, mit dem beweglichen Teil als separatem Körper oder Bauteil (GLB/STEP, ein Teil pro Knoten).",
+    "Este archivo contiene un solo bloque: ninguna pieza puede moverse por separado. Vuelva a exportar el modelo desde su CAD con la pieza móvil como cuerpo o componente independiente (GLB/STEP, una pieza por nodo).",
+    "Файл содержит один монолитный блок: ни одна деталь не может двигаться отдельно. Повторно экспортируйте модель из САПР, выделив подвижную деталь в отдельное тело или компонент (GLB/STEP, одна деталь на узел).",
+    "Questo file contiene un solo blocco: nessuna parte può muoversi separatamente. Riesportate il modello dal CAD con la parte mobile come corpo o componente separato (GLB/STEP, una parte per nodo).",
+    "このファイルは単一ブロックのため、部品を個別に動かせません。可動部品を別のボディまたはコンポーネントとして CAD から再エクスポートしてください（GLB/STEP、ノードごとに1部品）。"
+  ],
+  "Montage importé en mémoire de cet onglet ; modèle 3D à réimporter si absent.": [
+    "Assembly imported into this tab’s memory; reimport the GLB/STEP if missing.",
+    "装配已导入此标签页内存；GLB/STEP 缺失时需重新导入。",
+    "Aufbau in den Speicher dieses Tabs importiert; fehlende GLB/STEP erneut importieren.",
+    "Montaje importado en la memoria de esta pestaña; reimporte el GLB/STEP si falta.",
+    "Сборка импортирована в память вкладки; отсутствующий GLB/STEP нужно импортировать снова.",
+    "Montaggio importato nella memoria della scheda; reimportare il GLB/STEP se assente.",
+    "組立をこのタブのメモリに読み込みました。GLB/STEP がなければ再インポートしてください。"
+  ],
+  "GLB ou STEP (.step, .stp) · 30 Mo max.": [
+    "GLB or STEP (.step, .stp) · 30 MB max.",
+    "GLB 或 STEP（.step、.stp）· 最大 30 MB。",
+    "GLB oder STEP (.step, .stp) · Max. 30 MB.",
+    "GLB o STEP (.step, .stp) · Máx. 30 MB.",
+    "GLB или STEP (.step, .stp) · До 30 МБ.",
+    "GLB o STEP (.step, .stp) · Max 30 MB.",
+    "GLB または STEP（.step、.stp）· 最大30 MB。"
+  ],
+  "Préparation du modèle…": [
+    "Preparing model…",
+    "正在准备模型…",
+    "Modell wird vorbereitet…",
+    "Preparando modelo…",
+    "Подготовка модели…",
+    "Preparazione del modello…",
+    "モデルを準備中…"
+  ],
+  "Conversion STEP…": [
+    "Converting STEP…",
+    "正在转换 STEP…",
+    "STEP wird konvertiert…",
+    "Convirtiendo STEP…",
+    "Преобразование STEP…",
+    "Conversione STEP…",
+    "STEP を変換中…"
+  ],
+  "Vérification du modèle…": [
+    "Checking model…",
+    "正在检查模型…",
+    "Modell wird geprüft…",
+    "Comprobando modelo…",
+    "Проверка модели…",
+    "Verifica del modello…",
+    "モデルを確認中…"
+  ],
+  "Choisissez un fichier GLB ou STEP de moins de 30 Mo.": [
+    "Choose a GLB or STEP file smaller than 30 MB.",
+    "请选择小于 30 MB 的 GLB 或 STEP 文件。",
+    "Wählen Sie eine GLB- oder STEP-Datei unter 30 MB.",
+    "Elija un archivo GLB o STEP de menos de 30 MB.",
+    "Выберите файл GLB или STEP размером менее 30 МБ.",
+    "Scegli un file GLB o STEP inferiore a 30 MB.",
+    "30 MB 未満の GLB または STEP ファイルを選択してください。"
+  ],
+  "STEP illisible ou sans géométrie exploitable. Exportez un STEP complet avec ses pièces solides.": [
+    "Unreadable STEP or no usable geometry. Export a complete STEP with its solid parts.",
+    "STEP 无法读取或没有可用几何体。请导出包含实体零件的完整 STEP。",
+    "STEP unlesbar oder ohne nutzbare Geometrie. Exportieren Sie eine vollständige STEP-Datei mit Volumenkörpern.",
+    "STEP ilegible o sin geometría utilizable. Exporte un STEP completo con sus piezas sólidas.",
+    "STEP не читается или не содержит пригодной геометрии. Экспортируйте полный STEP с твёрдыми телами.",
+    "STEP illeggibile o senza geometria utilizzabile. Esporta uno STEP completo con le parti solide.",
+    "STEP を読み取れないか、有効な形状がありません。ソリッド部品を含む完全な STEP を書き出してください。"
+  ],
+  "Modèle STEP trop détaillé. Exportez uniquement le mécanisme utile, sans les petits détails.": [
+    "STEP model too detailed. Export only the relevant mechanism without small details.",
+    "STEP 模型过于复杂。请仅导出所需机构，去除细小细节。",
+    "STEP-Modell zu detailliert. Exportieren Sie nur den benötigten Mechanismus ohne kleine Details.",
+    "Modelo STEP demasiado detallado. Exporte solo el mecanismo necesario, sin pequeños detalles.",
+    "Модель STEP слишком подробная. Экспортируйте только нужный механизм без мелких деталей.",
+    "Modello STEP troppo dettagliato. Esporta solo il meccanismo necessario, senza piccoli dettagli.",
+    "STEP モデルが複雑すぎます。細部を省き、必要な機構のみ書き出してください。"
+  ],
+  "Préparation STEP trop longue. Exportez uniquement le mécanisme utile puis réessayez.": [
+    "STEP preparation took too long. Export only the relevant mechanism and try again.",
+    "STEP 准备时间过长。请仅导出所需机构后重试。",
+    "STEP-Aufbereitung dauert zu lange. Exportieren Sie nur den benötigten Mechanismus und versuchen Sie es erneut.",
+    "La preparación del STEP tardó demasiado. Exporte solo el mecanismo necesario y reintente.",
+    "Подготовка STEP заняла слишком много времени. Экспортируйте только нужный механизм и повторите.",
+    "Preparazione STEP troppo lunga. Esporta solo il meccanismo necessario e riprova.",
+    "STEP の準備がタイムアウトしました。必要な機構のみ書き出し、再試行してください。"
+  ],
+  "Le lecteur STEP n’a pas pu démarrer. Rechargez la page puis réessayez.": [
+    "The STEP reader could not start. Reload the page and try again.",
+    "STEP 读取器无法启动。请刷新页面后重试。",
+    "Der STEP-Reader konnte nicht starten. Laden Sie die Seite neu und versuchen Sie es erneut.",
+    "El lector STEP no pudo iniciarse. Recargue la página y reintente.",
+    "Не удалось запустить загрузчик STEP. Обновите страницу и повторите.",
+    "Impossibile avviare il lettore STEP. Ricarica la pagina e riprova.",
+    "STEP リーダーを起動できませんでした。ページを再読み込みして再試行してください。"
+  ],
+  "Unités STEP prises en compte automatiquement.": [
+    "STEP units applied automatically.",
+    "已自动应用 STEP 单位。",
+    "STEP-Einheiten automatisch berücksichtigt.",
+    "Unidades STEP aplicadas automáticamente.",
+    "Единицы STEP учтены автоматически.",
+    "Unità STEP applicate automaticamente.",
+    "STEP の単位を自動適用しました。"
+  ],
+  "Dimensions STEP hors limites : le modèle doit mesurer entre 0,1 mm et 20 m.": [
+    "STEP dimensions out of range: the model must measure between 0.1 mm and 20 m.",
+    "STEP 尺寸超出范围：模型尺寸必须介于 0.1 mm 和 20 m 之间。",
+    "STEP-Abmessungen außerhalb des Bereichs: Das Modell muss zwischen 0,1 mm und 20 m messen.",
+    "Dimensiones STEP fuera de rango: el modelo debe medir entre 0,1 mm y 20 m.",
+    "Размеры STEP вне диапазона: модель должна иметь размер от 0,1 мм до 20 м.",
+    "Dimensioni STEP fuori intervallo: il modello deve misurare tra 0,1 mm e 20 m.",
+    "STEP の寸法が範囲外です。モデルの大きさは 0.1 mm〜20 m にしてください。"
   ]
 }

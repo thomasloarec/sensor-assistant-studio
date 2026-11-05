@@ -966,3 +966,8 @@ Une nouvelle fixation de l’aimant propose une orientation dans le plan rapport
 Installation conserve deux tâches numérotées avec leur statut de face. La carte active utilise la surface primaire et son texte contrasté ; les coches ambiguës sont supprimées. La recherche commence à la position visible puis essaie l’approche la plus proche : translation, rotation dans le plan, appui latéral ou en bout et remise à plat de l’écart si nécessaire. Le capteur, la face finie et le mouvement défini restent invariants ; le corps entier doit être supporté sans collision. Une recherche infructueuse conserve le montage.
 
 Le sélecteur Vitesse accompagne la commande de lecture et reste utilisable pendant le mouvement : 0,05× à 4×. Il modifie uniquement la cadence de lecture, sans réinitialiser la position, modifier les attaches ni recalculer les zones. Typographie, surfaces, focus et cibles de 44 px réutilisent les jetons existants.
+
+
+### Import STEP — 5 novembre 2026
+
+Le contrôle unique « Importer mon modèle 3D » accepte GLB, STEP et STP, avec une aide courte et la limite de 30 Mo. La préparation, la conversion et la vérification sont annoncées par un statut accessible et restent annulables. Le montage courant reste affiché et intact tant que le nouvel import ne réussit pas. Les pièces séparées rejoignent les cinq étapes existantes sans mouvement présumé. Aucun nouveau jeton ni animation.

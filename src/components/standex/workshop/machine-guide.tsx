@@ -445,7 +445,7 @@ export default function MachineGuide({
         <p className="t-body">
           {t("Fichier :")} <strong className="mw-file-name t-metric">{m.fileName}</strong>
         </p>
-        <label className="mw-select-label">
+        {/\.(step|stp)$/i.test(m.fileName) ? <p className="t-caption">{t("Unités STEP prises en compte automatiquement.")}</p> : <label className="mw-select-label">
           {t("Unités du fichier")}
           <select
             value={m.unitScale}
@@ -455,7 +455,7 @@ export default function MachineGuide({
             <option value={1}>{t("Millimètres")}</option>
             <option value={10}>{t("Centimètres")}</option>
           </select>
-        </label>
+        </label>}
         {asset && (
           <p className="t-body">
             {t("Objet :")}{" "}
@@ -466,7 +466,7 @@ export default function MachineGuide({
         {asset && asset.parts.length === 1 && (
           <p className="notice-warning" data-testid="guide-monobloc">
             {t(
-              "Ce fichier ne contient qu'un seul bloc : aucune pièce ne peut bouger séparément. Réexportez le modèle depuis votre CAO avec la pièce mobile comme corps ou composant séparé (GLB, une pièce par nœud).",
+              "Ce fichier ne contient qu'un seul bloc : aucune pièce ne peut bouger séparément. Réexportez le modèle depuis votre CAO avec la pièce mobile comme corps ou composant séparé (GLB ou STEP, une pièce par composant).",
             )}
           </p>
         )}
