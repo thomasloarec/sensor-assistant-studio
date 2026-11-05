@@ -17,12 +17,14 @@ export function MachineDetectionPlacement({
   config,
   asset,
   ready,
+  progress,
   onApply,
   onPause,
 }: {
   config: WorkshopConfig;
   asset: MachineAsset | null;
   ready: boolean;
+  progress: number;
   onApply: (patch: Partial<MachineAssembly>, t: number) => void;
   onPause: () => void;
 }) {
@@ -36,7 +38,7 @@ export function MachineDetectionPlacement({
     result: DetectionPositions;
     index: number;
   } | null>(null);
-  const current = session?.key === key && session.asset === asset ? session : null;
+  const current = session?.key === key && session.asset === asset && Math.abs(session.result.t-progress)<1e-9 ? session : null;
   useEffect(() => {
     setNotice(null);
     setBusy(false);
@@ -44,7 +46,7 @@ export function MachineDetectionPlacement({
       pending.current?.abort();
       pending.current = null;
     };
-  }, [key, asset]);
+  }, [key, asset, progress]);
   const apply = (result: DetectionPositions, index: number) => {
     const position = result.positions[index];
     if (!position || !asset || !config.machine) return;
@@ -75,7 +77,7 @@ export function MachineDetectionPlacement({
     pending.current = controller;
     setBusy(true);
     try {
-      const result = await findDetectionPositions(config, asset, controller.signal);
+      const result = await findDetectionPositions(config, asset, controller.signal,progress);
       if (controller.signal.aborted) return;
       if (result.positions.length) apply(result, 0);
       else setNotice(result.reason ?? POSITION_MESSAGES.none);
@@ -121,7 +123,7 @@ export function MachineDetectionPlacement({
       </div>
       <details className="mw-search-help">
         <summary className="t-body">{t("À propos de la recherche")}</summary>
-        <p className="t-caption">{t("Recherche au plus près du capteur, sur la face de fixation actuelle. L’orientation et l’écart de pose sont conservés.")}</p>
+        <p className="t-caption">{t("Recherche par déplacement et rotation sur la même face. Le capteur reste en place.")}</p>
         <p className="t-caption">{t("Positions indicatives selon les zones simulées. La recherche conserve la surface d’appui et évite les zones mortes détectées.")}</p>
       </details>
     </div>

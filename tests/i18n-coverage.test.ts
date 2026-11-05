@@ -127,7 +127,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 21 entries: localized industry labels; Quickbase values remain canonical.
     // + 2 entries: accepted 3D import format and self-contained file requirements.
     // + 2 entries: visible picked point and installation at the current clip pose.
-    expect(Object.keys(dictionary)).toHaveLength(4176);
+    // + 2 entries: playback rate and rotation-enabled same-face search.
+    expect(Object.keys(dictionary)).toHaveLength(4178);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

@@ -207,7 +207,7 @@ describe("chronologie et lecture", () => {
     expect(p).toBeLessThan(1);
     for (let t = 0; t < 200; t += 16) p = playbackStep(p, 16, 6, false);
     expect(p).toBe(1);
-    expect(WORKSHOP).toContain("playbackStep(v, dt, seconds, playbackSpeed === \"slow\")");
+    expect(WORKSHOP).toContain("playbackStep(v, dt, seconds, playbackSpeed)");
   });
   test("la lecture lente reste disponible dans les réglages avancés", () => {
     expect(WORKSHOP).toContain('t("Vitesse de lecture")');

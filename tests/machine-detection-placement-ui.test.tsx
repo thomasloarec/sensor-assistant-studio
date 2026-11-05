@@ -16,7 +16,8 @@ test("successive regions share one face; undo restores the prior anchor and canc
   let current = c;
   function Harness() {
     const [config, setConfig] = useState(c),
-      [progress, setProgress] = useState(0.25),
+      // This pose has several regions. Search now preserves the visible pose.
+      [progress, setProgress] = useState(0),
       [state, setState] = useState({
         ...INITIAL_GUIDE,
         step: "install" as const,

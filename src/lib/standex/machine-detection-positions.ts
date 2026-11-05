@@ -1,18 +1,22 @@
 /** Indicative C1% search on the original, finite mounting face only.
- * No stored mesh/track copies, no orientation/offset changes, no free-space fallback.
+ * No stored mesh/track copies, orientation and seating may change on request, no free-space fallback.
  * Sampling is bounded; a negative result means none FOUND, never impossibility.
  */
 import { Quaternion, Vector3 } from "three";
 import { PROFILE } from "../detection-lab/profile";
-import { componentPose, partDelta, motionProblem, usesClip } from "./machine-assembly";
+import { componentPose, partDelta, motionProblem, usesClip, cycleU } from "./machine-assembly";
 import type { MachineAssembly } from "./machine-assembly";
 import type { MachineAsset } from "./machine-assets";
-import { applyAttachments, surfaceFootprint, type Attachment } from "./machine-mounting";
+import { surfaceFootprint, type Attachment } from "./machine-mounting";
 import { magnetSize, type Vec3, type WorkshopConfig } from "./magnetic-workshop";
-import { sensorById } from "./sensor-catalog";
 import { mountingFace, footprintFits, type MountingFace } from "./machine-face";
 import { catalogueFrame, catalogueModel, cataloguePlacement } from "./catalogue-pedagogical";
 import { partEnvelopes, reedObstaclesAt } from "./pedagogical-envelopes";
+import {
+  alignedMagnetSpin,
+  normalizedSpin,
+  configWithMagnetAttachment,
+} from "./machine-magnet-orientation";
 import { catalogueThresholds } from "./catalogue-response";
 
 /* i18n-canonical: refusal messages are translated by the UI. */
@@ -82,10 +86,16 @@ export function closestFaceTime(m: MachineAssembly, face: MountingFace, path: st
 export function mountingFootprint(c: WorkshopConfig, a: Attachment): Vec3[] {
   return surfaceFootprint(a, magnetSize(c));
 }
-export async function findDetectionPositions(
+async function searchFace(
   c: WorkshopConfig,
   asset: MachineAsset,
-  signal?: AbortSignal,
+  signal: AbortSignal | undefined,
+  options: {
+    t: number;
+    step?: number;
+    face: MountingFace;
+    envelopes: NonNullable<ReturnType<typeof partEnvelopes>>;
+  },
 ): Promise<DetectionPositions> {
   const empty = (reason: string): DetectionPositions => ({
     positions: [],
@@ -97,15 +107,14 @@ export async function findDetectionPositions(
     a = m?.magnetAttach;
   if (!m || !a || a.kind !== "surface" || a.offsetMm < 0 || motionProblem(m))
     return empty(POSITION_MESSAGES.mounting);
-  const face = mountingFace(asset, a),
-    envelopes = partEnvelopes(asset);
+  const { face, envelopes } = options;
   if (!face || !envelopes) return empty(POSITION_MESSAGES.face);
   const aborted = () => {
     if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
   };
   aborted();
-  const t = closestFaceTime(m, face, a.partPath),
-    u = usesClip(m) ? t : 2 * t;
+  const t = options.t,
+    u = cycleU(m, t);
   const model = catalogueModel(c),
     frame = catalogueFrame(c, t);
   const obstacles = reedObstaclesAt(m, envelopes, t, frame);
@@ -119,21 +128,13 @@ export async function findDetectionPositions(
   const max = face.bounds.max.map((v, i) => Math.min(v, centre[i]! + radius));
   if (min.some((v, i) => v >= max[i]!)) return empty(POSITION_MESSAGES.none);
   // Half the former spacing resolves narrow D4 lobes without changing physics.
-  const step = Math.max(0.2, ...min.map((v, i) => (max[i]! - v) / 240));
+  const step = Math.max(options.step ?? 0.2, ...min.map((v, i) => (max[i]! - v) / 240));
   const nx = Math.ceil((max[0]! - min[0]!) / step) + 1,
     ny = Math.ceil((max[1]! - min[1]!) / step) + 1;
-  const footprint = mountingFootprint(c, a),
-    size = magnetSize(c),
-    sensor = sensorById(c.sensorId);
-  const machineAt = (attach: Attachment) =>
-    applyAttachments(
-      { ...m, magnetAttach: attach },
-      { lengthMm: sensor.body[0], heightMm: sensor.body[1] },
-      { lengthMm: size[0], heightMm: size[1] },
-    );
+  const footprint = mountingFootprint(c, a);
   const responseAt = (point: Vec3): number => {
     if (point.some((v) => Math.abs(v) > 10000) || !footprintFits(face, point, footprint)) return 0;
-    const candidate = { ...c, machine: machineAt({ ...a, point }) };
+    const candidate = configWithMagnetAttachment(c, { ...a, point });
     const result = cataloguePlacement(
       candidate,
       catalogueFrame(candidate, t).pose,
@@ -157,14 +158,17 @@ export async function findDetectionPositions(
     if (j % 3 === 0) await new Promise<void>((resolve) => setTimeout(resolve, 0));
   }
   aborted();
-  const thresholds=catalogueThresholds(model.className);
-  if(!thresholds)return empty(POSITION_MESSAGES.none);
+  const thresholds = catalogueThresholds(model.className);
+  if (!thresholds) return empty(POSITION_MESSAGES.none);
   // Prefer the prudent core. If none is reachable on this face, use exactly
   // the same lower bound as illustrativeContact, and explicitly label it.
-  const sensitiveOnly=!scores.some(v=>v>=thresholds.high);
-  const threshold=sensitiveOnly ? thresholds.low??thresholds.high : thresholds.high;
-  for(let i=0;i<scores.length;i++)if(scores[i]!<threshold)scores[i]=0;
-  const score=(point:Vec3)=>{const value=responseAt(point);return value>=threshold?value:0;};
+  const sensitiveOnly = !scores.some((v) => v >= thresholds.high);
+  const threshold = sensitiveOnly ? (thresholds.low ?? thresholds.high) : thresholds.high;
+  for (let i = 0; i < scores.length; i++) if (scores[i]! < threshold) scores[i] = 0;
+  const score = (point: Vec3) => {
+    const value = responseAt(point);
+    return value >= threshold ? value : 0;
+  };
   const adjacent = (k: number) => [
     k % nx > 0 ? k - 1 : -1,
     k % nx < nx - 1 ? k + 1 : -1,
@@ -233,4 +237,80 @@ export async function findDetectionPositions(
     sensitiveOnly,
     ...(!positions.length ? { reason: POSITION_MESSAGES.none } : {}),
   };
+}
+
+/** Search the visible pose first, then the closest approach. Fine search keeps
+ * an already usable orientation; bounded coarse rotation/seating candidates
+ * recover cases where translation alone cannot activate the reed. */
+export async function findDetectionPositions(
+  c: WorkshopConfig,
+  asset: MachineAsset,
+  signal?: AbortSignal,
+  preferredTime?: number,
+): Promise<DetectionPositions> {
+  const empty = (reason: string): DetectionPositions => ({
+    positions: [],
+    t: preferredTime ?? 0,
+    stepMm: 0,
+    reason,
+  });
+  const m = c.machine,
+    a = m?.magnetAttach;
+  if (!m || !a || a.kind !== "surface" || a.offsetMm < 0 || motionProblem(m))
+    return empty(POSITION_MESSAGES.mounting);
+  const face = mountingFace(asset, a),
+    envelopes = partEnvelopes(asset);
+  if (!face || !envelopes) return empty(POSITION_MESSAGES.face);
+  const closest = closestFaceTime(m, face, a.partPath);
+  const times = [
+    ...new Set([
+      ...(preferredTime !== undefined && Number.isFinite(preferredTime)
+        ? [Math.max(0, Math.min(1, preferredTime))]
+        : []),
+      closest,
+    ]),
+  ];
+  for (const t of times) {
+    const options = { t, face, envelopes };
+    const original = await searchFace(c, asset, signal, options);
+    if (original.positions.length) return original;
+    const variants: Attachment[] = [];
+    for (const surfaceOrientation of [
+      a.surfaceOrientation ?? "side",
+      a.surfaceOrientation === "end" ? "side" : "end",
+    ] as const) {
+      const base = { ...a, surfaceOrientation },
+        aligned = alignedMagnetSpin(c, base, t);
+      const angles = [
+        aligned,
+        aligned + 90,
+        a.spinDeg,
+        ...Array.from({ length: 12 }, (_, i) => i * 15),
+      ];
+      for (const offsetMm of [...new Set([a.offsetMm, 0])])
+        for (const spinDeg of [
+          ...new Set(angles.map((v) => Math.round(normalizedSpin(v) * 1e6) / 1e6)),
+        ])
+          variants.push({ ...base, offsetMm, spinDeg });
+    }
+    const candidates: { config: WorkshopConfig; result: DetectionPositions }[] = [];
+    for (const attach of variants) {
+      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+      const next = configWithMagnetAttachment(c, attach);
+      const result = await searchFace(next, asset, signal, { ...options, step: 3 });
+      if (result.positions.length) candidates.push({ config: next, result });
+    }
+    candidates.sort(
+      (x, y) =>
+        Number(!!x.result.sensitiveOnly) - Number(!!y.result.sensitiveOnly) ||
+        y.result.positions[0]!.marginMm - x.result.positions[0]!.marginMm ||
+        y.result.positions[0]!.response - x.result.positions[0]!.response,
+    );
+    for (const candidate of candidates.slice(0, 2)) {
+      const refined = await searchFace(candidate.config, asset, signal, options);
+      if (refined.positions.length) return refined;
+    }
+    if (candidates.length) return candidates[0]!.result;
+  }
+  return empty(POSITION_MESSAGES.none);
 }

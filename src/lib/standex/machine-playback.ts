@@ -36,11 +36,13 @@ export function playbackStep(
   progress: number,
   elapsedMs: number,
   seconds: number | null,
-  slow: boolean,
+  speed: boolean | number,
 ): number {
   if (!seconds || !(seconds > 0) || !Number.isFinite(elapsedMs) || elapsedMs <= 0) return progress;
   const dt = Math.min(MAX_FRAME_MS, elapsedMs) / 1000;
-  const next = progress + dt / (seconds * (slow ? SLOW_FACTOR : 1));
+  const rate=typeof speed === "boolean" ? (speed ? 1/SLOW_FACTOR : 1) : speed;
+  if(!Number.isFinite(rate)||rate<=0)return progress;
+  const next = progress + dt * rate / seconds;
   // Dernière image EXACTE : l'accumulation flottante ne laisse pas 0,99999…
   return next >= 1 - 1e-9 ? 1 : next;
 }

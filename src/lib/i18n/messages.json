@@ -37582,5 +37582,23 @@
     "Задайте направление, затем ход больше 0 мм.",
     "Definire la direzione, poi una corsa maggiore di 0 mm.",
     "方向を設定し、0 mmより大きい移動量を入力してください。"
+  ],
+  "Recherche par déplacement et rotation sur la même face. Le capteur reste en place.": [
+    "Search by moving and rotating on the same face. The sensor stays in place.",
+    "在同一安装面上通过移动和旋转进行搜索。传感器保持原位。",
+    "Suche durch Verschieben und Drehen auf derselben Fläche. Der Sensor bleibt an seinem Platz.",
+    "Búsqueda mediante desplazamiento y rotación sobre la misma cara. El sensor permanece en su sitio.",
+    "Поиск перемещением и поворотом на той же грани. Датчик остаётся на месте.",
+    "Ricerca mediante spostamento e rotazione sulla stessa faccia. Il sensore resta in posizione.",
+    "同じ面上で移動と回転を行って探索します。センサーの位置は変わりません。"
+  ],
+  "Vitesse": [
+    "Speed",
+    "速度",
+    "Geschwindigkeit",
+    "Velocidad",
+    "Скорость",
+    "Velocità",
+    "速度"
   ]
 }

@@ -2133,6 +2133,9 @@
    real space so playback never covers the scene, fields or timeline. */
 .mw-stage .mw-playback-bar {
   flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
   display: flex;
   padding: 8px 16px;
   background: var(--mw-field);
@@ -3435,8 +3438,13 @@
 .mw-position-ends > button { flex: 1 1 100px; }
 .mw-install-tasks { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
 .mw-guide .mw-install-task { display: flex; width: 100%; gap: 12px; padding: 12px; text-align: start; background: var(--surface); color: var(--foreground); border-radius: var(--r-sm); box-shadow: var(--e-1); }
-.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--surface-tint); color: var(--heading); box-shadow: var(--e-2); }
+.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--e-2); }
+.mw-guide .mw-install-task[aria-pressed="true"] :is(strong, .t-caption) { color: inherit; }
 .mw-task-number { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: var(--r-pill); background: var(--surface-sunken); }
 .mw-task-label { display: grid; gap: 2px; flex: 1; }
 .mw-guide .mw-install-task:focus-visible, .mw-motion-decision:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .mw-guide-nav > .mw-button { flex: 1; white-space: normal; }
+
+.mw-playback-speed { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.mw-playback-speed select { min-height: 44px; min-width: 88px; padding: 8px 12px; background: var(--surface-sunken); color: var(--foreground); border-radius: var(--r-sm); }
+.mw-playback-speed select:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }

@@ -1,3 +1,4 @@
+import { initialMagnetAttachment } from '@/lib/standex/machine-magnet-orientation';
 import { useWorkshopDesktop } from "./use-workshop-desktop";
 import { Button } from "@/components/ui/button";
 import { sectionVolume } from '@/lib/standex/zone-section';
@@ -448,7 +449,7 @@ export default function MagneticWorkshop({
   const circuitContact = illustrativeContact(placement,layerClassName);
   /** Vitesse de lecture. Par défaut un aller-retour dure 6 s : la lecture
    * ralentie reste disponible dans les réglages avancés, elle ne disparaît pas. */
-  const [playbackSpeed, setPlaybackSpeed] = useState<"normal" | "slow">("normal");
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [reduced, setReduced] = useState(false);
   const [resetEpoch, setResetEpoch] = useState(0),
     [sceneError, setSceneError] = useState(false);
@@ -1069,7 +1070,9 @@ export default function MagneticWorkshop({
                 return;
               }
               const prev = which === "sensor" ? machine.sensorAttach : machine.magnetAttach;
-              machineChange(attachPatch(which, attachFromHit(hit, kind, prev), bodyConfig));
+              const anchor=attachFromHit(hit,kind,prev);
+              const attachment=which==='magnet'?initialMagnetAttachment(bodyConfig,anchor,progress,machineAsset):anchor;
+              machineChange(attachPatch(which,attachment,bodyConfig));
             },
             onHoleRay: (ray) => {
               setPlaying(false);
@@ -1098,7 +1101,7 @@ export default function MagneticWorkshop({
     const tick = (now: number) => {
       const dt = now - last;
       last = now;
-      setProgress((v) => playbackStep(v, dt, seconds, playbackSpeed === "slow"));
+      setProgress((v) => playbackStep(v, dt, seconds, playbackSpeed));
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -1578,6 +1581,12 @@ export default function MagneticWorkshop({
     ) : null;
 
   const stopPreparation = () => { prepCancel.current?.(); prepCancel.current=null; setPreparing(false); };
+  const renderSpeedControl = () => <label className="mw-playback-speed">
+    <span className="t-caption">{t("Vitesse")}</span>
+    <select aria-label={t("Vitesse de lecture")} value={playbackSpeed} onChange={e=>setPlaybackSpeed(Number(e.target.value))}>
+      {[0.05,0.1,0.25,0.5,1,2,4].map(rate=><option key={rate} value={rate}>{rate}×</option>)}
+    </select>
+  </label>;
   const renderPlayButton = (inGuide = false) => (
     <button
       ref={inGuide ? undefined : playRef}
@@ -2068,16 +2077,7 @@ export default function MagneticWorkshop({
             </select>
           </label>
         </details>
-        <label className="mw-select-label">
-          {t("Vitesse de lecture")}
-          <select
-            value={playbackSpeed}
-            onChange={(e) => setPlaybackSpeed(e.target.value as "normal" | "slow")}
-          >
-            <option value="normal">{t("Normale")}</option>
-            <option value="slow">{t("Lente")}</option>
-          </select>
-        </label>
+        {!catalogue && renderSpeedControl()}
         <GuidedVerdict
           mounting={guided}
           onFixCoverage={() =>
@@ -2316,7 +2316,7 @@ export default function MagneticWorkshop({
       )}
       {!desktop && (!machine || catalogue) && (
         <div className="mw-playback-bar" data-testid="workshop-playback-bar">
-          {renderPlayButton()}
+          {renderPlayButton()}{renderSpeedControl()}
         </div>
       )}
       <div className="mw-stage-grid">
@@ -2452,7 +2452,7 @@ export default function MagneticWorkshop({
           <details className="mw-primary-menu" open={primaryMenuOpen} onToggle={(e) => setPrimaryMenuOpen(e.currentTarget.open)}>
             <summary>{t("Modèle et résultat")}</summary>
           <div className="mw-primary-actions">
-            {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{renderPlayButton()}</div>}
+            {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{renderPlayButton()}{renderSpeedControl()}</div>}
             <div className="mw-model-import">
               <label className="mw-file-label">
                 {machine ? machine.fileName : t("Importer mon modèle 3D (.glb)")}

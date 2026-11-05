@@ -843,7 +843,7 @@ export default function MachineGuide({
               data-testid={"guide-target-" + v} onClick={() => {
                 setTool("navigate"); setState(s => ({ ...s, target: v, pick: null }));
               }}>
-              <span className="mw-task-number t-metric" aria-hidden="true">{fixed ? <Check size={18}/> : i + 1}</span>
+              <span className="mw-task-number t-metric" aria-hidden="true">{i + 1}</span>
               <span className="mw-task-label"><strong className="t-body">{t(label)}</strong><span className="t-caption">{t(fixed ? "Face choisie" : "À placer")}</span></span>
               <ChevronRight size={18} aria-hidden="true"/>
             </Button></li>;
@@ -981,7 +981,7 @@ export default function MachineGuide({
               </span>
             </p>
             {target === "magnet" && attach.kind === "surface" && (
-              <MachineDetectionPlacement config={config} asset={asset} ready={ready}
+              <MachineDetectionPlacement config={config} asset={asset} ready={ready} progress={progress}
                 onPause={() => setPlaying(false)}
                 onApply={(patch, time) => {
                   setPlaying(false);

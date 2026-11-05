@@ -957,3 +957,12 @@ La recherche sur face échantillonne plus finement les lobes. Elle privilégie l
 La barre principale aligne les actions sur le haut des boutons. La légende GLB reste sous le bouton d’import sans décaler les autres commandes ; le retour à la ligne et les cibles de 44 px sont conservés. Aucun nouveau jeton.
 
 Dans un modèle importé, les boîtes englobantes servent de premier filtre de collision. Le contrôle vérifie ensuite les surfaces triangulées et les volumes fermés du fichier : un intérieur vide ou l’espace autour d’une porte inclinée ne devient plus un obstacle plein. L’appui sur la face reste autorisé, une pénétration reste indisponible. La recherche, le point courant et la chronologie partagent ce contrôle ; le circuit est calculé pendant Installation comme pendant Essai. Les corps catalogue restent des enveloppes conservatrices, sans changement des lobes, des seuils ni du modèle magnétique.
+
+
+### Orientation de départ et vitesse — 5 novembre 2026
+
+Une nouvelle fixation de l’aimant propose une orientation dans le plan rapportée au capteur à la position affichée. Les deux orientations orthogonales sont comparées par le calcul commun ; cette proposition ponctuelle conserve le point cliqué et reste modifiable et annulable. Aucun effet ne réoriente ensuite une rotation manuelle.
+
+Installation conserve deux tâches numérotées avec leur statut de face. La carte active utilise la surface primaire et son texte contrasté ; les coches ambiguës sont supprimées. La recherche commence à la position visible puis essaie l’approche la plus proche : translation, rotation dans le plan, appui latéral ou en bout et remise à plat de l’écart si nécessaire. Le capteur, la face finie et le mouvement défini restent invariants ; le corps entier doit être supporté sans collision. Une recherche infructueuse conserve le montage.
+
+Le sélecteur Vitesse accompagne la commande de lecture et reste utilisable pendant le mouvement : 0,05× à 4×. Il modifie uniquement la cadence de lecture, sans réinitialiser la position, modifier les attaches ni recalculer les zones. Typographie, surfaces, focus et cibles de 44 px réutilisent les jetons existants.
