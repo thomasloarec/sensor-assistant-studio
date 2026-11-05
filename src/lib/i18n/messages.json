@@ -1,4 +1,35 @@
 {
+  "Point {0} sélectionné": [
+    "Point {0} selected", "已选择点 {0}", "Punkt {0} ausgewählt", "Punto {0} seleccionado",
+    "Точка {0} выбрана", "Punto {0} selezionato", "点 {0} を選択済み"
+  ],
+  "Le clip est lu tel qu'il est enregistré, du début à la fin, sans aller-retour ajouté.": [
+    "The clip plays as recorded, from start to finish, without an added return trip.",
+    "动画片段按原始记录从头播放到尾，不添加往返运动。",
+    "Der Clip wird wie gespeichert von Anfang bis Ende abgespielt, ohne zusätzlichen Rücklauf.",
+    "El clip se reproduce tal como está grabado, de principio a fin, sin añadir un recorrido de vuelta.",
+    "Клип воспроизводится в исходном виде от начала до конца, без добавления обратного движения.",
+    "La clip viene riprodotta come registrata, dall'inizio alla fine, senza aggiungere un ritorno.",
+    "クリップは記録どおりに最初から最後まで再生され、復路は追加されません。"
+  ],
+  "Importer mon modèle 3D (.glb)": [
+    "Import my 3D model (.glb)",
+    "导入我的 3D 模型 (.glb)",
+    "Mein 3D-Modell importieren (.glb)",
+    "Importar mi modelo 3D (.glb)",
+    "Импортировать мою 3D-модель (.glb)",
+    "Importa il mio modello 3D (.glb)",
+    "3D モデルをインポート (.glb)"
+  ],
+  "GLB uniquement (.glb) · 30 Mo max · textures incluses.": [
+    "GLB only (.glb) · 30 MB max · textures included.",
+    "仅支持 GLB (.glb) · 最大 30 MB · 须包含纹理。",
+    "Nur GLB (.glb) · max. 30 MB · Texturen eingebettet.",
+    "Solo GLB (.glb) · máx. 30 MB · texturas incluidas.",
+    "Только GLB (.glb) · до 30 МБ · текстуры встроены.",
+    "Solo GLB (.glb) · max 30 MB · texture incluse.",
+    "GLB のみ (.glb) · 最大 30 MB · テクスチャを含むファイル。"
+  ],
   "Électroménager": [
     "Appliances",
     "家用电器",

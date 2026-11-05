@@ -7,7 +7,7 @@ import type { PlacementDiagnosis } from '@/lib/detection-lab/placement-diagnosis
 import type { WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import type { Obb } from '@/lib/detection-lab/obstacles';
 import { fingerprint } from '@/lib/standex/mounting/geometry';
-import { CATALOGUE_MODEL_VERSION, type PivotPlan } from '@/lib/standex/catalogue-pedagogical';
+import { CATALOGUE_MODEL_VERSION, catalogueModel, catalogueBodyObbs, type PivotPlan } from '@/lib/standex/catalogue-pedagogical';
 import { CATALOGUE_CUT_PLANE_Z } from '@/lib/standex/catalogue-response';
 const cache=new Map<string,SampledVolume>();
 const cutCache=new Map<string,SampledVolume>();
@@ -22,7 +22,11 @@ export function volumeKey(settings:ExperimentSettings,frame:PedagogicalFrame,obs
  const body=(frame.pose as {frame?:number[][]}).frame?.map(row=>row.map(round));
  // Discovery translations move the point through an unchanged sensor-local field.
  // Keep the volume visible while dragging; full orientation and obstacles still key it.
- const volumeConfig=catalogue?{...catalogue,lateralShift:0,start:0,end:0,offset:0}:null;
+ const model=catalogue?catalogueModel(catalogue):null;
+ // Only the actual sensor-local field inputs. Moving an anchor on the same
+ // face does not alter a nominal orientation field, even in an imported file.
+ const volumeConfig=model&&catalogue?{centre:model.centre,lengthMm:model.lengthMm,field:model.field,
+   magnetBody:model.magnetBody,className:model.className,bodies:catalogueBodyObbs(catalogue)}:null;
  return settingsKey(settings,axis,0)+'|'+(obstacles?fingerprint(obstacles):'free')+'|'+(catalogue?CATALOGUE_MODEL_VERSION:'frozen')+'|'+JSON.stringify(volumeConfig)+'|'+JSON.stringify(catalogue?body??null:null);
 }
 /** Cut key: fixed flat-face plane for catalogue; instant plane for historical staff mode. */
@@ -70,35 +74,55 @@ export function usePedagogicalCut(enabled:boolean,settings:ExperimentSettings,fr
 /** Pinned volumes of the CURRENT preparation: never evicted while it runs or plays; replaced
  * wholesale by the next preparation (token). The general cache stays bounded at 12. */
 let pinned=new Map<string,SampledVolume>(),pinToken=0;
+let cancelPreparation:(()=>void)|null=null;
+const createVolumeWorker=()=>new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'});
 export type PrepRequest={key:string;settings:ExperimentSettings;frame:PedagogicalFrame;obstacles:readonly Obb[]|null;catalogue?:WorkshopConfig};
 /** Pivot preparation: (1) worker computes the adaptive orientation plan, (2) each exact planned
  * orientation volume is computed and pinned. Cancel terminates the worker; a stale token never
  * writes nor calls onDone. onDone(null) = failure (playback must not start). */
-export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepRequest,onDone:(plan:PivotPlan|null)=>void,maxVolumes=Infinity,factory:()=>Worker=()=>new Worker(new URL('./pedagogical.worker.ts',import.meta.url),{type:'module'}),onProgress?:(done:number,total:number)=>void):()=>void{
+export function preparePivot(config:WorkshopConfig,request:(t:number)=>PrepRequest,onDone:(plan:PivotPlan|null)=>void,maxVolumes=Infinity,factory:()=>Worker=createVolumeWorker,onProgress?:(done:number,total:number)=>void,concurrency=factory===createVolumeWorker?Math.max(1,Math.min(3,(globalThis.navigator?.hardwareConcurrency??2)-1)):1):()=>void{
+ cancelPreparation?.();
  const token=++pinToken,next=new Map<string,SampledVolume>(),previous=pinned;
  let worker:Worker;try{worker=factory();}catch{onDone(null);return()=>{};}
  pinned=next;
- let live=true,plan:PivotPlan|null=null,pending:PrepRequest[]=[],index=0;
- const finish=(p:PivotPlan|null)=>{if(!live||token!==pinToken)return;live=false;worker.terminate();if(p)pinned=next;onDone(p);};
- const send=()=>{onProgress?.(index,pending.length);const r=pending[index];if(!r){finish(plan);return;}
-  const hit=previous.get(r.key)??cache.get(r.key);if(hit){next.set(r.key,hit);index++;send();return;}
-  worker.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:0,key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});};
+ let live=true,plan:PivotPlan|null=null,pending:PrepRequest[]=[],index=0,completed=0;
+ const workers=[worker],assigned=new Map<Worker,PrepRequest>();
+ const cancel=()=>{if(!live)return;live=false;workers.forEach(w=>w.terminate());if(cancelPreparation===cancel)cancelPreparation=null;};
+ cancelPreparation=cancel;
+ const finish=(p:PivotPlan|null)=>{if(!live||token!==pinToken)return;cancel();onDone(p);};
+ const send=(w:Worker)=>{
+  if(!live||token!==pinToken)return;
+  while(index<pending.length){const r=pending[index++]!;const hit=previous.get(r.key)??cache.get(r.key);
+   if(hit){next.set(r.key,hit);completed++;continue;}
+   assigned.set(w,r);
+   w.postMessage({settings:r.settings,axis:r.frame.pose.axis,planeZ:0,key:r.key,mode:'volume',obstacles:r.obstacles??[],catalogue:r.catalogue,frame:r.catalogue?(r.frame.pose as {frame?:unknown}).frame:undefined});break;
+  }
+  onProgress?.(completed,pending.length);
+  if(completed===pending.length)finish(plan);
+ };
+ const accept=(w:Worker,event:MessageEvent<{key:string;result?:SampledVolume}>)=>{
+  if(!live||token!==pinToken)return;
+  const r=assigned.get(w);
+  if(!r||event.data.key!==r.key||!event.data.result||event.data.result.key!==r.key){finish(null);return;}
+  assigned.delete(w);next.set(r.key,event.data.result);completed++;send(w);
+ };
  worker.onmessage=(event:MessageEvent<{key:string;result?:SampledVolume;plan?:PivotPlan;error?:boolean}>)=>{
   if(!live||token!==pinToken)return;
   if(!plan){if(!event.data.plan){finish(null);return;}
    const samples=event.data.plan.samples.slice(0,maxVolumes),kept=new Set(samples);
    plan={samples,truncated:event.data.plan.samples.length>maxVolumes,intervals:event.data.plan.intervals.map(i=>({...i,certified:i.certified&&kept.has(i.t0)&&kept.has(i.t1)}))};
-   pending=[...new Map(samples.map(t=>{const r=request(t);return [r.key,r] as const;})).values()];send();return;}
-  const r=pending[index];
-  if(!r||event.data.key!==r.key||!event.data.result||event.data.result.key!==r.key){finish(null);return;}
-  next.set(r.key,event.data.result);index++;send();
+   pending=[...new Map(samples.map(t=>{const r=request(t);return [r.key,r] as const;})).values()];
+   const count=Math.min(pending.length,Math.max(1,Math.min(3,Math.floor(concurrency)||1)));
+   for(let i=1;i<count;i++){try{const w=factory();w.onmessage=e=>accept(w,e);w.onerror=()=>finish(null);workers.push(w);}catch{break;}}
+   workers.forEach(send);return;}
+  accept(worker,event);
  };
  worker.onerror=()=>finish(null);
  // Shared pose adapter resolves the loaded clip HERE. The worker receives numeric orientations,
  // never clip tracks or registry references. 256 includes every midpoint of the 1/128 plan.
  const orientations=Array.from({length:257},(_,i)=>({t:i/256,pose:request(i/256).frame.pose}));
  worker.postMessage({key:'plan:'+token,mode:'plan',catalogue:config,orientations,settings:request(0).settings,axis:[0,1,0],planeZ:0});
- return()=>{if(live){live=false;worker.terminate();}};
+ return cancel;
 }
 export function volumeCacheHas(key:string):boolean{return cache.has(key)||pinned.has(key);}
 export function pinnedVolume(key:string):SampledVolume|undefined{return pinned.get(key);}

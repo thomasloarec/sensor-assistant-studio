@@ -10,8 +10,9 @@ if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://l
 
 
 // La scène WebGL n'est pas l'objet du test : elle est remplacée par un témoin.
+let currentScene: any;
 mock.module("../src/components/standex/workshop/machine-scene", () => ({
-  default: () => React.createElement("div", { "data-testid": "scene-stub" }),
+  default: (props: any) => { currentScene=props; return React.createElement("div", { "data-testid": "scene-stub" }); },
 }));
 mock.module("@radix-ui/react-use-layout-effect", () => ({ useLayoutEffect: React.useLayoutEffect }));
 
@@ -31,6 +32,38 @@ afterAll(() => {
 });
 
 describe("Positions de détection dans le Workshop intégré", () => {
+  test('installation scrubs the moving part and preserves its pose through tools, edits and undo',async()=>{
+    const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
+    const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
+    const {DEFAULT_WORKSHOP}=await import('../src/lib/standex/magnetic-workshop');
+    const {DEMO_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
+    const {attachPatch}=await import('../src/components/standex/workshop/machine-guide');
+    for(const clientPedagogical of [false,true]){
+      let config={...DEFAULT_WORKSHOP,sensorId:'MK04',magnetModel:'M04',sensitivity:'B',machine:structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1']!)};
+      const a={kind:'surface' as const,support:'moving' as const,partPath:'0/1/0',point:[18,67,22] as [number,number,number],normal:[0,0,1] as [number,number,number],offsetMm:0,spinDeg:0,flip:false,depthRef:'collar' as const,axisSource:'face' as const};
+      config.machine={...config.machine,...attachPatch('magnet',a,config)};
+      const view=render(<Workshop embedded clientPedagogical={clientPedagogical} initialConfig={config} onDraftChange={c=>config=c as typeof config} onClose={()=>{}} onSave={async()=>{}}/>);
+      try{
+        await waitFor(()=>expect(currentScene?.asset).toBeTruthy());
+        await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
+        await waitFor(()=>expect((view.getByLabelText('Aperçu de la position') as HTMLInputElement).disabled).toBe(false));
+        const slider=view.getByLabelText('Aperçu de la position') as HTMLInputElement;
+        await act(async()=>{slider.value='25';const key=Object.keys(slider).find(k=>k.startsWith('__reactProps$'))!;(slider as any)[key].onChange({target:slider});});
+        expect(currentScene.sample.t).toBe(.25);
+        await act(async()=>fireEvent.click(view.getByRole('radio',{name:'Aimant'})));
+        await act(async()=>fireEvent.click(view.getByTestId('guide-move')));
+        expect(currentScene.tool).toBe('move-magnet');expect(currentScene.sample.t).toBe(.25);
+        await act(async()=>currentScene.onChange(attachPatch('magnet',{...a,point:[18.2,67,22]},config)));
+        expect(currentScene.sample.t).toBe(.25);expect(config.machine.magnetAttach?.point[0]).toBe(18.2);
+        await act(async()=>fireEvent.click(view.getByRole('button',{name:'Annuler le dernier réglage'})));
+        expect(config.machine.magnetAttach?.point).toEqual(a.point);expect(currentScene.sample.t).toBe(.25);
+        await act(async()=>fireEvent.click(view.getByTestId('guide-step-test')));
+        await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
+        expect((view.getByLabelText('Aperçu de la position') as HTMLInputElement).value).toBe('25');
+        expect(currentScene.sample.t).toBe(.25);
+      }finally{view.unmount();currentScene=null;}
+    }
+  },20000);
   test("drawer → coffee keeps the requested model and pair; both components expose free and attached rotations with undo", async()=>{
     const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');

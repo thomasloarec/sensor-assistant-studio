@@ -1,5 +1,26 @@
 # Langage de design Standex DETECT
 
+### Pointage et installation en mouvement — 5 novembre 2026
+
+Le premier point d’un axe porte un repère numéroté de 28 px dans la scène,
+indépendant du zoom et sans capturer les clics. Il suit son support et disparaît
+à la validation ou à l’annulation. Couleurs, halo et typographie reprennent les jetons.
+Le curseur d’aperçu reste disponible dans Mouvement et Installation, avec la même
+ouverture ou le même temps de clip. Passer à un outil de pose suspend la lecture
+et conserve cette position ; le déplacement sur la face et son annulation
+conservent également la pose affichée. Aucun nouveau déplacement automatique.
+La préparation des zones partage les calculs invariants et utilise jusqu’à trois
+tâches en arrière-plan, avec progression et annulation communes. Les seuils,
+la grille, les exclusions mécaniques et les orientations préparées restent identiques.
+
+### Format de modèle 3D — 5 novembre 2026
+
+Le libellé d’import précise l’extension `.glb`. Une aide toujours présente sous
+ce contrôle, même après chargement, annonce GLB uniquement, 30 Mo maximum et
+textures incluses. Elle utilise `t-caption` et l’encre secondaire existante,
+revient à la ligne sur mobile et décrit le champ pour les lecteurs d’écran.
+Les huit langues sont couvertes ; aucun nouveau format n’est ajouté.
+
 ### Industries traduites — 5 novembre 2026
 
 Les 21 industries utilisent les mêmes libellés localisés dans le formulaire,

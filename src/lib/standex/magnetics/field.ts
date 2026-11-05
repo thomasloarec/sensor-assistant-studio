@@ -93,24 +93,9 @@ export function fieldAtPoint(
   const half = body.dimensionsMm.map((d) => d / 2),
     br = body.brMt * body.polarity;
   if (body.shape === "block") {
-    if (p.every((x, i) => Math.abs(x) <= half[i]!))
-      return { ok: false, reason: "GEOMETRY_OVERLAP" };
-    for (const face of [-1, 1]) {
-      const w = p[axis]! - face * half[axis]!;
-      // Edge-extension singularities are named refusals, never perturbed geometry.
-      if (Math.abs(w) <= Number.EPSILON * Math.max(...half))
-        return { ok: false, reason: "NO_UNIQUE_CROSSING" };
-      for (const su of [-1, 1])
-        for (const sv of [-1, 1]) {
-          const x = p[u]! + su * half[u]!,
-            y = p[v]! + sv * half[v]!,
-            r = Math.hypot(x, y, w);
-          const factor = (face * su * sv * br) / (4 * Math.PI);
-          b[u] = b[u]! - factor * Math.asinh(y / Math.hypot(x, w));
-          b[v] = b[v]! - factor * Math.asinh(x / Math.hypot(y, w));
-          b[axis] += factor * Math.atan((x * y) / (w * r));
-        }
-    }
+    const local = prepareBlockField(body.dimensionsMm, axis, body.brMt, body.polarity)(p);
+    if (!local.ok) return local;
+    [b[0], b[1], b[2]] = local.vector;
   } else {
     if (
       !["cylinder", "ring"].includes(body.shape) ||
@@ -142,5 +127,33 @@ export function fieldAtPoint(
       approximation: "none",
       approximationErrorPct: 0,
     },
+  };
+}
+
+/** The same rectangular-face integral in body coordinates. Constant geometry
+ * is prepared once for a batch; no pose rotations or unused vector projections
+ * are rebuilt for every reed quadrature point. */
+export function prepareBlockField(dimensions: Vec3, axis: 0 | 1 | 2, brMt: number, polarity: 1 | -1 = 1) {
+  const half = dimensions.map(d => d / 2), u = (axis + 1) % 3, v = (axis + 2) % 3;
+  const valid = dimensions.every(d => Number.isFinite(d) && d > 0) && Number.isFinite(brMt) && brMt > 0
+    && [0, 1, 2].includes(axis) && [-1, 1].includes(polarity);
+  const epsilon = Number.EPSILON * Math.max(...half), br = brMt * polarity;
+  return (p: Vec3) => {
+    if (!valid || !p.every(Number.isFinite)) return { ok: false as const, reason: "INVALID_INPUT" as const };
+    if (p.every((x, i) => Math.abs(x) <= half[i]!))
+      return { ok: false as const, reason: "GEOMETRY_OVERLAP" as const };
+    const b: Vec3 = [0, 0, 0];
+    for (const face of [-1, 1]) {
+      const w = p[axis]! - face * half[axis]!;
+      if (Math.abs(w) <= epsilon) return { ok: false as const, reason: "NO_UNIQUE_CROSSING" as const };
+      for (const su of [-1, 1]) for (const sv of [-1, 1]) {
+        const x = p[u]! + su * half[u]!, y = p[v]! + sv * half[v]!, r = Math.hypot(x, y, w);
+        const factor = (face * su * sv * br) / (4 * Math.PI);
+        b[u] = b[u]! - factor * Math.asinh(y / Math.hypot(x, w));
+        b[v] = b[v]! - factor * Math.asinh(x / Math.hypot(y, w));
+        b[axis] += factor * Math.atan((x * y) / (w * r));
+      }
+    }
+    return { ok: true as const, vector: b };
   };
 }

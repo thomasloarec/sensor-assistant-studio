@@ -75,7 +75,7 @@ import {
   publishedClassKind,
   nominalSensitivityRowsFor,
 } from "@/lib/standex/magnetics/registries";
-import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Component, lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowRight,
@@ -306,6 +306,7 @@ export default function MagneticWorkshop({
   onRequestTrial,
   onSaveState,
 }: WorkshopProps) {
+  const importHelpId = useId();
   useLocale();
   const pedagogical = staffPedagogical || clientPedagogical;
   const [exploring, setExploring] = useState(false);
@@ -599,6 +600,8 @@ export default function MagneticWorkshop({
    * pose modifiée librement libère honnêtement son attache. */
   function machineChange(patch: Partial<MachineAssembly>, opts: { keepTime?: boolean } = {}) {
     if (!machine) return;
+    const keepTime = opts.keepTime ?? ["sensorAttach", "magnetAttach", "sensorPosition", "magnetPosition", "sensorRotation", "magnetRotation"]
+      .some(key => key in patch);
     const { freed, ...clean } = freePosePatch(patch);
     // Changement d'unités : repères, attaches et course liés au modèle sont
     // rééchelonnés ; la taille physique des produits ne change pas.
@@ -628,7 +631,7 @@ export default function MagneticWorkshop({
     setHistoryTick((v) => v + 1);
     // Un alignement « à l'instant affiché » garde le temps courant, y compris
     // quand on l'annule ou le rétablit (comparaison au même instant).
-    if (opts.keepTime) timedChanges.current.add(next);
+    if (keepTime) timedChanges.current.add(next);
     if (freed.length)
       setGuideState((g) => ({ ...g, freed: [...new Set([...g.freed, ...freed])] }));
     else if ("sensorAttach" in patch || "magnetAttach" in patch)
@@ -636,7 +639,7 @@ export default function MagneticWorkshop({
         ...g,
         freed: g.freed.filter((w) => !(w + "Attach" in patch)),
       }));
-    update({ machine: next }, { keepTime: !!opts.keepTime });
+    update({ machine: next }, { keepTime });
   }
   /** Repères de mesure : annulables, mais l'instant de lecture est conservé
    *  (un repère peut se poser pendant l'animation). */
@@ -725,12 +728,13 @@ export default function MagneticWorkshop({
   function chooseTool(next: MachineTool) {
     if (next === "cable" && (exploring || isPcbSensor(config.sensorId))) return;
     setPlaying(false);
-    // Le tracé de câble et les repères se relèvent DANS la pose courante : on
-    // ne remet pas le cycle à zéro.
-    // Pedagogical mode: returning to navigation (e.g. moving between guide steps)
-    // keeps the displayed instant; entering a mounting tool still resets it.
-    const keepTime = pedagogical && next === "navigate";
-    if (!keepTime && next !== "cable" && next !== "measure" && tool !== "measure") setProgress(0);
+    // Tools work in the displayed pose; scene hits/dragging convert back to the
+    // stored rest pose. Changing tools must never move the support away.
+    prepCancel.current?.();
+    prepCancel.current = null;
+    setPreparing(false);
+    // Changing which parts belong to the motion is defined in the file pose.
+    if (next === "select") setProgress(0);
     setTool(next);
   }
   function exampleMachine() {
@@ -2449,17 +2453,23 @@ export default function MagneticWorkshop({
             <summary>{t("Modèle et résultat")}</summary>
           <div className="mw-primary-actions">
             {desktop && (!machine || catalogue) && <div className="mw-playback-bar mw-playback-inline" data-testid="workshop-playback-bar">{renderPlayButton()}</div>}
-            <label className="mw-file-label">
-              {machine ? machine.fileName : t("Importer mon modèle 3D")}
-              <input
-                type="file"
-                accept=".glb,model/gltf-binary"
-                onChange={(e) => {
-                  void importMachine(e.target.files?.[0]);
-                  e.target.value = "";
-                }}
-              />
-            </label>
+            <div className="mw-model-import">
+              <label className="mw-file-label">
+                {machine ? machine.fileName : t("Importer mon modèle 3D (.glb)")}
+                <input
+                  type="file"
+                  accept=".glb,model/gltf-binary"
+                  aria-describedby={importHelpId}
+                  onChange={(e) => {
+                    void importMachine(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              <p id={importHelpId} className="t-caption">
+                {t("GLB uniquement (.glb) · 30 Mo max · textures incluses.")}
+              </p>
+            </div>
             {pendingUnits && (
               <div className="mw-units-retry notice-warning" role="group" data-testid="units-retry"
                 aria-label={t("Unités du nouveau fichier")}>

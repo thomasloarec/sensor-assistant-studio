@@ -318,7 +318,7 @@ function Assembly({
     [],
   );
   useEffect(() => () => highlight.dispose(), [highlight]);
-  const editable = (tool === "sensor" || tool === "magnet") && sample.t === 0;
+  const editable = (tool === "sensor" || tool === "magnet") && (!!guide || sample.t === 0);
   const selected = tool === "sensor" ? sensorRef : magnetRef;
   const moveTarget=tool==="move-sensor"?"sensor":tool==="move-magnet"?"magnet":null;
   const moveFrame=useMemo(()=>moveTarget?surfaceMoveFrame(machine,moveTarget,u):null,[machine,moveTarget,u]);
@@ -364,7 +364,7 @@ function Assembly({
       return;
     }
     if (tool === "pick") {
-      const hit = sample.t === 0 ? hitOf(event, path, moving) : null;
+      const hit = hitOf(event, path, moving);
       if (hit) guide?.onPickPoint?.(hit);
       return;
     }
@@ -533,7 +533,7 @@ function Assembly({
           }}
         />
       )}
-      {moveTarget && moveFrame && sample.t===0 && <>
+      {moveTarget && moveFrame && <>
         <primitive object={moveProxy}/>
         <TransformControls object={moveProxy} mode="translate" space="local"
           showX showY showZ={false} size={0.75} translationSnap={0.1}
@@ -600,10 +600,16 @@ function Assembly({
           <meshBasicMaterial color="#d9480f" />
         </mesh>
       )}
-      {[...(guide?.points ?? []), ...(guide?.attachMarks ?? [])].map((p, i) => (
+      {(guide?.points ?? []).map((p, i) => (
+        <Html key={i} position={p} center zIndexRange={[20, 10]} style={{ pointerEvents: "none" }}>
+          <span className="mw-picked-point" data-testid="guide-picked-point"
+            aria-label={msg("Point {0} sélectionné", [String(i + 1)])}>{i + 1}</span>
+        </Html>
+      ))}
+      {(guide?.attachMarks ?? []).map((p, i) => (
         <mesh key={i + ":" + p.join(",")} position={p}>
           <sphereGeometry args={[1.4, 10, 10]} />
-          <meshBasicMaterial color={i < (guide?.points.length ?? 0) ? "#d9480f" : "#159776"} />
+          <meshBasicMaterial color="#159776" />
         </mesh>
       ))}
       {routing && routing.points.length > 0 && <CableOverlay routing={routing} />}

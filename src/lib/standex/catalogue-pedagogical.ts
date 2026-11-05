@@ -15,7 +15,7 @@ import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
 import { gaussLegendre, reedResponse, type MagnetPose, type PoseEvaluation } from '../detection-lab/pose';
 import { cylinderField, cylinderSignedDistance } from '../detection-lab/field';
 import { PROFILE, type ReedScenario } from '../detection-lab/profile';
-import { fieldAtPoint } from './magnetics/field';
+import { prepareBlockField } from './magnetics/field';
 import { axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
 import { magnetObb, obbOverlap, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
@@ -123,23 +123,46 @@ export function catalogueBodyObbs(c:WorkshopConfig):Obb[]{
  * frozen kernel; reed effective length and scenario shifts scale with the profile's estimated
  * reed length (documented hypothesis); the calculation domain does NOT. */
 export function catalogueEvaluate(m:ReturnType<typeof catalogueModel>,pose:CataloguePose,s:ReedScenario,frame:Frame,quadrature=PROFILE.reed.quadraturePerBlade):PoseEvaluation{
- const n=Math.hypot(...pose.axis);if(!(n>0)||!pose.center.every(Number.isFinite))return {ok:false,reason:'invalid'};
- // The domain is measured from the reed datum, not the centre of a long housing.
- if(Math.hypot(...pose.center.map((v,i)=>v-(m.centre[i]??0)))>PROFILE.domain.maxCenterMm)return {ok:false,reason:'domain'};
- const axis=pose.axis.map(v=>v/n) as Vec3,k=m.lengthMm/14,half=PROFILE.reed.effectiveLengthMm*s.lengthFactor*k/2,sh=s.shift.map(v=>v*k);
+ return prepareCatalogueEvaluation(m,pose.axis,s,frame,quadrature)(pose.center);
+}
+/** Batch form of the exact evaluator: fixed orientation, quadrature and field
+ * geometry are shared by all centres in a volume. No sampling or threshold changes. */
+export function prepareCatalogueEvaluation(m:ReturnType<typeof catalogueModel>,direction:Vec3,s:ReedScenario,frame:Frame,quadrature=PROFILE.reed.quadraturePerBlade){
+ const n=Math.hypot(...direction),axis=direction.map(v=>v/n) as Vec3,k=m.lengthMm/14,half=PROFILE.reed.effectiveLengthMm*s.lengthFactor*k/2,sh=s.shift.map(v=>v*k);
  const fd=m.field;
- const B=(q:Vec3):number=>{
-  if(fd.kind==='cylinder'){const body={radiusMm:fd.radiusMm,lengthMm:fd.lengthMm,jT:fd.jT*s.momentFactor,center:pose.center,axis};return cylinderSignedDistance(body,q)<=0?NaN:cylinderField(body,q)[0];}
-  const d=q.map((v,i)=>v-(pose.center[i]??0)) as Vec3,local=frame.map(r=>dot(r,d)) as Vec3;
-  const proj=frame.map(r=>dot(r,axis)),ax=proj.map(Math.abs).indexOf(Math.max(...proj.map(Math.abs))) as 0|1|2;
-  const r=fieldAtPoint({shape:'block',dimensionsMm:fd.dims,innerDiameterMm:0,magnetizationAxis:ax,brMt:fd.brMt*s.momentFactor,polarity:(proj[ax]??1)<0?-1:1,pose:{positionMm:[0,0,0],rotationDeg:[0,0,0]}} as Parameters<typeof fieldAtPoint>[0],local);
-  if(!r.ok)return NaN;const b=r.field.bVectorMt;return frame.reduce((sum,row,i)=>sum+(b[i]??0)*(row[0]??0),0);
- };
+ const proj=frame.map(r=>dot(r,axis)),ax=proj.map(Math.abs).indexOf(Math.max(...proj.map(Math.abs))) as 0|1|2;
+ const block=fd.kind==='block'?prepareBlockField(fd.dims,ax,fd.brMt*s.momentFactor,(proj[ax]??1)<0?-1:1):null;
  const g=gaussLegendre(quadrature);
- const blade=(from:number,to:number)=>{let sum=0;for(let i=0;i<g.x.length;i++){const x=from+((g.x[i]!+1)/2)*(to-from);sum+=(g.w[i]!/2)*B([x+(sh[0]??0)+m.centre[0],(sh[1]??0)+m.centre[1],(sh[2]??0)+m.centre[2]]);}return sum;};
- const m1=blade(-half,0),m2=blade(0,half);
- if(!Number.isFinite(m1)||!Number.isFinite(m2))return {ok:false,reason:'collision'};
- return {ok:true,response:reedResponse(m1,m2,CATALOGUE_RESPONSE.model,CATALOGUE_RESPONSE.relativeSignEpsilon),m1,m2};
+ const points=(from:number,to:number)=>g.x.map(v=>[from+((v+1)/2)*(to-from)+(sh[0]??0)+m.centre[0],(sh[1]??0)+m.centre[1],(sh[2]??0)+m.centre[2]] as Vec3);
+ const left=points(-half,0),right=points(0,half);
+ return (center:Vec3):PoseEvaluation=>{
+  if(!(n>0)||!center.every(Number.isFinite))return {ok:false,reason:'invalid'};
+  if(Math.hypot(...center.map((v,i)=>v-(m.centre[i]??0)))>PROFILE.domain.maxCenterMm)return {ok:false,reason:'domain'};
+  const body=fd.kind==='cylinder'?{radiusMm:fd.radiusMm,lengthMm:fd.lengthMm,jT:fd.jT*s.momentFactor,center,axis}:null;
+  const B=(q:Vec3):number=>{
+   if(body)return cylinderSignedDistance(body,q)<=0?NaN:cylinderField(body,q)[0];
+   const d=q.map((v,i)=>v-(center[i]??0)) as Vec3,local=frame.map(r=>dot(r,d)) as Vec3;
+   const r=block!(local);if(!r.ok)return NaN;return frame.reduce((sum,row,i)=>sum+(r.vector[i]??0)*(row[0]??0),0);
+  };
+  const blade=(qs:Vec3[])=>{let sum=0;for(let i=0;i<qs.length;i++)sum+=(g.w[i]!/2)*B(qs[i]!);return sum;};
+  const m1=blade(left),m2=blade(right);
+  if(!Number.isFinite(m1)||!Number.isFinite(m2))return {ok:false,reason:'collision'};
+  return {ok:true,response:reedResponse(m1,m2,CATALOGUE_RESPONSE.model,CATALOGUE_RESPONSE.relativeSignEpsilon),m1,m2};
+ };
+}
+
+/** Nominal grid evaluation, sharing the same full-body collision test and exact
+ * response as cataloguePlacement without reconstructing invariant data per node. */
+export function catalogueNominalSampler(c:WorkshopConfig,axis:Vec3,frame:Frame,obstacles:readonly Obb[]=[],model=catalogueModel(c)){
+ const evaluate=prepareCatalogueEvaluation(model,axis,nominalScenario(),frame),bodies=[...catalogueBodyObbs(c),...obstacles];
+ const half=model.magnetBody.map(n=>n/2) as Vec3,validAxis=Math.hypot(...axis)>0;
+ return (center:Vec3)=>{
+  if(!validAxis||!center.every(Number.isFinite))return {response:null,blocked:false};
+  const magnet:Obb={path:'magnet',c:center,a:frame,h:half};
+  const blocked=bodies.some(o=>obbOverlap(magnet,o));
+  const e=blocked?null:evaluate(center);
+  return {response:e?.ok?e.response:null,blocked};
+ };
 }
 export function cataloguePlacement(c:WorkshopConfig,pose:CataloguePose,obstacles:readonly Obb[]=[],model=catalogueModel(c),nominalOnly=false):PlacementEvidence{
  const m=model,th=classThresholds(m.className);
@@ -188,11 +211,12 @@ export function catalogueSamplingAxes(c:WorkshopConfig,axis:Vec3,planeZ:number,f
  if(extent!==undefined)return axes();
  const th=classThresholds(model.className)!,threshold=th.low??th.high;
  const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle),scenario=nominalScenario();
+ const evaluate=prepareCatalogueEvaluation(model,axis,scenario,bodyFrame);
  const limit=Math.ceil(PROFILE.domain.maxCenterMm+Math.max(...model.centre.map(Math.abs)));
  const memo=new Map<string,boolean>();
  const active=(center:Vec3)=>{
   const key=center.join(',');const known=memo.get(key);if(known!==undefined)return known;
-  const e=catalogueEvaluate(model,{center,axis},scenario,bodyFrame);
+  const e=evaluate(center);
   const hit=e.ok&&e.response>=threshold;memo.set(key,hit);return hit;
  };
  for(;;){
@@ -221,6 +245,7 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
  // Reuse exact samples only under those symmetries (never with imported obstacles or a shifted grid).
  const symmetric=obstacles.length===0&&planeZ===0&&model.centre.every(n=>n===0);
  const bodyFrame=frame??magnetBodyFrame(c,c.magnetAngle);
+ const sample=catalogueNominalSampler(c,axis,bodyFrame,obstacles,model);
  const planar=obstacles.length===0&&planeZ===0&&model.centre[1]===0&&Math.abs(axis[1])<1e-12&&bodyFrame.every(a=>Math.abs(a[1])<1e-12||Math.abs(Math.abs(a[1])-1)<1e-12);
  // Same evaluator as point/cut/timeline, including body collision; no angle quantization.
  for(let k=0;k<zs.length;k++)for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
@@ -229,9 +254,9 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
   const reflected=(k*ys.length+(ys.length-1-j))*xs.length+i;
   const both=((zs.length-1-k)*ys.length+j)*xs.length+(xs.length-1-i);
   const reuse=symmetric?Math.min(index,inverse,...(planar?[reflected,both]:[])):planar?Math.min(index,reflected):index;
-  const e=reuse<index?null:cataloguePlacement(c,frame?{center:[x,y,z],axis,frame}:{center:[x,y,z],axis},obstacles,model,true);
-  const response=reuse<index?field.values[reuse]??null:e?.nominal?.ok?e.nominal.response:null;
-  const blocked=reuse<index?field.blocked[reuse]??false:e?.cause==='overlap';
+  const e=reuse<index?null:sample([x,y,z]);
+  const response=reuse<index?field.values[reuse]??null:e!.response;
+  const blocked=reuse<index?field.blocked[reuse]??false:e!.blocked;
   const zone:0|1|2=response===null?0:response>=th.high?2:th.low!==null&&response>=th.low?1:0;
   const [x0,x1]=nodeBounds(xs,i),[y0,y1]=nodeBounds(ys,j),[z0,z1]=nodeBounds(zs,k);
   const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response,blocked};
@@ -249,10 +274,11 @@ export function catalogueCut(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacles:
  const [xs,ys,zs]=catalogueSamplingAxes(c,axis,planeZ,frame,extent,model,true);
  const displayedExtent=Math.max(xs.at(-1)!,ys.at(-1)!,zs.at(-1)!);
  const cut:SampledVolume['cut']=[];
+ const sample=catalogueNominalSampler(c,axis,frame??magnetBodyFrame(c,c.magnetAngle),obstacles,model),th=classThresholds(model.className)!;
  for(let j=0;j<ys.length;j++)for(let i=0;i<xs.length;i++){
-  const x=xs[i]??0,y=ys[j]??0,e=cataloguePlacement(c,frame?{center:[x,y,planeZ],axis,frame}:{center:[x,y,planeZ],axis},obstacles,model,true);
+  const x=xs[i]??0,y=ys[j]??0,e=sample([x,y,planeZ]);
   const [x0,x1]=nodeBounds(xs,i),[y0,y1]=nodeBounds(ys,j);
-  cut.push({i,j,k:0,x,y,z:planeZ,x0,x1,y0,y1,z0:planeZ,z1:planeZ,zone:e.zone,response:e.nominal?.ok?e.nominal.response:null,blocked:e.cause==='overlap'});
+  cut.push({i,j,k:0,x,y,z:planeZ,x0,x1,y0,y1,z0:planeZ,z1:planeZ,zone:e.response===null?0:e.response>=th.high?2:th.low!==null&&e.response>=th.low?1:0,response:e.response,blocked:e.blocked});
  }
  return {key:'',cells:[],cut,field:{xs,ys,zs:[planeZ],values:[],blocked:[]},axis,planeZ,extent:displayedExtent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length,truncated:cut.some(p=>p.zone>0&&(p.i===0||p.i===xs.length-1||p.j===0||p.j===ys.length-1))};
 }
@@ -302,9 +328,10 @@ export function pivotBoundary(c:WorkshopConfig,t:number,model=catalogueModel(c),
 }
 /** Numeric pose adapter also works for loaded clips. Tracks stay in the browser tab. */
 export function orientationBoundary(c:WorkshopConfig,pose:CataloguePose,model=catalogueModel(c),extent=24):(number|null)[]{
+ const sample=catalogueNominalSampler(c,pose.axis,pose.frame??magnetBodyFrame(c,c.magnetAngle),[],model),th=classThresholds(model.className)!;
  return PIVOT_PROBE_Z.flatMap(z=>{let shell:number|null=null,core:number|null=null;
-  for(let x=0;x<=extent+1e-9&&core===null;x+=0.25){const e=cataloguePlacement(c,{...pose,center:[x,0,z]},[],model,true);
-   if(shell===null&&(e.zone??0)>=1)shell=x;if(e.zone===2)core=x;}
+  for(let x=0;x<=extent+1e-9&&core===null;x+=0.25){const e=sample([x,0,z]);
+   if(e.response!==null){if(shell===null&&e.response>=(th.low??th.high))shell=x;if(e.response>=th.high)core=x;}}
   return [shell,core];});
 }
 export type PivotPlan={samples:number[];intervals:{t0:number;t1:number;certified:boolean}[];truncated?:boolean};

@@ -229,7 +229,8 @@ export function guideOverlay(
       (state.step === "motion" || state.step === "test") && axisDir
         ? { origin, dir: axisDir, length: Math.max(20, extent * 0.4) }
         : null,
-    points: state.pick?.points ?? [],
+    points: (state.pick?.points ?? []).map(p => state.pick?.support
+      ? pointAt(m, state.pick.support.path, p, u) : p),
     // Un repère d'attache suit exactement la transformation de son support.
     attachMarks: [m.sensorAttach, m.magnetAttach]
       .filter((a): a is Attachment => !!a)
@@ -359,6 +360,23 @@ export default function MachineGuide({
     asset?.nodes.find((n) => n.path === path)?.name ?? path;
   const ready = guideMotionReady(m, !!asset);
   const stepIndex = STEPS.findIndex(([s]) => s === state.step);
+  const positionPreview = (
+    <div className="mw-position-preview" data-testid="guide-position-preview">
+      <label className="mw-select-label">
+        {t("Aperçu de la position")}
+        <input type="range" min={0} max={clipMode ? 100 : 50} step={clipMode ? 0.1 : 0.5}
+          value={(clipMode ? progress : Math.min(progress, 1 - progress)) * 100}
+          disabled={!asset || (clipMode ? !sampler : !!problem)}
+          aria-label={t("Aperçu de la position")}
+          onChange={e => { setPlaying(false); setProgress(Number(e.target.value) / 100); }} />
+      </label>
+      {clipMode && sampler ? <p className="t-body t-metric" data-testid="guide-clip-preview">
+        {msg("Temps : {0} s / {1} s", [(u * sampler.duration).toFixed(2), sampler.duration.toFixed(2)])}
+      </p> : !clipMode && <p className="t-body" data-testid="guide-opening">
+        {msg("Ouverture : {0} {1}", [opening.value.toFixed(1), opening.unit])}
+      </p>}
+    </div>
+  );
   const orientationControls = (
     <details className="mw-precise mw-rotation" data-testid="guide-orientation" key={target}>
       <summary className="t-body">{t(target === "sensor" ? "Rotation du capteur" : "Rotation de l’aimant")}</summary>
@@ -614,7 +632,7 @@ export default function MachineGuide({
             {problem && <p className="notice-warning">{t(problem)}</p>}
             <p className="t-caption">
               {t(
-                "Le clip est lu tel qu'il est enregistré, du début à la fin, sans aller-retour ajouté. Pose d'installation = début du clip (0 s).",
+                "Le clip est lu tel qu'il est enregistré, du début à la fin, sans aller-retour ajouté.",
               )}
             </p>
             <p className="t-caption">
@@ -622,23 +640,7 @@ export default function MachineGuide({
                 "Attaches et repères sont enregistrés dans la pose statique du fichier et suivent exactement leur pièce. Un composant non attaché reste fixe.",
               )}
             </p>
-            <label className="mw-select-label">
-              {t("Aperçu de la position")}
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={0.1}
-                value={progress * 100}
-                aria-label={t("Aperçu de la position")}
-                onChange={(e) => setProgress(Number(e.target.value) / 100)}
-              />
-            </label>
-            {sampler && (
-              <p className="t-body t-metric" data-testid="guide-clip-preview">
-                {msg("Temps : {0} s / {1} s", [(u * sampler.duration).toFixed(2), sampler.duration.toFixed(2)])}
-              </p>
-            )}
+            {positionPreview}
           </>
         ) : (
           <>
@@ -807,21 +809,7 @@ export default function MachineGuide({
                 />
               ))}
           </details>
-          <label className="mw-select-label">
-            {t("Aperçu de la position")}
-            <input
-              type="range"
-              min={0}
-              max={50}
-              step={0.5}
-              value={Math.min(50, progress * 100)}
-              aria-label={t("Aperçu de la position")}
-              onChange={(e) => setProgress(Number(e.target.value) / 100)}
-            />
-          </label>
-          <p className="t-body" data-testid="guide-opening">
-            {msg("Ouverture : {0} {1}", [opening.value.toFixed(1), opening.unit])}
-          </p>
+          {positionPreview}
           {problem && <p className="notice-warning">{t(problem)}</p>}
           <div className="mw-guide-row">
             <Button
@@ -845,6 +833,7 @@ export default function MachineGuide({
     ),
     install: (
       <>
+        {positionPreview}
         <div className="mw-install-setup">
         {/* i18n-canonical : libellés français traduits au rendu par t(). */}
         <div className="mw-segmented" role="radiogroup" aria-label={t("Composant à installer")}>
