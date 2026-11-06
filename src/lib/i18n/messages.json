@@ -37358,24 +37358,6 @@
     "Assistenza Claude per titolo e settore",
     "Claude によるタイトルと業種の提案"
   ],
-  "L’aide Claude est désactivée lorsqu’un NDA est demandé.": [
-    "Claude assistance is disabled when an NDA is requested.",
-    "申请保密协议时，Claude 辅助功能将关闭。",
-    "Bei angeforderter NDA ist die Claude-Hilfe deaktiviert.",
-    "La ayuda de Claude se desactiva cuando se solicita un NDA.",
-    "Помощь Claude отключена при запросе NDA.",
-    "L’assistenza Claude è disattivata quando viene richiesto un NDA.",
-    "NDA が要求されている場合、Claude の支援は無効になります。"
-  ],
-  "Après les six questions, vos réponses sont transmises à Claude pour proposer un titre et une industrie. Les champs de coordonnées et les fichiers ne sont pas inclus.": [
-    "After the six questions, your answers are sent to Claude to suggest a title and industry. Contact fields and files are not included.",
-    "完成六个问题后，您的回答将发送给 Claude 以建议标题和行业。不包含联系信息字段和文件。",
-    "Nach den sechs Fragen werden Ihre Antworten an Claude gesendet, um Titel und Branche vorzuschlagen. Kontaktfelder und Dateien werden nicht einbezogen.",
-    "Tras las seis preguntas, sus respuestas se envían a Claude para sugerir un título y una industria. No se incluyen los campos de contacto ni los archivos.",
-    "После шести вопросов ответы передаются Claude для предложения названия и отрасли. Контактные поля и файлы не включаются.",
-    "Dopo le sei domande, le risposte vengono inviate a Claude per suggerire titolo e settore. I campi dei contatti e i file non sono inclusi.",
-    "6つの質問の後、回答を Claude に送信してタイトルと業種を提案します。連絡先の入力欄やファイルは含まれません。"
-  ],
   "La sélection des capteurs et les calculs techniques restent locaux.": [
     "Sensor selection and engineering calculations stay local.",
     "传感器选择和技术计算仍在本地完成。",
