@@ -2070,7 +2070,6 @@ export function DesignSpace({
           <input type="checkbox" checked={identityEnabled && !nda.required} disabled={nda.required} onChange={e=>setIdentityEnabled(e.target.checked)} />
           {t("Aide Claude pour le titre et l’industrie")}
         </label>
-        <p className="t-caption">{nda.required ? t("L’aide Claude est désactivée lorsqu’un NDA est demandé.") : t("Après les six questions, vos réponses sont transmises à Claude pour proposer un titre et une industrie. Les champs de coordonnées et les fichiers ne sont pas inclus.")}</p>
       </div>
       {showAdvanced ? (
         <>
