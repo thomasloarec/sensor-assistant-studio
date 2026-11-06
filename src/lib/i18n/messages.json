@@ -24551,14 +24551,14 @@
     "Nulla da annunciare: nessun riscontro è pubblicato su questo fascicolo.",
     "知らせる内容がありません。このカルテには公開済みの回答がありません。"
   ],
-  "Rien à installer, aucun formulaire pour commencer. L’aide Claude au titre et à l’industrie est facultative et expliquée avant les questions.": [
-    "Nothing to install, no forms to start. Claude assistance for the title and industry is optional and explained before the questions.",
-    "无需安装，无需填写表单即可开始。Claude 的标题和行业建议功能可自由选择，问答开始前会说明。",
-    "Nichts zu installieren, kein Formular zu Beginn. Die Claude-Hilfe für Titel und Branche ist optional und wird vor den Fragen erklärt.",
-    "Nada que instalar, ningún formulario para empezar. La ayuda de Claude para el título y la industria es opcional y se explica antes de las preguntas.",
-    "Не нужно ничего устанавливать или заполнять формы для начала работы. Помощь Claude с названием и отраслью необязательна; пояснение дано перед вопросами.",
-    "Niente da installare, nessun modulo per iniziare. L’aiuto di Claude per titolo e settore è facoltativo e viene spiegato prima delle domande.",
-    "インストール不要、フォーム入力なしで開始できます。タイトルと業種に関するClaudeの支援は任意で、質問の前に説明されます。"
+  "Rien à installer, aucun formulaire pour commencer.": [
+    "Nothing to install, no forms to start.",
+    "无需安装，无需填写表单即可开始。",
+    "Nichts zu installieren, kein Formular zu Beginn.",
+    "Nada que instalar, ningún formulario para empezar.",
+    "Не нужно ничего устанавливать или заполнять формы для начала работы.",
+    "Niente da installare, nessun modulo per iniziare.",
+    "インストール不要、フォーム入力なしで開始できます。"
   ],
   "Rotation dans le plan": [
     "Rotation in the plane",
