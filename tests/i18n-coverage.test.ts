@@ -128,8 +128,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 2 entries: accepted 3D import format and self-contained file requirements.
     // + 2 entries: visible picked point and installation at the current clip pose.
     // + 2 entries: playback rate and rotation-enabled same-face search.
-    // - 2 entries: bandeau d'aide Claude retiré ; l'interrupteur garde son libellé.
-    expect(Object.keys(dictionary)).toHaveLength(4191);
+    // - 3 entries: bandeau d'aide Claude et libellé de l'interrupteur retirés.
+    expect(Object.keys(dictionary)).toHaveLength(4190);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
