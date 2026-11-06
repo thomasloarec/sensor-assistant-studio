@@ -102,13 +102,14 @@ surfaces restent identiques ; aucun code de pays enregistré n’est renommé.
 Le champ Industrie se place entre Entreprise et E-mail dans Avec Standex. La liste
 native utilise la surface remplie et des libellés traduits dans les huit langues. Le champ
 reste seul : aucune aide, aucun encart de suggestion, statut ou bouton de confirmation.
-La valeur affichée, préremplie ou choisie, est acceptée lors de l’envoi du formulaire. L’aide Claude est présentée avant les questions avec une case
-de désactivation, sans imposer un nouveau dialogue. Aucun nom technique de clé API
-n’apparaît dans ce parcours. Les responsabilités nationales par industrie utilisent
+La valeur affichée, préremplie ou choisie, est acceptée lors de l’envoi du formulaire.
+Depuis le 6 novembre, Claude propose automatiquement le titre et l’industrie à la
+sortie du questionnaire, sans encart, case à cocher ni mention dans le parcours.
+Les protections existantes des projets NDA et des valeurs saisies restent actives.
+Les responsabilités nationales par industrie utilisent
 les mêmes contrôles et le même récapitulatif avant/après que les territoires.
 Typographie, surfaces, focus et cibles de 44 px reprennent les jetons existants.
-L’accueil annonce le caractère facultatif de l’aide Claude ; le texte de revue
-réserve la confirmation d’envoi au dossier destiné aux ingénieurs Standex.
+Le texte de revue réserve la confirmation d’envoi au dossier destiné aux ingénieurs Standex.
 
 ### Territoires et portraits — 4 novembre 2026
 

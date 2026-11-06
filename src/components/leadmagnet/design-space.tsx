@@ -674,7 +674,6 @@ export function DesignSpace({
 
   const [ndaDialogOpen, setNdaDialogOpen] = useState(false);
   const [bookingCityId, setBookingCityId] = useState<string | null>(null);
-  const [identityEnabled, setIdentityEnabled] = useState(true);
   const [bookingIndustry, setBookingIndustry] = useState<string | null>(null);
   const [bookingCountry, setBookingCountry] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -710,7 +709,7 @@ export function DesignSpace({
   const [pendingSaved, setPendingSaved] = useState<{ id: string; email: string } | null>(null);
   const questionnaireReady = focusIdx >= GUIDED_QUESTIONS.length - 1 || GUIDED_QUESTIONS.every(q =>
     dossier.requirements.some(r => r.key === q.key && r.value.trim()) || (dossier.delegatedDecisions ?? []).includes(delegatedQuestion(q.key)));
-  useProjectIdentity(dossier, setDossier, visible && questionnaireReady && tab !== "besoin" && !pendingSaved && identityEnabled && !nda.required);
+  useProjectIdentity(dossier, setDossier, visible && questionnaireReady && tab !== "besoin" && !pendingSaved && !nda.required);
   const pendingIdentityRef = useRef<{ localId: string; email: string; assetKey: string | null; identity: PendingIdentity } | null>(null);
   const pendingIdentity = () => {
     const email = dossier.business.contactEmail?.trim().toLowerCase() ?? "";
@@ -2065,12 +2064,6 @@ export function DesignSpace({
   const besoinSection = (
     <div className="space-y-5">
       <Button variant="ghost" onClick={resetSearch}>{t("Réinitialiser ma recherche")}</Button>
-      <div className="panel-block space-y-2">
-        <label className="t-body flex min-h-11 items-center gap-3">
-          <input type="checkbox" checked={identityEnabled && !nda.required} disabled={nda.required} onChange={e=>setIdentityEnabled(e.target.checked)} />
-          {t("Aide Claude pour le titre et l’industrie")}
-        </label>
-      </div>
       {showAdvanced ? (
         <>
           <p className="text-base text-muted-foreground">{t(LOCAL_ASSISTANT_LABEL)}</p>
