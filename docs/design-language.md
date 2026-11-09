@@ -7,7 +7,7 @@ confirme « Projet envoyé ». La recherche du commercial reste invisible : sans
 attribution, pendant la recherche ou en cas d'erreur, seul ce message de complétion
 apparaît, sans mention d'indisponibilité ni relance technique. Le contact résolu
 pour le pays, la ville et l'industrie courants et son calendrier configuré viennent
-compléter cette confirmation. Aucun contact, lien ou créneau n'est inventé.
+compléter cette confirmation. Aucun contact ni lien n’est inventé. Les créneaux fictifs du mode démonstration sont explicitement identifiés.
 Le suivi permet de rouvrir la confirmation, sans promettre un rendez-vous.
 Le dialogue conserve les jetons existants et peut défiler sur un écran peu haut.
 La vérification d'adresse requise avant une première soumission reste distincte.
@@ -19,11 +19,9 @@ sans réclamer les champs réservés à Standex. Un accès ouvre le formulaire N
 Les règles d'envoi, de consentement et de preuve NDA ne sont pas assouplies.
 Les erreurs de volume ou de préparation du partage 3D rejoignent la même liste.
 
-L'atelier n'est pas modifié dans cette livraison. Pour la future adaptation aux
-petits écrans, le circuit électrique doit rester présent en permanence ; aucun
-réglage, explication, mesure, commande ni état ne doit être supprimé. Seule la
-présentation de la chronologie et de sa légende peut être compactée, sans modifier
-leurs états, couleurs, valeurs ni comportement.
+L’atelier client dispose désormais d’une scène centrale et d’une colonne de lecture à droite à partir de 1024 px. Le verdict et la légende complète y sont déplacés sans supprimer de texte, de mesure, de réglage ni d’état. Le circuit électrique reste toujours présent dans la scène. La chronologie conserve son bandeau coloré, son curseur et sa précision, sous la scène. Les réglages et les explications défilent indépendamment sur ordinateur ; sous 1024 px, tout reste dans le flux vertical. La scène conserve son instance et sa caméra lors du redimensionnement. Les jetons existants sont réutilisés.
+
+Le calendrier de démonstration est restauré pour un commercial identifié sans lien de réservation. Il indique le fuseau horaire, affiche uniquement les créneaux futurs, et précise avant/après confirmation qu’aucune invitation réelle n’est créée. L’adaptateur Outlook utilise la même interface avec disponibilités et confirmation serveur. Aucun repli silencieux du réel vers la démonstration. Les dates et horaires sélectionnés héritent du texte contrasté de leur bouton. Le raccordement et la recette IT sont décrits dans [outlook-booking.md](outlook-booking.md).
 
 
 ### Définition du mouvement et tâches de pose — 5 novembre 2026

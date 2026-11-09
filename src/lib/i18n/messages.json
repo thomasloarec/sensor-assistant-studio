@@ -37714,5 +37714,95 @@
     "Размеры STEP вне диапазона: модель должна иметь размер от 0,1 мм до 20 м.",
     "Dimensioni STEP fuori intervallo: il modello deve misurare tra 0,1 mm e 20 m.",
     "STEP の寸法が範囲外です。モデルの大きさは 0.1 mm〜20 m にしてください。"
+  ],
+  "Explications du montage": [
+    "Assembly explanations",
+    "装配说明",
+    "Erläuterungen zum Aufbau",
+    "Explicaciones del montaje",
+    "Пояснения к сборке",
+    "Spiegazioni del montaggio",
+    "組立の説明"
+  ],
+  "Démonstration : aucun agenda réel n’est consulté et aucune invitation ne sera envoyée.": [
+    "Demo: no real calendar is accessed and no invitation will be sent.",
+    "演示：不会访问真实日历，也不会发送邀请。",
+    "Demo: Es wird kein echter Kalender abgefragt und keine Einladung versendet.",
+    "Demostración: no se consulta ningún calendario real ni se enviará ninguna invitación.",
+    "Демонстрация: реальные календари не проверяются, приглашения не отправляются.",
+    "Dimostrazione: non viene consultato alcun calendario reale e non sarà inviato alcun invito.",
+    "デモ：実際のカレンダーへのアクセスや招待の送信は行われません。"
+  ],
+  "Votre rendez-vous est confirmé": [
+    "Your meeting is confirmed",
+    "您的会议已确认",
+    "Ihr Termin ist bestätigt",
+    "Su reunión está confirmada",
+    "Ваша встреча подтверждена",
+    "Il suo appuntamento è confermato",
+    "予約が確定しました"
+  ],
+  "Votre invitation sera envoyée par Microsoft Outlook.": [
+    "Microsoft Outlook will send your invitation.",
+    "Microsoft Outlook 将发送您的邀请。",
+    "Ihre Einladung wird von Microsoft Outlook versendet.",
+    "Microsoft Outlook enviará su invitación.",
+    "Microsoft Outlook отправит вам приглашение.",
+    "Microsoft Outlook invierà il suo invito.",
+    "Microsoft Outlook から招待が送信されます。"
+  ],
+  "30 minutes": [
+    "30 minutes",
+    "30 分钟",
+    "30 Minuten",
+    "30 minutos",
+    "30 минут",
+    "30 minuti",
+    "30分"
+  ],
+  "Chargement des horaires…": [
+    "Loading times…",
+    "正在加载时间…",
+    "Zeiten werden geladen…",
+    "Cargando horarios…",
+    "Загрузка времени…",
+    "Caricamento degli orari…",
+    "時間を読み込み中…"
+  ],
+  "La réservation n’a pas pu être confirmée. Vérifiez votre calendrier avant de réessayer.": [
+    "The booking could not be confirmed. Check your calendar before trying again.",
+    "无法确认预订。重试前请检查您的日历。",
+    "Die Buchung konnte nicht bestätigt werden. Prüfen Sie Ihren Kalender vor einem erneuten Versuch.",
+    "No se pudo confirmar la reserva. Revise su calendario antes de intentarlo de nuevo.",
+    "Не удалось подтвердить бронирование. Перед повторной попыткой проверьте календарь.",
+    "Impossibile confermare la prenotazione. Controlli il calendario prima di riprovare.",
+    "予約を確認できませんでした。再試行する前にカレンダーをご確認ください。"
+  ],
+  "Aucun horaire cette semaine. Choisissez une autre semaine.": [
+    "No times available this week. Choose another week.",
+    "本周没有可用时间。请选择其他周。",
+    "Diese Woche sind keine Termine verfügbar. Wählen Sie eine andere Woche.",
+    "No hay horarios esta semana. Elija otra semana.",
+    "На этой неделе нет свободного времени. Выберите другую неделю.",
+    "Nessun orario disponibile questa settimana. Scelga un’altra settimana.",
+    "今週の空き時間はありません。別の週を選択してください。"
+  ],
+  "Confirmation en cours…": [
+    "Confirming…",
+    "正在确认…",
+    "Wird bestätigt…",
+    "Confirmando…",
+    "Подтверждение…",
+    "Conferma in corso…",
+    "確認中…"
+  ],
+  "{0} à {1} ({2})": [
+    "{0} at {1} ({2})",
+    "{0} {1}（{2}）",
+    "{0} um {1} ({2})",
+    "{0} a las {1} ({2})",
+    "{0} в {1} ({2})",
+    "{0} alle {1} ({2})",
+    "{0} {1}（{2}）"
   ]
 }

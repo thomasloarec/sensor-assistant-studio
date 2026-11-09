@@ -3448,3 +3448,42 @@
 .mw-playback-speed { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .mw-playback-speed select { min-height: 44px; min-width: 88px; padding: 8px 12px; background: var(--surface-sunken); color: var(--foreground); border-radius: var(--r-sm); }
 .mw-playback-speed select:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* Client workshop: give the scene the remaining height, keep every explanation
+   in a separate reading rail. CSS alone reflows the same mounted scene. */
+.mw-view-layout { display: contents; }
+.mw-client-pedagogical .mw-reading-panel { display: grid; align-content: start; gap: 12px; min-width: 0; }
+.mw-client-pedagogical .mw-reading-panel .mw-legend {
+  position: static; display: flex; flex-direction: column; gap: 12px;
+  margin: 0; padding: 12px; background: var(--mw-field); border-radius: var(--r-lg);
+}
+.mw-client-pedagogical .mw-reading-panel .mw-legend > span { display: block; }
+@media (min-width: 1024px) {
+  .mw-client-pedagogical .mw-stage-grid {
+    grid-template-columns: clamp(260px, 22vw, 340px) minmax(0, 1fr);
+    gap: 12px; padding: 12px;
+  }
+  .mw-client-pedagogical .mw-main { gap: 8px; }
+  .mw-client-pedagogical .mw-view-layout {
+    display: grid; flex: 1 1 auto; min-height: 460px;
+    grid-template-columns: minmax(0, 1fr) clamp(210px, 17vw, 270px);
+    grid-template-rows: minmax(380px, 1fr) auto; gap: 8px;
+  }
+  .mw-client-pedagogical .mw-view-layout > .mw-canvas {
+    grid-column: 1; grid-row: 1; min-height: 380px; height: auto;
+  }
+  .mw-client-pedagogical .mw-view-layout > .mw-cycle { grid-column: 1; grid-row: 2; }
+  .mw-client-pedagogical .mw-reading-panel {
+    grid-column: 2; grid-row: 1 / 3; min-height: 0; overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .mw-client-pedagogical .mw-verdict-banner { align-content: start; }
+  .mw-client-pedagogical .mw-primary-actions { gap: 8px; padding: 6px; }
+  .mw-client-pedagogical .mw-primary-actions > .mw-button { margin-left: auto; }
+}
+@media (max-width: 1023px) {
+  .mw-client-pedagogical .mw-reading-panel { margin-bottom: 12px; }
+}
+@media (min-width: 1024px) {
+  .mw-client-pedagogical.mw-embedded .mw-main > .mw-view-layout { flex: 1 1 0; }
+}
