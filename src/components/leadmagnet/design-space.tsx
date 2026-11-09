@@ -5377,7 +5377,7 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
-      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} />
+      <BookingDialog dossierId={serverDossierId} open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} />
       <SubmissionProblemsDialog problems={submissionProblems} nda={nda} onClose={() => setSubmissionProblems(null)} onOpenNda={focusNdaSection} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (

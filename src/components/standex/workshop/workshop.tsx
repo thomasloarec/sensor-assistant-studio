@@ -2306,6 +2306,37 @@ export default function MagneticWorkshop({
     </details>
   );
 
+  const placementInformation = (catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':'Position ou orientation à vérifier avec Standex')}</span>{pivotT!==null&&playing&&<span className="t-caption">{t(orientationTransition?'La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.':'Pendant la lecture, les zones montrent l’orientation préparée la plus proche')}</span>}{clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} />}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner);
+  const cycleLegend = (clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+              <span>
+                <i className="closed" />
+                {t("Fermé")}
+              </span>
+              <span>
+                <i className="open" />
+                {t("Ouvert")}
+              </span>
+              <span>
+                <i className="unknown" />
+                {t("Indéterminé")}
+              </span>
+              {!machine && (
+                <span>
+                  <i className="target" />
+                  {t("Fenêtre souhaitée")}
+                </span>
+              )}
+              <button
+                className="mw-reset"
+                aria-label={t("Revenir au départ")}
+                onClick={() => {
+                  setPlaying(false);
+                  setProgress(0);
+                }}
+              >
+                <RotateCcw size={17} />
+              </button>
+            </div>);
   return (
     <main className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${clientPedagogical ? "mw-client-pedagogical" : ""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
       {productCard && !pedagogical && (
@@ -2561,9 +2592,13 @@ export default function MagneticWorkshop({
               ))}
             </div>
           )}
-          {catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':'Position ou orientation à vérifier avec Standex')}</span>{pivotT!==null&&playing&&<span className="t-caption">{t(orientationTransition?'La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.':'Pendant la lecture, les zones montrent l’orientation préparée la plus proche')}</span>}{clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} />}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner}
+
           {catalogue&&preparing&&<div className="notice-info t-body" role="status" data-testid="zones-preparation">{t('Préparation des zones : le mouvement démarrera automatiquement.')} <span className="t-metric">{prepSeconds} s{prepProgress.total>0?' · '+prepProgress.done+'/'+prepProgress.total:''}</span></div>}
           {clientPedagogical&&exploring&&<p className="notice-info t-body" data-testid="client-exploration-context">{t('Exemple générique — ce résultat ne concerne pas le couple de votre dossier')}</p>}
+          <div className="mw-view-layout">
+          {!clientPedagogical && <>
+          {placementInformation}
+          </>}
           <div
             className="mw-canvas"
             role={pedagogical?"group":"img"}
@@ -2818,36 +2853,15 @@ export default function MagneticWorkshop({
                 setProgress(Number(e.target.value) / 100);
               }}
             />
-            {clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
-              <span>
-                <i className="closed" />
-                {t("Fermé")}
-              </span>
-              <span>
-                <i className="open" />
-                {t("Ouvert")}
-              </span>
-              <span>
-                <i className="unknown" />
-                {t("Indéterminé")}
-              </span>
-              {!machine && (
-                <span>
-                  <i className="target" />
-                  {t("Fenêtre souhaitée")}
-                </span>
-              )}
-              <button
-                className="mw-reset"
-                aria-label={t("Revenir au départ")}
-                onClick={() => {
-                  setPlaying(false);
-                  setProgress(0);
-                }}
-              >
-                <RotateCcw size={17} />
-              </button>
-            </div>}
+
+            {!clientPedagogical && <>
+            {cycleLegend}
+            </>}
+          </div>
+          {clientPedagogical && <aside className="mw-reading-panel" aria-label={t("Explications du montage")}>
+          {placementInformation}
+            {cycleLegend}
+          </aside>}
           </div>
         </section>
       </div>

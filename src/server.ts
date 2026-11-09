@@ -47,6 +47,10 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      if (new URL(request.url).pathname === "/api/booking") {
+        const { handleBooking } = await import("./lib/leadmagnet/booking.server");
+        return await handleBooking(request);
+      }
       if (new URL(request.url).pathname === "/api/customer-access") {
         const { handleCustomerAccess } = await import("./lib/leadmagnet/customer-access.server");
         return await handleCustomerAccess(request);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { fetchSalesContact } from "@/lib/leadmagnet/territory-adapter";
@@ -12,6 +12,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { demoBookingProvider, outlookBookingProvider } from "@/lib/leadmagnet/booking-provider";
+import { BookingCalendar } from "./booking-calendar";
 import { SalesAvatar } from "./sales-avatar";
 export function RoutedBooking({
   open,
@@ -20,6 +22,7 @@ export function RoutedBooking({
   cityId,
   industry,
   loadContact = fetchSalesContact,
+  dossierId = null,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -27,6 +30,7 @@ export function RoutedBooking({
   cityId?: string | null;
   industry?: string | null;
   loadContact?: typeof fetchSalesContact;
+  dossierId?: string | null;
 }) {
   useLocale();
   const lookupKey = JSON.stringify([country, cityId ?? null, industry ?? null]);
@@ -54,10 +58,16 @@ export function RoutedBooking({
     result?.lookupKey === lookupKey && result.value.reason === "assigned"
       ? result.value.contact
       : null;
+  const liveCalendar = import.meta.env["VITE_BOOKING_PROVIDER"] === "outlook";
+  const provider = useMemo(
+    () =>
+      liveCalendar && contact ? outlookBookingProvider(dossierId, contact.id) : demoBookingProvider,
+    [liveCalendar, dossierId, contact?.id],
+  );
   // Submission is already confirmed. Routing must never dismiss that next step.
   if (!open) return null;
   const known = Boolean(contact?.id && contact.name);
-  const url = bookingUrl(contact?.booking_url ?? undefined);
+  const url = liveCalendar ? null : bookingUrl(contact?.booking_url ?? undefined);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl max-h-[90dvh] overflow-y-auto">
@@ -92,9 +102,19 @@ export function RoutedBooking({
             </Button>
           </>
         ) : null}
-        <Button variant="outline" onClick={() => onOpenChange(false)}>
-          {t("Revenir à mon projet")}
-        </Button>
+        {known && contact && !url ? (
+          <BookingCalendar
+            key={JSON.stringify([lookupKey, contact.id, dossierId])}
+            contactName={contact.name}
+            provider={provider}
+            onClose={() => onOpenChange(false)}
+          />
+        ) : null}
+        {(!known || url) && (
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t("Revenir à mon projet")}
+          </Button>
+        )}
       </DialogContent>
     </Dialog>
   );
