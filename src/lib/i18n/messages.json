@@ -37804,5 +37804,185 @@
     "{0} в {1} ({2})",
     "{0} alle {1} ({2})",
     "{0} {1}（{2}）"
+  ],
+  "Aimant détecté": [
+    "Magnet detected",
+    "检测到磁铁",
+    "Magnet erkannt",
+    "Imán detectado",
+    "Магнит обнаружен",
+    "Magnete rilevato",
+    "磁石を検出"
+  ],
+  "Aimant non détecté": [
+    "Magnet not detected",
+    "未检测到磁铁",
+    "Magnet nicht erkannt",
+    "Imán no detectado",
+    "Магнит не обнаружен",
+    "Magnete non rilevato",
+    "磁石を未検出"
+  ],
+  "Position à ajuster": [
+    "Adjust the position",
+    "请调整位置",
+    "Position anpassen",
+    "Ajuste la posición",
+    "Измените положение",
+    "Regolare la posizione",
+    "位置の調整が必要"
+  ],
+  "Simulation à compléter": [
+    "Complete the simulation setup",
+    "请完成模拟设置",
+    "Simulation vervollständigen",
+    "Complete la configuración de la simulación",
+    "Завершите настройку моделирования",
+    "Completare la simulazione",
+    "シミュレーションの設定が必要"
+  ],
+  "À cette position": [
+    "At this position",
+    "在此位置",
+    "An dieser Position",
+    "En esta posición",
+    "В этом положении",
+    "In questa posizione",
+    "この位置では"
+  ],
+  "Le circuit suit la position de l’aimant.": [
+    "The circuit responds to the magnet’s position.",
+    "电路状态随磁铁位置变化。",
+    "Die Schaltung reagiert auf die Position des Magneten.",
+    "El circuito responde a la posición del imán.",
+    "Цепь реагирует на положение магнита.",
+    "Il circuito reagisce alla posizione del magnete.",
+    "回路は磁石の位置に応じて変化します。"
+  ],
+  "Lancez le mouvement et observez le circuit.": [
+    "Start the movement and watch the circuit.",
+    "启动运动并观察电路。",
+    "Starten Sie die Bewegung und beobachten Sie die Schaltung.",
+    "Inicie el movimiento y observe el circuito.",
+    "Запустите движение и наблюдайте за цепью.",
+    "Avvii il movimento e osservi il circuito.",
+    "動きを開始して回路を観察してください。"
+  ],
+  "Vérifiez l’espace autour du capteur et de l’aimant.": [
+    "Check the space around the sensor and magnet.",
+    "请检查传感器和磁铁周围的空间。",
+    "Prüfen Sie den Freiraum um Sensor und Magnet.",
+    "Compruebe el espacio alrededor del sensor y del imán.",
+    "Проверьте пространство вокруг датчика и магнита.",
+    "Verifichi lo spazio attorno al sensore e al magnete.",
+    "センサーと磁石の周囲の空間を確認してください。"
+  ],
+  "Définissez le mouvement de votre modèle.": [
+    "Define your model’s movement.",
+    "请设置模型的运动。",
+    "Definieren Sie die Bewegung Ihres Modells.",
+    "Defina el movimiento de su modelo.",
+    "Задайте движение модели.",
+    "Definisca il movimento del modello.",
+    "モデルの動きを設定してください。"
+  ],
+  "Chargez votre modèle pour explorer la détection.": [
+    "Load your model to explore detection.",
+    "加载模型以探索检测效果。",
+    "Laden Sie Ihr Modell, um die Erkennung zu erkunden.",
+    "Cargue su modelo para explorar la detección.",
+    "Загрузите модель, чтобы изучить обнаружение.",
+    "Carichi il modello per esplorare il rilevamento.",
+    "モデルを読み込んで検出を試してください。"
+  ],
+  "Ce montage nécessite une vérification avec Standex.": [
+    "Check this assembly with Standex.",
+    "请与 Standex 核实此安装方案。",
+    "Prüfen Sie diesen Aufbau mit Standex.",
+    "Revise este montaje con Standex.",
+    "Уточните эту сборку со Standex.",
+    "Verifichi questo montaggio con Standex.",
+    "この配置について Standex にご確認ください。"
+  ],
+  "Les couleurs dans la vue 3D": [
+    "Colours in the 3D view",
+    "3D 视图中的颜色",
+    "Farben in der 3D-Ansicht",
+    "Colores en la vista 3D",
+    "Цвета в 3D-виде",
+    "Colori nella vista 3D",
+    "3Dビューの色"
+  ],
+  "Détection estimée": [
+    "Estimated detection",
+    "预计检测",
+    "Geschätzte Erkennung",
+    "Detección estimada",
+    "Расчётное обнаружение",
+    "Rilevamento stimato",
+    "推定検出"
+  ],
+  "Détection selon la sensibilité": [
+    "Detection depends on sensitivity",
+    "检测取决于灵敏度",
+    "Erkennung je nach Empfindlichkeit",
+    "Detección según la sensibilidad",
+    "Обнаружение зависит от чувствительности",
+    "Rilevamento secondo la sensibilità",
+    "感度に応じた検出"
+  ],
+  "Obstacle mécanique": [
+    "Mechanical obstacle",
+    "机械障碍物",
+    "Mechanisches Hindernis",
+    "Obstáculo mecánico",
+    "Механическое препятствие",
+    "Ostacolo meccanico",
+    "機械的な障害物"
+  ],
+  "Simulation indicative": [
+    "Illustrative simulation",
+    "示意模拟",
+    "Veranschaulichende Simulation",
+    "Simulación orientativa",
+    "Иллюстративная модель",
+    "Simulazione indicativa",
+    "参考用シミュレーション"
+  ],
+  "En savoir plus": [
+    "Learn more",
+    "了解更多",
+    "Mehr erfahren",
+    "Más información",
+    "Подробнее",
+    "Scopri di più",
+    "詳しく見る"
+  ],
+  "L’aimant actionne le contact sans le toucher. Observez le circuit quand il se déplace.": [
+    "The magnet operates the contact without touching it. Watch the circuit as the magnet moves.",
+    "磁铁无需接触即可驱动触点。移动磁铁时，请观察电路。",
+    "Der Magnet betätigt den Kontakt berührungslos. Beobachten Sie die Schaltung während seiner Bewegung.",
+    "El imán acciona el contacto sin tocarlo. Observe el circuito mientras se mueve.",
+    "Магнит переключает контакт, не касаясь его. Наблюдайте за цепью при движении магнита.",
+    "Il magnete aziona il contatto senza toccarlo. Osservi il circuito mentre si muove.",
+    "磁石は触れることなく接点を動かします。磁石が動くときの回路を観察してください。"
+  ],
+  "La lampe illustre un capteur très sensible. Dans la zone jaune, l’activation dépend de sa sensibilité.": [
+    "The lamp illustrates a highly sensitive sensor. In the yellow zone, activation depends on sensitivity.",
+    "指示灯展示高灵敏度传感器的状态。在黄色区域，激活取决于灵敏度。",
+    "Die Lampe veranschaulicht einen sehr empfindlichen Sensor. In der gelben Zone hängt die Aktivierung von der Empfindlichkeit ab.",
+    "La lámpara ilustra un sensor muy sensible. En la zona amarilla, la activación depende de la sensibilidad.",
+    "Лампа иллюстрирует высокочувствительный датчик. В жёлтой зоне срабатывание зависит от чувствительности.",
+    "La lampada illustra un sensore molto sensibile. Nella zona gialla l’attivazione dipende dalla sensibilità.",
+    "ランプは高感度センサーの状態を示します。黄色の領域では感度によって動作が異なります。"
+  ],
+  "Certaines zones dépassent la vue affichée.": [
+    "Some zones extend beyond the displayed view.",
+    "部分区域超出当前显示范围。",
+    "Einige Zonen reichen über die angezeigte Ansicht hinaus.",
+    "Algunas zonas se extienden fuera de la vista mostrada.",
+    "Некоторые зоны выходят за пределы отображаемого вида.",
+    "Alcune zone si estendono oltre la vista mostrata.",
+    "一部の領域は表示範囲を超えています。"
   ]
 }

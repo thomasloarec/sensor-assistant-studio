@@ -1,3 +1,4 @@
+import { ClientPlacementStatus, ClientZoneLegend, clientPlacementTitle } from "./client-guidance";
 import { initialMagnetAttachment } from '@/lib/standex/machine-magnet-orientation';
 import { useWorkshopDesktop } from "./use-workshop-desktop";
 import { Button } from "@/components/ui/button";
@@ -2306,8 +2307,18 @@ export default function MagneticWorkshop({
     </details>
   );
 
-  const placementInformation = (catalogue ? <div className="mw-verdict-banner notice-info" role="status" data-testid="client-pedagogical-verdict"><strong className="t-title-s">{t(PLACEMENT_LABEL[placement.state])}</strong><span className="t-caption">{t(CATALOGUE_LABELS.notice)}</span><span className="t-body">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</span>{catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><span key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</span>)}<span className="t-caption">{t(placement.state==='favorable'?'Zones d’activation estimées':placement.cause==='overlap'?'Collision du corps de l’aimant avec l’enveloppe ou le montage':'Position ou orientation à vérifier avec Standex')}</span>{pivotT!==null&&playing&&<span className="t-caption">{t(orientationTransition?'La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.':'Pendant la lecture, les zones montrent l’orientation préparée la plus proche')}</span>}{clientPedagogical && <PivotNotes failed={prepFailed} hidden={pivotHidden} />}</div> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner);
-  const cycleLegend = (clientPedagogical && !exploring ? <div className="mw-legend" data-testid="client-product-legend"><span>{config.sensorId} + {config.magnetModel}</span><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{layerThresholds?.low!=null&&<span>{t('Zone jaune : activation possible selon l’exemplaire. La lampe illustre la borne la plus sensible de la classe, pas une activation garantie.')}</span>}<span>{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</span>{sampled.failed&&<span>{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</span>}<span>{t(CATALOGUE_LABELS.notice)}</span></div> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
+  const placementInformation = (catalogue ? <ClientPlacementStatus contact={circuitContact} cause={placement.cause} playing={playing}>
+    {pivotT!==null&&playing&&orientationTransition&&<span className="t-caption">{t('La forme varie rapidement près de cette orientation. Mettre en pause pour affiner les zones.')}</span>}
+    <PivotNotes failed={prepFailed} hidden={pivotHidden} />
+  </ClientPlacementStatus> : pedagogical ? <PedagogicalBanner evidence={placement} diagnosis={diagnosis} remedy={remedy} onPropose={r=>{if(r.kind==="verified")setSuggestion(r.config);}}/> : verdictBanner);
+  const cycleLegend = (clientPedagogical && !exploring ? <ClientZoneLegend sensor={config.sensorId} magnet={config.magnetModel} variableZone={layerThresholds?.low!=null}
+    alert={<>{sampled.failed&&<span role="alert">{t("Calcul des zones interrompu")}</span>}{sampled.volume?.truncated&&<span>{t("Certaines zones dépassent la vue affichée.")}</span>}</>}>
+    <p className="t-caption">{t('Le repère indique le centre magnétique estimé ; c’est sa position dans les lobes qui commande la lampe.')}</p>
+    <p className="t-caption">{t(catalogueProfile?CATALOGUE_LABELS[catalogueProfile.status]:CATALOGUE_LABELS.analogy)}</p>
+    {catalogueProfile&&catalogueVerdictNotes(config,catalogueProfile).map(n=><p key={n} className="t-caption" data-testid="catalogue-verdict-note">{t(n)}</p>)}
+    {sampled.volume?.truncated&&<p className="t-caption">{msg("Lobes tronqués aux limites du domaine affiché ±{0} mm ; aucune fermeture physique déduite.",[sampled.volume.extent])}</p>}
+    <p className="t-caption">{t(CATALOGUE_LABELS.notice)}</p>
+  </ClientZoneLegend> : pedagogical ? <div className="mw-legend" data-testid="pedagogical-legend"><span className="mw-ped-high">{t("Zone favorable estimée")}</span><span className="mw-ped-low">{t("Dépend de la sensibilité")}</span><span className="mw-ped-body">{t("Capteur générique, reed 66 monté")}</span><span className="mw-ped-gray">{t("Positions où l’aimant rencontrerait ce corps")}</span>{machine&&<span className="mw-ped-hatch">{t("Chevauchement possible avec une pièce du montage — à vérifier")}</span>}<span>{t("Estimation indicative")}</span></div> : <div className="mw-legend">
               <span>
                 <i className="closed" />
                 {t("Fermé")}
@@ -2608,7 +2619,7 @@ export default function MagneticWorkshop({
                 : reference
                   ? t(config.geometry)
                   : t(motionLabels[config.motion]),
-              t(pedagogical?PLACEMENT_LABEL[placement.state]:contactLabel[sample.contact]),
+              t(clientPedagogical?clientPlacementTitle(circuitContact,placement.cause):pedagogical?PLACEMENT_LABEL[placement.state]:contactLabel[sample.contact]),
             ])}
           >
             {pedagogical && zones && (preparing || (view === "top" && !playing ? cutSampled.busy : sampled.busy)) && <div className="mw-zone-loading" role="status" aria-label={t("Calcul des volumes en cours…")} data-testid="zone-loading"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg></div>}

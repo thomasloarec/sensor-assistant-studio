@@ -1,5 +1,14 @@
 # Langage de design Standex DETECT
 
+### Atelier : expliquer l’instant et alléger la lecture — 9 novembre 2026
+
+Dans l’atelier client, « À cette position » précède l’état de détection, issu du même calcul nominal que le circuit. Le départ MK04/M04 hors détection n’est plus présenté comme un verdict défavorable sur tout le mouvement. Un obstacle ou un mouvement non défini conserve une explication d’action spécifique ; aucun état positif n’est forcé et aucun montage n’est déplacé.
+
+La lecture par défaut se limite à cet état, une invitation à observer le circuit, l’identité du couple et trois légendes courtes des couleurs de la vue 3D. La zone jaune n’est expliquée que si cette plage de sensibilité existe. Une seule mention « Simulation indicative » reste visible. Les explications du reed, de la lampe, du repère et les réserves du modèle restent accessibles derrière « En savoir plus », fermé par défaut. Les erreurs de calcul et les limites de zones affichées restent visibles lorsqu’elles surviennent. Le circuit électrique et toutes les commandes sont conservés.
+
+Le volet utilise les jetons, la typographie et le focus existants, avec une cible de 44 px pour son ouverture. Les libellés accessibles suivent le même état instantané que le texte visible.
+
+
 ### Rendez-vous après soumission — 9 novembre 2026
 
 Après confirmation réelle de soumission, le dialogue remercie le client et
