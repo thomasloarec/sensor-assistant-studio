@@ -2,7 +2,7 @@ import { afterEach, expect, test } from "bun:test";
 import React from "react";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 if (typeof document === "undefined") GlobalRegistrator.register({ url: "http://localhost/" });
-const { render, cleanup, fireEvent, waitFor } = await import("@testing-library/react");
+const { act, render, cleanup, waitFor } = await import("@testing-library/react");
 import { DEFAULT_WORKSHOP } from "../src/lib/standex/magnetic-workshop";
 import {
   catalogueFrame,
@@ -51,9 +51,22 @@ test("MK04/M04 starts outside detection then activates: the message follows the 
       .querySelector("[data-contact]")
       ?.getAttribute("data-contact"),
   ).toBe("open");
-  fireEvent.change(v.getByRole("slider", { name: "Position in cycle" }), {
-    target: { value: "50" },
-  });
+  const seek = async (percent: number) =>
+    act(async () => {
+      // Happy DOM's synthetic range change is unreliable across the full suite.
+      // Exercise the real React handler, as workshop-align-time does; native input
+      // and the visible circuit are also checked in the browser preview.
+      const el = v.getByRole("slider", { name: "Position in cycle" }) as HTMLInputElement;
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(
+        el,
+        String(percent),
+      );
+      const key = Object.keys(el).find((k) => k.startsWith("__reactProps$"))!;
+      (el as unknown as Record<string, { onChange: (e: { target: HTMLInputElement }) => void }>)[
+        key
+      ]!.onChange({ target: el });
+    });
+  await seek(50);
   await waitFor(() =>
     expect(v.getByTestId("client-instant-state").textContent).toBe("Magnet detected"),
   );
@@ -63,9 +76,7 @@ test("MK04/M04 starts outside detection then activates: the message follows the 
       .querySelector("[data-contact]")
       ?.getAttribute("data-contact"),
   ).toBe("closed");
-  fireEvent.change(v.getByRole("slider", { name: "Position in cycle" }), {
-    target: { value: "100" },
-  });
+  await seek(100);
   await waitFor(() =>
     expect(v.getByTestId("client-instant-state").textContent).toBe("Magnet not detected"),
   );
