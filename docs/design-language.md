@@ -1,5 +1,18 @@
 # Langage de design Standex DETECT
 
+### Rendez-vous après soumission — 9 novembre 2026
+
+Cette règle remplace la résolution invisible du 4 novembre : après confirmation
+réelle de soumission, le dialogue s'ouvre pendant la recherche du commercial.
+Une absence d'attribution ou une erreur ne le ferme plus. Le projet reste annoncé
+enregistré, aucun créneau n'est inventé, et Réessayer relance la recherche. L'accès
+au rendez-vous reste visible dans le suivi, même si la recherche a échoué.
+Seul le contact résolu pour le pays, la ville et l'industrie courants est présenté.
+Le calendrier externe n'est proposé que si le contact possède un lien valide.
+Le dialogue conserve les jetons existants et peut défiler sur un écran peu haut.
+La vérification d'adresse requise avant une première soumission reste distincte.
+
+
 ### Définition du mouvement et tâches de pose — 5 novembre 2026
 
 Le choix exclusif Coulisse / Pivote garde son contrôle segmenté avec pictogrammes.

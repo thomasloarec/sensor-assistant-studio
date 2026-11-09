@@ -1,4 +1,8 @@
 {
+  "Hauteur": ["Height", "高度", "Höhe", "Altura", "Высота", "Altezza", "高さ"],
+  "Préparer mon rendez-vous avec Standex": ["Arrange my meeting with Standex", "安排与 Standex 的会面", "Mein Gespräch mit Standex vorbereiten", "Preparar mi reunión con Standex", "Подготовить встречу со Standex", "Preparare il mio incontro con Standex", "Standex との面談を準備する"],
+  "Recherche de votre interlocuteur Standex…": ["Finding your Standex contact…", "正在查找您的 Standex 联系人…", "Ihr Standex-Ansprechpartner wird gesucht…", "Buscando a su contacto de Standex…", "Поиск вашего контактного лица в Standex…", "Ricerca del referente Standex…", "Standex の担当者を検索中…"],
+  "Votre projet reste enregistré. Le rendez-vous en ligne n'est pas disponible pour le moment. Aucun créneau n'est réservé.": ["Your project remains saved. Online booking is currently unavailable. No time slot has been reserved.", "您的项目已保存。目前无法在线预约，尚未预订任何时段。", "Ihr Projekt bleibt gespeichert. Die Online-Terminbuchung ist derzeit nicht verfügbar. Es wurde kein Termin reserviert.", "Su proyecto sigue guardado. La reserva en línea no está disponible por el momento. No se ha reservado ningún horario.", "Ваш проект сохранён. Онлайн-запись сейчас недоступна. Время встречи не забронировано.", "Il progetto rimane salvato. La prenotazione online non è al momento disponibile. Nessun orario è stato prenotato.", "プロジェクトは保存されています。現在オンライン予約は利用できません。日時はまだ予約されていません。"],
   "Point {0} sélectionné": [
     "Point {0} selected",
     "已选择点 {0}",

@@ -36,7 +36,11 @@ export function detectEnvelopeFromText(requirements: readonly Requirement[], fre
   let ambiguous: { quote: string; key: string } | null = null;
   for (const s of sentences(requirements, free)) {
     const text = norm(s.quote);
-    if (!SPACE.test(text) || OTHER_OBJECT.test(text)) continue;
+    // Natural statements such as "I have a space of only 40x40x20mm" are
+    // explicit available space too; retain the unrelated-object exclusion.
+    const personalSpace = /\b(?:i|we) (?:have|only have) (?:only )?(?:a )?(?:space|volume) (?:of |available |for the sensor )*(?:only )?-?\s*\d/.test(text)
+      || /\bj ai (?:seulement )?(?:un |une )?(?:espace|place|volume) (?:disponible |de |pour le capteur )*(?:seulement )?-?\s*\d/.test(text);
+    if ((!SPACE.test(text) && !personalSpace) || OTHER_OBJECT.test(text)) continue;
     const matches = [...text.matchAll(TRIPLE)];
     if (matches.length === 0) continue;
     for (const m of matches) {

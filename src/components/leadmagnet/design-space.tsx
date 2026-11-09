@@ -677,7 +677,6 @@ export function DesignSpace({
   const [bookingIndustry, setBookingIndustry] = useState<string | null>(null);
   const [bookingCountry, setBookingCountry] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [bookingAvailable, setBookingAvailable] = useState(false);
   const [cablePanelOpen, setCablePanelOpen] = useState(false);
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
@@ -1378,7 +1377,6 @@ export function DesignSpace({
       setNda(INITIAL_NDA);
     setNdaDialogOpen(false);
     setBookingOpen(false);
-    setBookingAvailable(false);
     setBookingCountry(null);
     setBookingCityId(null);
     setBookingIndustry(null);
@@ -1749,7 +1747,6 @@ export function DesignSpace({
           setBookingCountry(input.dossier.business.siteCountry ?? null);
           setBookingCityId(input.dossier.business.siteCityId ?? null);
           setBookingIndustry(input.dossier.business.industry ?? null);
-          setBookingAvailable(false);
           setBookingOpen(true);
           // Le succès n'est PAS un message libre : il décrit la révision
           // exactement confirmée par le serveur. Dès que le brouillon change,
@@ -4547,13 +4544,13 @@ export function DesignSpace({
                 >
                   {t("Ouvrir mon espace (mes projets, suivi, variantes)")}
                 </Button>
-                {bookingAvailable ? (
+                {lastSent ? (
                   <Button
                     variant="outline"
                     className="min-h-11 text-base"
                     onClick={() => setBookingOpen(true)}
                   >
-                    {t("Échanger avec mon responsable Standex")}
+                    {t("Préparer mon rendez-vous avec Standex")}
                   </Button>
                 ) : null}
               </div>
@@ -5382,7 +5379,7 @@ export function DesignSpace({
         {espaceSection}
       </WorkspacePanel>
 
-      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} onContactAvailabilityChange={setBookingAvailable} />
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (
         <SensorCard
