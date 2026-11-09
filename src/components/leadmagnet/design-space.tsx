@@ -4,6 +4,7 @@ import { currentClientTrace, recordClientTrace } from "@/lib/standex/client-peda
 import { NeedExamples } from "./need-examples";
 import { SiteLocation } from "./site-location";
 import { BookingDialog } from "./booking-dialog";
+import { SubmissionProblemsDialog } from "./submission-problems-dialog";
 import {
   EXTERNAL_TRANSLATION_ENABLED,
   externalTranslationAllowed,
@@ -677,6 +678,7 @@ export function DesignSpace({
   const [bookingIndustry, setBookingIndustry] = useState<string | null>(null);
   const [bookingCountry, setBookingCountry] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [submissionProblems, setSubmissionProblems] = useState<string[] | null>(null);
   const [cablePanelOpen, setCablePanelOpen] = useState(false);
   const [volumeError, setVolumeError] = useState<string | null>(null);
   /** Le modèle 3D reste en mémoire tant que ce partage n'est pas explicitement demandé. */
@@ -1377,6 +1379,7 @@ export function DesignSpace({
       setNda(INITIAL_NDA);
     setNdaDialogOpen(false);
     setBookingOpen(false);
+    setSubmissionProblems(null);
     setBookingCountry(null);
     setBookingCityId(null);
     setBookingIndustry(null);
@@ -1629,19 +1632,12 @@ export function DesignSpace({
     }
     const pendingFirstSubmission = CUSTOMER_EMAIL_ACCESS && !serverDossierId &&
       (!backend?.authenticated || Boolean(preparedUpload?.file.path.includes("/pending/")));
-    if (volumeError) {
-      setSubmitMessage(volumeError);
-      setSubmitMessageTone("danger");
-      return;
-    }
+    const preparationProblems: string[] = volumeError ? [volumeError] : [];
+    // i18n-canonical: these keys are translated when the problems dialog renders.
     if (shareModel && dossier.workshopAsset && !preparedUpload) {
-      setSubmitMessage(
-        t(
-          "Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi.",
-        ),
+      preparationProblems.push(
+        "Préparez d'abord le partage du modèle 3D : il doit être déposé et vérifié avant votre accord d'envoi.",
       );
-      setSubmitMessageTone("danger");
-      return;
     }
     if (
       preparedUpload &&
@@ -1649,13 +1645,9 @@ export function DesignSpace({
         preparedUpload.revision !== serverRevision + 1)
     ) {
       setPreparedUpload(null);
-      setSubmitMessage(
-        t(
-          "Le projet ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
-        ),
+      preparationProblems.push(
+        "Le projet ou la version visée a changé depuis le dépôt du fichier : préparez à nouveau le partage.",
       );
-      setSubmitMessageTone("danger");
-      return;
     }
     const input = {
       dossier,
@@ -1681,17 +1673,23 @@ export function DesignSpace({
       lock: busyRef,
       generation: () => contextGenRef.current,
       setOperation: setBusyOperation,
-      validate: () => checkSubmission(input),
+      validate: async () => {
+        const check = await checkSubmission(input);
+        const problems = [...new Set([...preparationProblems, ...(check.ok ? [] : check.problems)])];
+        return problems.length ? { ok: false, problems } : { ok: true };
+      },
       onInvalid: (problems) => {
         setSubmitMessage(problems.map((problem) => t(problem)).join(" "));
         setSubmitMessageTone("danger");
-        if (!ndaOk) focusNdaSection();
+        setNdaDialogOpen(false);
+        setSubmissionProblems(problems);
       },
       onError: () => {
         setSubmitMessage(t(submitFailureMessage(phase)));
         setSubmitMessageTone("danger");
       },
       submit: async () => {
+        setSubmissionProblems(null);
         setSubmitMessage(null);
         phase = "awaiting_confirmation";
         if (pendingFirstSubmission) {
@@ -4550,7 +4548,7 @@ export function DesignSpace({
                     className="min-h-11 text-base"
                     onClick={() => setBookingOpen(true)}
                   >
-                    {t("Préparer mon rendez-vous avec Standex")}
+                    {t("Voir la confirmation d'envoi")}
                   </Button>
                 ) : null}
               </div>
@@ -5380,6 +5378,7 @@ export function DesignSpace({
       </WorkspacePanel>
 
       <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} country={bookingCountry} cityId={bookingCityId} industry={bookingIndustry} />
+      <SubmissionProblemsDialog problems={submissionProblems} nda={nda} onClose={() => setSubmissionProblems(null)} onOpenNda={focusNdaSection} />
       {/* Fiche détaillée volontaire : cotes, sources et STEP d'encombrement. */}
       {detailSensorId ? (
         <SensorCard

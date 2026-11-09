@@ -183,6 +183,35 @@ afterEach(() => {
   setWebGLSupportForTests(null);
 });
 
+describe("popups de validation au clic sur Envoyer", () => {
+  const stepButton = (view: RenderResult, re: RegExp) => view.getByRole("button", { name: re });
+  for (const nda of [false, true]) test(`liste réelle des champs manquants, NDA ${nda}`, async () => {
+    const view = renderQuestionnaire(390);
+    await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
+    if (nda) {
+      await act(async () => fireEvent.click(within(view.getByTestId('nda-card')).getByRole('checkbox')));
+      const ndaForm = await waitFor(() => view.getByRole('dialog', { name: 'Confidentialité du projet · NDA Standex' }));
+      await act(async () => fireEvent.click(within(ndaForm).getByRole('button', { name: 'Close', exact: true })));
+    }
+    await act(async () => fireEvent.click(view.getByRole('button', { name: 'Envoyer mon projet', exact: true })));
+    const dialog = await waitFor(() => view.getByRole('dialog', { name: "Informations à compléter avant l'envoi" }));
+    expect(dialog.textContent).toContain("Votre projet n'a pas été envoyé");
+    for (const field of ['Volume annuel de capteurs', 'Phase du projet', 'Date de lancement série', 'Durée de série', 'ville et le pays', "Consentement d'envoi"]) expect(dialog.textContent).toContain(field);
+    if (nda) {
+      expect(dialog.textContent).toContain('Informations NDA à compléter');
+      expect(dialog.textContent).toContain('Raison sociale du client');
+      expect(dialog.textContent).toContain('Nom du signataire client');
+      expect(dialog.textContent).not.toContain('Date côté Standex');
+      await act(async () => fireEvent.click(within(dialog).getByRole('button', { name: 'Ouvrir Confidentialité et NDA' })));
+      await waitFor(() => expect(view.getByRole('dialog', { name: 'Confidentialité du projet · NDA Standex' })).toBeTruthy());
+    } else {
+      expect(dialog.textContent).not.toContain('Informations NDA à compléter');
+      await act(async () => fireEvent.click(within(dialog).getByRole('button', { name: 'Revenir à mon projet' })));
+      expect(view.queryByRole('dialog')).toBeNull();
+    }
+  }, 30000);
+});
+
 describe("Connecteurs compacts — état réel du questionnaire", () => {
   for (const { id } of LANGUAGES) test(`quatre aperçus distincts avant sélection — ${id}`, () => {
     setLocale(id);

@@ -129,8 +129,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 2 entries: visible picked point and installation at the current clip pose.
     // + 2 entries: playback rate and rotation-enabled same-face search.
     // - 3 entries: bandeau d'aide Claude et libellé de l'interrupteur retirés.
-    // + 4 entries: height and resilient post-submission booking.
-    expect(Object.keys(dictionary)).toHaveLength(4194);
+    // + 6 entries: height, submission confirmation and missing-information dialogs.
+    expect(Object.keys(dictionary)).toHaveLength(4196);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

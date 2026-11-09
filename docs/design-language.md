@@ -2,15 +2,28 @@
 
 ### Rendez-vous après soumission — 9 novembre 2026
 
-Cette règle remplace la résolution invisible du 4 novembre : après confirmation
-réelle de soumission, le dialogue s'ouvre pendant la recherche du commercial.
-Une absence d'attribution ou une erreur ne le ferme plus. Le projet reste annoncé
-enregistré, aucun créneau n'est inventé, et Réessayer relance la recherche. L'accès
-au rendez-vous reste visible dans le suivi, même si la recherche a échoué.
-Seul le contact résolu pour le pays, la ville et l'industrie courants est présenté.
-Le calendrier externe n'est proposé que si le contact possède un lien valide.
+Après confirmation réelle de soumission, le dialogue remercie le client et
+confirme « Projet envoyé ». La recherche du commercial reste invisible : sans
+attribution, pendant la recherche ou en cas d'erreur, seul ce message de complétion
+apparaît, sans mention d'indisponibilité ni relance technique. Le contact résolu
+pour le pays, la ville et l'industrie courants et son calendrier configuré viennent
+compléter cette confirmation. Aucun contact, lien ou créneau n'est inventé.
+Le suivi permet de rouvrir la confirmation, sans promettre un rendez-vous.
 Le dialogue conserve les jetons existants et peut défiler sur un écran peu haut.
 La vérification d'adresse requise avant une première soumission reste distincte.
+
+Avant envoi, les contrôles de soumission existants alimentent un dialogue listant
+les éléments à compléter. Il indique explicitement que le projet n'est pas envoyé.
+Pour un NDA requis non vérifié, les champs client manquants sont nommés séparément,
+sans réclamer les champs réservés à Standex. Un accès ouvre le formulaire NDA.
+Les règles d'envoi, de consentement et de preuve NDA ne sont pas assouplies.
+Les erreurs de volume ou de préparation du partage 3D rejoignent la même liste.
+
+L'atelier n'est pas modifié dans cette livraison. Pour la future adaptation aux
+petits écrans, le circuit électrique doit rester présent en permanence ; aucun
+réglage, explication, mesure, commande ni état ne doit être supprimé. Seule la
+présentation de la chronologie et de sa légende peut être compactée, sans modifier
+leurs états, couleurs, valeurs ni comportement.
 
 
 ### Définition du mouvement et tâches de pose — 5 novembre 2026

@@ -31,12 +31,9 @@ export function RoutedBooking({
   useLocale();
   const lookupKey = JSON.stringify([country, cityId ?? null, industry ?? null]);
   const [result, setResult] = useState<{ lookupKey: string; value: ContactResult } | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let live = true;
     setResult(null);
-    setFailed(false);
     if (!open) return;
     if (!country) {
       return;
@@ -47,13 +44,12 @@ export function RoutedBooking({
         setResult({ lookupKey, value: r });
       })
       .catch(() => {
-        if (!live) return;
-        setFailed(true);
+        // Routing is supplementary: a lookup failure never alters confirmation.
       });
     return () => {
       live = false;
     };
-  }, [open, country, cityId, industry, lookupKey, attempt, loadContact]);
+  }, [open, country, cityId, industry, lookupKey, loadContact]);
   const contact =
     result?.lookupKey === lookupKey && result.value.reason === "assigned"
       ? result.value.contact
@@ -61,15 +57,14 @@ export function RoutedBooking({
   // Submission is already confirmed. Routing must never dismiss that next step.
   if (!open) return null;
   const known = Boolean(contact?.id && contact.name);
-  const loading = Boolean(country && !failed && result?.lookupKey !== lookupKey);
   const url = bookingUrl(contact?.booking_url ?? undefined);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t(known ? "Échangez avec votre responsable Standex" : "Préparer mon rendez-vous avec Standex")}</DialogTitle>
+          <DialogTitle>{t("Projet envoyé")}</DialogTitle>
           <DialogDescription>
-            {t("Votre projet a bien été reçu. Préparons la suite ensemble.")}
+            {t("Merci ! Votre projet a bien été reçu par Standex.")}
           </DialogDescription>
         </DialogHeader>
         {known && contact ? (
@@ -96,22 +91,7 @@ export function RoutedBooking({
               </a>
             </Button>
           </>
-        ) : known ? (
-          <p className="notice-info t-body">
-            {t(
-              "La réservation en ligne sera bientôt disponible. Votre responsable Standex vous recontactera pour convenir d’un rendez-vous. Aucun créneau n’est réservé à ce stade.",
-            )}
-          </p>
-        ) : (
-          <div className="space-y-3" role="status" aria-live="polite">
-            <p className="notice-info t-body">
-              {t(loading
-                ? "Recherche de votre interlocuteur Standex…"
-                : "Votre projet reste enregistré. Le rendez-vous en ligne n'est pas disponible pour le moment. Aucun créneau n'est réservé.")}
-            </p>
-            {!loading && country ? <Button variant="outline" onClick={() => setAttempt((n) => n + 1)}>{t("Réessayer")}</Button> : null}
-          </div>
-        )}
+        ) : null}
         <Button variant="outline" onClick={() => onOpenChange(false)}>
           {t("Revenir à mon projet")}
         </Button>
