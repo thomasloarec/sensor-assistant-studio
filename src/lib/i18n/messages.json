@@ -1,4 +1,10 @@
 {
+  "Hauteur": ["Height", "高度", "Höhe", "Altura", "Высота", "Altezza", "高さ"],
+  "Informations à compléter avant l'envoi": ["Information to complete before sending","发送前需要补充的信息","Vor dem Senden zu ergänzende Angaben","Información que debe completar antes del envío","Данные, которые нужно заполнить перед отправкой","Informazioni da completare prima dell'invio","送信前に入力が必要な情報"],
+  "Votre projet n'a pas été envoyé. Complétez les éléments suivants, puis réessayez.": ["Your project has not been sent. Complete the following items, then try again.","您的项目尚未发送。请补充以下内容后重试。","Ihr Projekt wurde nicht gesendet. Ergänzen Sie die folgenden Angaben und versuchen Sie es erneut.","Su proyecto no se ha enviado. Complete los siguientes datos e inténtelo de nuevo.","Ваш проект не отправлен. Заполните следующие данные и повторите попытку.","Il progetto non è stato inviato. Completi le seguenti informazioni, quindi riprovi.","プロジェクトは送信されていません。以下の項目を入力してから、もう一度お試しください。"],
+  "Informations NDA à compléter": ["NDA information to complete","需要补充的保密协议信息","Zu ergänzende NDA-Angaben","Datos del acuerdo de confidencialidad que debe completar","Данные для соглашения о конфиденциальности","Informazioni NDA da completare","秘密保持契約で入力が必要な情報"],
+  "Merci ! Votre projet a bien été reçu par Standex.": ["Thank you! Standex has received your project.","谢谢！Standex 已收到您的项目。","Vielen Dank! Standex hat Ihr Projekt erhalten.","¡Gracias! Standex ha recibido su proyecto.","Спасибо! Standex получил ваш проект.","Grazie! Standex ha ricevuto il suo progetto.","ありがとうございます。Standex はプロジェクトを受け取りました。"],
+  "Voir la confirmation d'envoi": ["View submission confirmation","查看提交确认","Sendebestätigung anzeigen","Ver confirmación del envío","Посмотреть подтверждение отправки","Visualizza la conferma dell'invio","送信確認を表示"],
   "Point {0} sélectionné": [
     "Point {0} selected",
     "已选择点 {0}",

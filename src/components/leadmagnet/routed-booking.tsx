@@ -19,14 +19,14 @@ export function RoutedBooking({
   country,
   cityId,
   industry,
-  onContactAvailabilityChange,
+  loadContact = fetchSalesContact,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   country: string | null;
   cityId?: string | null;
   industry?: string | null;
-  onContactAvailabilityChange?: (available: boolean) => void;
+  loadContact?: typeof fetchSalesContact;
 }) {
   useLocale();
   const lookupKey = JSON.stringify([country, cityId ?? null, industry ?? null]);
@@ -35,45 +35,39 @@ export function RoutedBooking({
     let live = true;
     setResult(null);
     if (!open) return;
-    onContactAvailabilityChange?.(false);
     if (!country) {
-      onOpenChange(false);
       return;
     }
-    void fetchSalesContact(country, cityId ?? null, industry ?? null)
+    void loadContact(country, cityId ?? null, industry ?? null)
       .then((r) => {
         if (!live) return;
-        const known = r.reason === "assigned" && Boolean(r.contact?.id && r.contact?.name);
         setResult({ lookupKey, value: r });
-        onContactAvailabilityChange?.(known);
-        if (!known) onOpenChange(false);
       })
       .catch(() => {
-        if (!live) return;
-        onContactAvailabilityChange?.(false);
-        onOpenChange(false);
+        // Routing is supplementary: a lookup failure never alters confirmation.
       });
     return () => {
       live = false;
     };
-  }, [open, country, cityId, industry, lookupKey, onOpenChange, onContactAvailabilityChange]);
+  }, [open, country, cityId, industry, lookupKey, loadContact]);
   const contact =
     result?.lookupKey === lookupKey && result.value.reason === "assigned"
       ? result.value.contact
       : null;
-  // Resolve silently before mounting the modal; never show an unassigned or stale contact.
-  if (!open || !contact?.id || !contact.name) return null;
+  // Submission is already confirmed. Routing must never dismiss that next step.
+  if (!open) return null;
+  const known = Boolean(contact?.id && contact.name);
   const url = bookingUrl(contact?.booking_url ?? undefined);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t("Échangez avec votre responsable Standex")}</DialogTitle>
+          <DialogTitle>{t("Projet envoyé")}</DialogTitle>
           <DialogDescription>
-            {t("Votre projet a bien été reçu. Préparons la suite ensemble.")}
+            {t("Merci ! Votre projet a bien été reçu par Standex.")}
           </DialogDescription>
         </DialogHeader>
-        {contact ? (
+        {known && contact ? (
           <div className="flex items-center gap-4">
             <SalesAvatar
               name={contact.name}
@@ -84,7 +78,7 @@ export function RoutedBooking({
             <p className="t-title-m">{contact.name}</p>
           </div>
         ) : null}
-        {contact && url ? (
+        {known && url ? (
           <>
             <p className="t-body">
               {t(
@@ -97,12 +91,6 @@ export function RoutedBooking({
               </a>
             </Button>
           </>
-        ) : contact ? (
-          <p className="notice-info t-body">
-            {t(
-              "La réservation en ligne sera bientôt disponible. Votre responsable Standex vous recontactera pour convenir d’un rendez-vous. Aucun créneau n’est réservé à ce stade.",
-            )}
-          </p>
         ) : null}
         <Button variant="outline" onClick={() => onOpenChange(false)}>
           {t("Revenir à mon projet")}
