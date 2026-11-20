@@ -2,6 +2,7 @@
  *  Installation → Essai. Une seule étape développée à la fois ; la scène reste
  *  visible à côté. Les coordonnées libres restent dans les réglages avancés. */
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { EXAMPLE_MODELS } from "@/lib/standex/machine-demos";
 import { ArrowLeftRight, Check, ChevronRight, MoveRight, RotateCw } from 'lucide-react';
 import { MachineDetectionPlacement } from './machine-detection-placement';
 import { Button } from "@/components/ui/button";
@@ -1509,68 +1510,47 @@ export default function MachineGuide({
       </div>
       <details className="mw-guide-demos">
         <summary>{t("Modèles de démonstration")}</summary>
-        <DemoButtons onDemo={onDemo} onCoffee={() => onDemo("builtin:coffee-v1")} />
+        <DemoButtons onDemo={onDemo} />
       </details>
     </section>
   );
 }
 
-/* i18n-canonical : libellés français traduits au rendu par t(). */
-export const DEMOS: [string, string, string][] = [
-  ["builtin:drawer-v1", "Tiroir à deux pièces mobiles", "Coulisse +Z, 120 mm ; façade avec poignée et caisse séparées."],
-  ["builtin:door-v1", "Porte sur axe incliné", "Pivot par l'origine, axe incliné de 15° dans le plan XY, 90°."],
-  ["builtin:wall-v1", "Paroi avec alésage", "Paroi 6 mm, alésage Ø 8 mm centré X 0 / Y 60, axe Z ; volet coulissant 40 mm en X."],
-  ["builtin:arm-v1", "Bras animé (animation du fichier)", "Portique incliné, chariot en translation et bras en rotation animés différemment ; trois clips dont un refusé (changement d'échelle)."],
-];
 /** Le raccourci de démonstration se referme après un choix : la scène reste dégagée. */
 const closeShortcut = (el: HTMLElement) => {
   const d = el.closest(".mw-demo-shortcut");
   if (d instanceof HTMLDetailsElement) d.open = false;
 };
-export function DemoButtons({
-  onDemo,
-  onCoffee,
-}: {
-  onDemo: (key: string) => void;
-  onCoffee?: () => void;
-}) {
+/** Les quatre modèles d'exemple proposés, avec crédits et licence visibles.
+ *  Aucun lien de téléchargement : les licences Sketchfab Standard ne le permettent pas. */
+export function DemoButtons({ onDemo }: { onDemo: (key: string) => void }) {
   return (
     <ul className="mw-demo-list">
-      {onCoffee && (
-        <li>
+      {EXAMPLE_MODELS.map((m) => (
+        <li key={m.key}>
           <Button
             className="mw-button mw-secondary"
-            data-testid="demo-coffee"
+            data-testid={"demo-" + m.key}
             onClick={(e) => {
               closeShortcut(e.currentTarget);
-              onCoffee();
+              onDemo(m.key);
             }}
           >
-            {t("Machine à café")}
+            {t(m.name)}
           </Button>
-          <span className="t-caption">
-            {t("Machine à café : bac mobile en translation.")}
+          <span className="t-caption">{t(m.detail)}</span>
+          <span className="t-caption mw-demo-credit" data-testid={"credit-" + m.key}>
+            <a href={m.source} target="_blank" rel="noopener noreferrer">{m.title}</a>
+            {" · "}
+            <a href={m.authorUrl} target="_blank" rel="noopener noreferrer">{m.author}</a>
+            {" · "}
+            <a href={m.licenseUrl} target="_blank" rel="noopener noreferrer">{m.license}</a>
           </span>
-        </li>
-      )}
-      {DEMOS.map(([key, name, detail]) => (
-        <li key={key}>
-          <Button
-            className="mw-button mw-secondary"
-            data-testid={"demo-" + key}
-            onClick={(e) => {
-              closeShortcut(e.currentTarget);
-              onDemo(key);
-            }}
-          >
-            {t(name)}
-          </Button>
-          <span className="t-caption">{t(detail)}</span>
         </li>
       ))}
       <li>
         <span className="t-caption">
-          {t("Tiroir, porte, paroi et bras animé : le capteur et l'aimant restent votre sélection actuelle, ces exemples ne les imposent pas.")}
+          {t("Le capteur et l'aimant restent votre sélection actuelle. Le mouvement de ces modèles n'est pas défini : choisissez les pièces mobiles ou une animation du fichier.")}
         </span>
       </li>
     </ul>

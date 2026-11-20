@@ -1,8 +1,11 @@
 import { Box3, Group, LoadingManager, Mesh, Vector3 } from "three";
 import type { BufferGeometry, Material, Object3D } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { COFFEE_ASSET } from "./machine-assembly";
 import type { Vec3 } from "./magnetic-workshop";
+import blenderGlb from "@/assets/models/blender.glb.asset.json";
+import waterMeterGlb from "@/assets/models/payton_water_meter_mechanism.glb.asset.json";
+import cncGlb from "@/assets/models/cnc_meachine.glb.asset.json";
+import hospitalBedGlb from "@/assets/models/hospital_bed.glb.asset.json";
 import { analyzeAnimations } from "./machine-animation";
 import type { MachineAnimation } from "./machine-clip-registry";
 import type { ModelImportOptions } from "./machine-step-runner";
@@ -34,8 +37,13 @@ export interface MachineAsset {
   animation: MachineAnimation;
   dispose: () => void;
 }
-/** Exemples intégrés : fichiers autonomes servis par l'application. */
+/** Fichiers intégrés servis par l'application, chargés à la demande. Les clés
+ *  v1 ne sont plus proposées : elles restent résolues pour les anciens montages. */
 export const BUILTIN_FILES: Record<string, string> = {
+  "builtin:blender-v2": blenderGlb.url,
+  "builtin:water-meter-v2": waterMeterGlb.url,
+  "builtin:cnc-v2": cncGlb.url,
+  "builtin:hospital-bed-v2": hospitalBedGlb.url,
   "builtin:coffee-v1": "/models/machine-cafe-bac-mobile.glb",
   "builtin:drawer-v1": "/models/demo-tiroir-deux-pieces.glb",
   "builtin:door-v1": "/models/demo-porte-axe-incline.glb",
@@ -161,7 +169,7 @@ export function validateGlb(data: ArrayBuffer) {
     throw new Error("Exportez un GLB sans compression Draco, Meshopt ou KTX2.");
 }
 async function readFile(key: string, mode: AssetStorageMode): Promise<ArrayBuffer> {
-  const builtin = key === COFFEE_ASSET ? BUILTIN_FILES[COFFEE_ASSET] : BUILTIN_FILES[key];
+  const builtin = BUILTIN_FILES[key];
   if (builtin) {
     const r = await fetch(builtin);
     if (!r.ok) throw new Error("Exemple 3D indisponible.");

@@ -3500,3 +3500,10 @@
 .mw-reading-details > summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .mw-reading-details-body { display: grid; gap: 12px; padding-block: 8px; }
 .mw-reading-details-body > p { margin: 0; }
+
+/* Crédits des modèles d'exemple : discrets, lisibles et focalisables. */
+.mw-demo-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

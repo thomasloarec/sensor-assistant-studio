@@ -68,7 +68,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
       }finally{view.unmount();currentScene=null;}
     }
   },20000);
-  test("drawer → coffee keeps the requested model and pair; both components expose free and attached rotations with undo", async()=>{
+  test("legacy drawer → water-meter example keeps the requested model and pair; both components expose free and attached rotations with undo", async()=>{
     const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
     const {DEFAULT_WORKSHOP}=await import('../src/lib/standex/magnetic-workshop');
@@ -78,10 +78,17 @@ describe("Positions de détection dans le Workshop intégré", () => {
       machine:structuredClone(DEMO_ASSEMBLIES['builtin:drawer-v1']!)};
     const view=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
     try {
-      await act(async()=>fireEvent.click(view.getAllByTestId('demo-coffee')[0]!));
-      await waitFor(()=>expect(draft.machine.assetKey).toBe('builtin:coffee-v1'),{timeout:10000});
+      await act(async()=>fireEvent.click(view.getAllByTestId('demo-builtin:water-meter-v2')[0]!));
+      await waitFor(()=>expect(draft.machine.assetKey).toBe('builtin:water-meter-v2'),{timeout:10000});
       expect(draft.sensorId).toBe('MK03');expect(draft.magnetModel).toBe('NDFEB250175H-6X10');
-      await waitFor(()=>expect(view.getAllByText('machine-cafe-bac-mobile.glb').length).toBeGreaterThan(0));
+      expect(draft.machine.motionStatus).toBe('unset');expect(draft.machine.movingNodes).toEqual([]);
+      await waitFor(()=>expect(view.getAllByText('payton_water_meter_mechanism.glb').length).toBeGreaterThan(0));
+    }finally{view.unmount();}
+    // Rotations: a legacy saved coffee montage (confirmed motion) still opens and edits.
+    draft={...draft,machine:structuredClone(DEMO_ASSEMBLIES['builtin:coffee-v1']!)};
+    const legacy=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
+    try {
+      const view=legacy;
       await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
       expect(view.getByText('Rotation du capteur')).toBeTruthy();
       await act(async()=>fireEvent.click(view.getByText('Rotation du capteur')));
@@ -91,7 +98,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
       await act(async()=>fireEvent.click(view.getByTestId('guide-target-magnet')));
       expect(view.getByText('Rotation de l’aimant')).toBeTruthy();
       expect(view.getByTestId('guide-free-rotation-X')).toBeTruthy();
-    }finally{view.unmount();}
+    }finally{legacy.unmount();}
 
     const a={kind:'surface' as const,support:'moving' as const,partPath:'0/1/0',
       point:[18,67,22] as [number,number,number],normal:[0,0,1] as [number,number,number],

@@ -123,6 +123,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 1 entry: internal workspace Beta status.
     // + 52 entries: sales territories, city lookup and profile portraits.
     // + 24 entries: industry routing, assisted identity and transfer disclosure.
+    // + 9 entries: four real example GLBs (names, details, motion note).
     // + 1 entry: plain required-industry validation without a separate confirmation.
     // + 21 entries: localized industry labels; Quickbase values remain canonical.
     // + 2 entries: accepted 3D import format and self-contained file requirements.
@@ -133,7 +134,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 10 entries: restored calendar, common Outlook states and workshop reading rail.
     // + 20 entries: concise instant feedback and progressive workshop explanations.
     // + 4 entries: compact activation facts and product-specific vigilance.
-    expect(Object.keys(dictionary)).toHaveLength(4296);
+    expect(Object.keys(dictionary)).toHaveLength(4305);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

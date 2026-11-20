@@ -145,7 +145,7 @@ import {
   rescaleMachine,
   syncAttachSupports,
 } from "@/lib/standex/machine-assembly";
-import { DEMO_ASSEMBLIES } from "@/lib/standex/machine-demos";
+import { EXAMPLE_ASSEMBLIES } from "@/lib/standex/machine-demos";
 import FlatScene from "./flat-scene";
 import SensorCatalog from "./sensor-catalog";
 import ContactIndicator from "./contact-indicator";
@@ -748,12 +748,13 @@ export default function MagneticWorkshop({
     );
   }, [machine?.sensorAttach?.kind, machine?.magnetAttach?.kind]);
   function openDemo(key: string) {
-    if (key === "builtin:coffee-v1" && !clientPedagogical) return exampleMachine();
-    const demo = DEMO_ASSEMBLIES[key];
+    const demo = EXAMPLE_ASSEMBLIES[key];
     if (!demo) return;
     cancelModelImport();
     setPendingUnits(null);
-    freshImportRef.current = null;
+    // Même règle qu'un import : les composants sont rapprochés du modèle chargé,
+    // sans pièce mobile ni mouvement supposé.
+    freshImportRef.current = demo.assetKey + "|" + demo.unitScale;
     setPlaying(false);
     setProgress(0);
     setTool("navigate");
@@ -777,29 +778,6 @@ export default function MagneticWorkshop({
     // Changing which parts belong to the motion is defined in the file pose.
     if (next === "select") setProgress(0);
     setTool(next);
-  }
-  function exampleMachine() {
-    cancelModelImport();
-    if (clientPedagogical) {
-      openDemo('builtin:coffee-v1');
-      return;
-    }
-    update({
-      machine: structuredClone(COFFEE_ASSEMBLY),
-      demoReach: 25,
-      // Un vrai capteur garde son couple documenté : il ne bascule jamais
-      // d'office dans le modèle fictif.
-      mode: "reference",
-      sensorId: "MK24-A-J",
-      magnetModel: defaultMagnetFor("MK24-A-J"),
-      initialContact: "open",
-      magnetization: "axial",
-      polarity: 1,
-    });
-    setView("3d");
-    setFocus("assembly");
-    setResetEpoch((v) => v + 1);
-    setSceneError(false);
   }
   /** Import en TRANSACTION : le fichier est entièrement chargé et sa géométrie
    *  validée AVANT de remplacer le montage, l'historique ou l'asset. En cas
@@ -2157,7 +2135,6 @@ export default function MagneticWorkshop({
             tool={tool}
             setTool={chooseTool}
             onChange={machineChange}
-            onExample={exampleMachine}
             onExit={() => update({ machine: null })}
             onCatalog={() => setCatalogOpen(true)}
             onProductCard={() => setProductCard(true)}
@@ -2228,15 +2205,6 @@ export default function MagneticWorkshop({
           >
             {t("Télécharger le fichier de montage")}
           </button>
-        </details>
-        <details className="mw-workshop-example">
-          <summary>{t("Exemple : machine à café")}</summary>
-          <button className="mw-button mw-secondary" onClick={exampleMachine}>
-            {t("Ouvrir la machine à café")}
-          </button>
-          <a href="/models/machine-cafe-bac-mobile.glb" download>
-            {t("Télécharger le fichier 3D")}
-          </a>
         </details>
           </div>
         </details>
@@ -2614,7 +2582,7 @@ export default function MagneticWorkshop({
             )}
             <details className="mw-demo-shortcut" data-testid="demo-shortcut">
               <summary>{t("Essayer un modèle de démonstration")}</summary>
-              <DemoButtons onDemo={openDemo} onCoffee={exampleMachine} />
+              <DemoButtons onDemo={openDemo} />
             </details>
 
             <button

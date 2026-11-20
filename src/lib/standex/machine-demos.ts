@@ -4,6 +4,7 @@
  *  et les composants restent à installer dans l'étape Installation. */
 import { COFFEE_ASSEMBLY } from "./machine-assembly";
 import type { MachineAssembly } from "./machine-assembly";
+import { EXAMPLE_CREDITS } from "./example-credits";
 
 const tilt = (15 * Math.PI) / 180;
 const base = (patch: Partial<MachineAssembly>): MachineAssembly => ({
@@ -72,4 +73,47 @@ export const DEMO_ASSEMBLIES: Record<string, MachineAssembly> = {
     sensorPosition: [-40, 20, 90],
     magnetPosition: [-60, 20, 90],
   }),
+};
+
+/** Modèles d'exemple PROPOSÉS (lot 2026-11-20) : quatre GLB réels fournis par
+ *  Standex, chargés à la demande. Aucun mouvement n'est validé : pièces mobiles,
+ *  course et clips restent à configurer par l'utilisateur. Les anciens exemples
+ *  ci-dessus ne sont plus proposés ; ils restent lisibles pour les montages
+ *  enregistrés et les tests. */
+export interface ExampleModel {
+  key: string;
+  /** Libellé canonique français, traduit au rendu. */
+  name: string;
+  detail: string;
+  title: string;
+  author: string;
+  authorUrl: string;
+  license: string;
+  licenseUrl: string;
+  source: string;
+}
+const fresh = (assetKey: string, fileName: string, unitScale: number): MachineAssembly =>
+  base({
+    assetKey,
+    fileName,
+    unitScale,
+    movingNodes: [],
+    movingNode: "",
+    travel: [0, 0, 0],
+    motion: "translation",
+    motionStatus: "unset",
+  });
+export const EXAMPLE_MODELS: ExampleModel[] = [
+  { key: "builtin:blender-v2", name: "Robot de cuisine", detail: "Pièces séparées sélectionnables ; aucune animation dans le fichier, mouvement du couvercle à définir.", ...EXAMPLE_CREDITS["builtin:blender-v2"]! },
+  { key: "builtin:water-meter-v2", name: "Compteur d’eau", detail: "Mécanisme à engrenages ; animation du fichier « AnimationStack » disponible dans l’étape Mouvement.", ...EXAMPLE_CREDITS["builtin:water-meter-v2"]! },
+  { key: "builtin:cnc-v2", name: "Machine CNC", detail: "Animations du fichier Wheel, Vice, Holder et Spindle disponibles dans l’étape Mouvement ; mouvement du carter à définir.", ...EXAMPLE_CREDITS["builtin:cnc-v2"]! },
+  { key: "builtin:hospital-bed-v2", name: "Lit médical", detail: "Pièces séparées sélectionnables ; aucune animation dans le fichier, mouvement du lit à définir.", ...EXAMPLE_CREDITS["builtin:hospital-bed-v2"]! },
+];
+/** Unités des fichiers lues à la mesure : compteur en mètres, les trois autres
+ *  en centimètres (robot ≈ 0,49 m de haut, CNC ≈ 2 m de large, lit ≈ 3,3 m). */
+export const EXAMPLE_ASSEMBLIES: Record<string, MachineAssembly> = {
+  "builtin:blender-v2": fresh("builtin:blender-v2", "blender.glb", 10),
+  "builtin:water-meter-v2": fresh("builtin:water-meter-v2", "payton_water_meter_mechanism.glb", 1000),
+  "builtin:cnc-v2": fresh("builtin:cnc-v2", "cnc_meachine.glb", 10),
+  "builtin:hospital-bed-v2": fresh("builtin:hospital-bed-v2", "hospital_bed.glb", 10),
 };

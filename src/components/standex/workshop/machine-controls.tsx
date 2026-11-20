@@ -76,7 +76,6 @@ export default function MachineControls({
   tool,
   setTool,
   onChange,
-  onExample,
   onExit,
   onCatalog,
   onProductCard,
@@ -87,7 +86,6 @@ export default function MachineControls({
   tool: MachineTool;
   setTool: (v: MachineTool) => void;
   onChange: (patch: Partial<MachineAssembly>) => void;
-  onExample: () => void;
   onExit: () => void;
   onCatalog: () => void;
   onProductCard: () => void;
