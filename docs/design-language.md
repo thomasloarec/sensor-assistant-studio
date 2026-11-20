@@ -1,5 +1,24 @@
 # Langage de design Standex DETECT
 
+### Configuration directe et aperçus en mouvement — 20 novembre 2026
+
+Dans Résultat, l'absence d'essai enregistré n'affiche plus d'invitation à tester un
+couple. La configuration garde son accès de retour aux couples ; sans sélection,
+l'invitation à choisir le capteur reste disponible. Les résultats effectivement
+enregistrés et les réserves de compatibilité sont conservés. La phrase introductive
+des options est supprimée afin d'aligner l'image et le bloc de configuration.
+
+Les capteurs et aimants des couples proposés et du résultat tournent lentement
+avec la même caméra et les mêmes modèles que les aperçus historiques. Un seul
+contexte WebGL rend leurs scènes indépendantes et transmet chaque image fraîche
+à leur canevas visible : ils ne sont plus remplacés par des instantanés définitifs.
+Les gestes restent locaux à la vignette ; le rendu suit ses dimensions et son
+clipping natif. Les scènes hors champ sont démontées, l'onglet masqué suspend la
+boucle et la dernière vignette démontée libère le moteur. La réduction des
+mouvements désactive la rotation et l'amortissement. WebGL indisponible ou perdu
+conserve le repli dessiné de la référence exacte. Aucun nouveau jeton de design.
+
+
 ### Suggestions et configuration — 20 novembre 2026
 
 Les critères actifs ne sont affichés qu'une fois dans les bulles bleues de l'en-tête.

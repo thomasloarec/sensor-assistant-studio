@@ -4587,15 +4587,14 @@ export function DesignSpace({
       {dossier.selectedSensorId ? (
         <div className="sensor-configuration-layout">
           <figure className="sensor-configuration-preview" data-testid="configured-sensor-preview">
-            <CandidateThumbnail key={dossier.selectedSensorId} sensorId={dossier.selectedSensorId} cabled fitToView size="large" legend="sensor" quiet />
+            <CandidateThumbnail animated key={dossier.selectedSensorId} sensorId={dossier.selectedSensorId} cabled fitToView size="large" legend="sensor" quiet />
             <figcaption>
               <strong className="t-title-m">{sensorDisplayTitle(dossier.selectedSensorId)}</strong>
               {sensorDisplayVariant(dossier.selectedSensorId) ? <span className="t-caption block">{t(sensorDisplayVariant(dossier.selectedSensorId)!)}</span> : null}
               <p className="t-caption mt-1">{msg("Vous avez choisi le capteur {0}.", [dossier.selectedSensorId])}</p>
             </figcaption>
           </figure>
-          <div className="min-w-0 space-y-3">
-            <p className="t-body">{t("Voici les possibilités de câble et de connecteur pour ce capteur.")}</p>
+          <div className="min-w-0">
             {optionalQuestions}
           </div>
         </div>

@@ -582,6 +582,11 @@
   }
   /* Scène 3D + règle : la règle est posée au-dessus du canvas, sa longueur en
      pixels vient du zoom orthographique réel (pixels par millimètre). */
+  .candidate-thumb-shared-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
   .candidate-thumb-stage {
     position: relative;
     block-size: 100%;

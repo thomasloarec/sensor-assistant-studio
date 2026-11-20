@@ -61,10 +61,9 @@ describe("écran Résultat", () => {
     // Presentation simplification never erases the provenance from the saved trace.
     expect(trace.reasons).toContain(CATALOGUE_LABELS.datum);
   });
-  test("sans essai : état vide et retour vers les couples", () => {
+  test("sans essai : aucun encart ne détourne de la configuration", () => {
     const html = render(null);
-    expect(html).toContain('data-testid="result-empty"');
-    expect(html).toContain("Testez un couple pour voir son résultat ici.");
+    expect(html).toBe("");
   });
 
   test("détection prévue : distances enregistrées, jamais recalculées", () => {

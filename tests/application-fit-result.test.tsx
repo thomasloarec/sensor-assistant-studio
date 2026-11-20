@@ -144,7 +144,7 @@ describe("Résultat sans couple essayé", () => {
     expect(html).toContain('data-step="mounting"');
     expect(html).toContain(FIT_PANEL.changeAction);
   });
-  test("sans point ouvert, l'écran vide habituel revient", () => {
+  test("sans point ouvert, aucun bloc ne précède la configuration", () => {
     const plain = renderToStaticMarkup(
       <ResultView
         pair={null}
@@ -158,7 +158,7 @@ describe("Résultat sans couple essayé", () => {
         onTestPair={noop}
       />,
     );
-    expect(plain).toContain('data-testid="result-empty"');
+    expect(plain).toBe("");
   });
   test("avec un couple essayé, l'encart s'affiche aussi et sans bouton redondant", () => {
     const withPair = renderToStaticMarkup(
