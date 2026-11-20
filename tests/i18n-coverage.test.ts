@@ -132,7 +132,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 6 entries: height, submission confirmation and missing-information dialogs.
     // + 10 entries: restored calendar, common Outlook states and workshop reading rail.
     // + 20 entries: concise instant feedback and progressive workshop explanations.
-    expect(Object.keys(dictionary)).toHaveLength(4226);
+    // + 4 entries: compact activation facts and product-specific vigilance.
+    expect(Object.keys(dictionary)).toHaveLength(4230);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
