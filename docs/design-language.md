@@ -1,5 +1,15 @@
 # Langage de design Standex DETECT
 
+### Usage produit — 20 novembre 2026
+
+L’administration accueille quatre blocs de lecture : indicateurs, parcours,
+points d’arrêt et difficultés. Les cartes réutilisent les surfaces `panel-block`,
+les parcours le contrôle segmenté et les barres `progress-mini`, les nombres
+`t-metric`. Les difficultés détaillées utilisent des disclosures natifs. Le choix
+facultatif de mesure, en bas de l’espace client, donne deux boutons de même poids.
+Aucun nouveau jeton. États vide, chargement et erreur distincts, huit langues
+réactives, cibles de 44 px et comportement mobile du socle conservés.
+
 ### Configuration directe et aperçus en mouvement — 20 novembre 2026
 
 Dans Résultat, l'absence d'essai enregistré n'affiche plus d'invitation à tester un

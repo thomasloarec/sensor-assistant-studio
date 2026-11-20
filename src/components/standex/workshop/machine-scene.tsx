@@ -1,3 +1,4 @@
+import { SceneReady } from "./scene-ready";
 import { machineFrame } from "@/lib/standex/machine-view";
 import type { MachineFocus } from "@/lib/standex/machine-view";
 import { MachineCamera } from "./machine-camera";
@@ -635,6 +636,7 @@ export default function MachineScene({
   onMarkers,
   onPlaced,
   onContextLost,
+  onReady,
   routing,
   ghost,
   guide,
@@ -663,6 +665,7 @@ export default function MachineScene({
   onMarkers: (markers: Marker[]) => void;
   onPlaced: () => void;
   onContextLost: () => void;
+  onReady?: () => void;
   /** Absent = comportement d'origine, aucun tracé de câble. */
   routing?: CableRouting | undefined;
   /** Prévisualisation seule : jamais enregistrée dans le montage. */
@@ -730,6 +733,7 @@ export default function MachineScene({
         view={view}
         command={[m.assetKey, m.unitScale, config.sensorId, focus, view, resetEpoch].join(":")}
       />
+      <SceneReady key={`${resetEpoch}:${m.assetKey}`} onReady={onReady} />
     </Canvas>
   );
 }

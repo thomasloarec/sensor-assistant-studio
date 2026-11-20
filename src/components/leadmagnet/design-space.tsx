@@ -1,3 +1,5 @@
+import { trackUsage, setUsageFlow, bindUsageSubmission, usageChoice, subscribeUsage } from "@/lib/usage/client";
+import { useSyncExternalStore } from "react";
 import { IndustryField } from "./industry-field";
 import { useProjectIdentity } from "./use-project-identity";
 import { currentClientTrace, recordClientTrace } from "@/lib/standex/client-pedagogical";
@@ -509,6 +511,8 @@ export function DesignSpace({
 }: DesignSpaceProps) {
   useLocale();
   const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
+  const usageConsent = useSyncExternalStore(subscribeUsage, usageChoice, () => null);
+  useEffect(() => { if (visible) { setUsageFlow(dossier.id); trackUsage("project_started", {}, true); } }, [visible, dossier.id, usageConsent]);
   /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
    * n'est capturée qu'au démarrage réel, jamais à ce montage silencieux. */
   const localeCapturedRef = useRef(false);
@@ -692,6 +696,11 @@ export function DesignSpace({
   const [showAdvanced, setShowAdvanced] = useState(false);
   /** Mode guidé : une seule question à la fois, sans rien retirer du dossier. */
   const [focusIdx, setFocusIdx] = useState(0);
+  useEffect(() => {
+    if (!visible) return;
+    if (tab === "besoin") trackUsage("question_viewed", { step: focusIdx + 1 });
+    if (tab === "revue") trackUsage("contact_viewed");
+  }, [visible, tab, focusIdx, dossier.id, usageConsent]);
   /** Ce à quoi un accord d'envoi se rattache à cet instant : dossier serveur visé,
    * révision suivante, empreinte du contenu relu et empreintes des fichiers déjà déposés.
    * Dès qu'un de ces éléments change, l'accord précédent tombe.
@@ -1631,6 +1640,7 @@ export function DesignSpace({
       setSubmitMessageTone("info");
       return;
     }
+    trackUsage("submission_attempted");
     const pendingFirstSubmission = CUSTOMER_EMAIL_ACCESS && !serverDossierId &&
       (!backend?.authenticated || Boolean(preparedUpload?.file.path.includes("/pending/")));
     const preparationProblems: string[] = volumeError ? [volumeError] : [];
@@ -1680,12 +1690,14 @@ export function DesignSpace({
         return problems.length ? { ok: false, problems } : { ok: true };
       },
       onInvalid: (problems) => {
+        trackUsage("submission_blocked");
         setSubmitMessage(problems.map((problem) => t(problem)).join(" "));
         setSubmitMessageTone("danger");
         setNdaDialogOpen(false);
         setSubmissionProblems(problems);
       },
       onError: () => {
+        trackUsage("submission_failed");
         setSubmitMessage(t(submitFailureMessage(phase)));
         setSubmitMessageTone("danger");
       },
@@ -1697,6 +1709,7 @@ export function DesignSpace({
           try {
             const response = await savePendingProject(pendingIdentity(), await buildSnapshot(input));
             if (contextGenRef.current !== gen) return;
+            void bindUsageSubmission(response.id!, pendingIdentity().receipt);
             setPendingSaved({ id: response.id!, email: input.dossier.business.contactEmail! });
             setSubmitMessage(t(response.emailRequested
               ? "Votre projet est enregistré en attente de vérification pendant 24 heures maximum. Ouvrez l'email reçu pour confirmer votre adresse et transmettre le projet à Standex."
@@ -1704,6 +1717,7 @@ export function DesignSpace({
             setSubmitMessageTone("info");
           } catch (error) {
             if (contextGenRef.current !== gen) return;
+            trackUsage("submission_failed");
             setSubmitMessage(t(customerAccessMessage(error)));
             setSubmitMessageTone("danger");
           }
@@ -1734,6 +1748,7 @@ export function DesignSpace({
         );
         if (contextGenRef.current !== gen) return;
         if (outcome.status === "submitted") {
+          if (targetDossierId) void bindUsageSubmission(targetDossierId);
           phase = "committed";
           committedRevisionRef.current = serverRevision + 1;
           // Liaison du contenu réellement confirmé, rattachée au dossier
@@ -1778,6 +1793,7 @@ export function DesignSpace({
             setEnglishMessage(null);
           }
         } else {
+          trackUsage("submission_failed");
           setSubmitMessage(outcome.reason);
           setSubmitMessageTone("danger");
         }
@@ -2160,6 +2176,7 @@ export function DesignSpace({
                   onClick={() => {
                     // Ne rien effacer et ne rien fabriquer : la question est notée
                     // comme traitée « à définir avec Standex », sans valeur.
+                    trackUsage("question_skipped", { step: focusIdx + 1 }, true);
                     setQuestionAside(question.key, true);
                     if (!lastQuestion) setFocusIdx((i) => i + 1);
                     else setTab("montage");
@@ -2255,6 +2272,7 @@ export function DesignSpace({
                   disabled={lastQuestion && intakeEmpty}
                   aria-describedby={lastQuestion && intakeEmpty ? "intake-empty-note" : undefined}
                   onClick={() => {
+                    trackUsage("question_answered", { step: focusIdx + 1 }, true);
                     if (!lastQuestion) setFocusIdx((i) => i + 1);
                     else if (!intakeEmpty) setTab("montage");
                   }}
@@ -2471,6 +2489,9 @@ export function DesignSpace({
     [candidateRows, dossier.selectedSensorId],
   );
   const customPair = pairCardFor(sensorById(CUSTOM_SENSOR_ID));
+  useEffect(() => {
+    if (visible && tab === "montage") trackUsage(!fitBlocked && suggestedPairs.length ? "suggestions_viewed" : "suggestions_empty");
+  }, [visible, tab, fitBlocked, suggestedPairs.length, dossier.id, usageConsent]);
   const offerCustom = suggestedPairs.length === 0 || dossier.mounting.kind.startsWith("pcb_") || plausibleCandidates.some(r => isPcbSensor(r.candidate.id) && r.candidate.id !== CUSTOM_SENSOR_ID);
   /** Liste complète dépliée ou non : un état explicite, pour que le lien soit
    * un vrai lien et non l'ergonomie par défaut d'un dépliant. */
@@ -2714,6 +2735,7 @@ export function DesignSpace({
   };
   const openWorkshopPanel = () => {
     if (fitGuard()) return;
+    trackUsage("workshop_opened");
     setCablePanelOpen(false);
     setWorkshopMounted(true);
     setShowWorkshop(true);
@@ -2730,6 +2752,7 @@ export function DesignSpace({
    * couple. Ce n'est ni une commande ni une validation R&D. */
   const testPair = (card: PairCard) => {
     if (fitGuard()) return;
+    trackUsage("pair_selected", {}, true);
     setCablePanelOpen(false);
     chooseSensor(card.sensorId, t(card.sensorName), card.magnetId);
     openWorkshopPanel();
@@ -3721,6 +3744,7 @@ export function DesignSpace({
       const url = URL.createObjectURL(new Blob([bytes as unknown as BlobPart], { type: "application/pdf" }));
       const a = document.createElement("a"); a.href = url;
       a.download = projectPdfFilename(dossier.title, dossier.id, dossier.revision, serverDossierId); a.click();
+      trackUsage("pdf_generated");
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
       setSummaryMessage(t("Le rapport PDF n'a pas pu être produit sur cet appareil."));
@@ -4667,6 +4691,7 @@ export function DesignSpace({
     <div>
       <Suspense fallback={<p className="text-base">{t("Chargement de l'atelier…")}</p>}>
         <MagneticWorkshop
+          usageVisible={visible && panel === "atelier"}
           clientPedagogical
           onExplorationChange={setWorkshopExploring}
           onClientPedagogicalResult={result=>{
