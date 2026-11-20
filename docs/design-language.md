@@ -1053,3 +1053,16 @@ Le sélecteur Vitesse accompagne la commande de lecture et reste utilisable pend
 ### Import STEP — 5 novembre 2026
 
 Le contrôle unique « Importer mon modèle 3D » accepte GLB, STEP et STP, avec une aide courte et la limite de 30 Mo. La préparation, la conversion et la vérification sont annoncées par un statut accessible et restent annulables. Le montage courant reste affiché et intact tant que le nouvel import ne réussit pas. Les pièces séparées rejoignent les cinq étapes existantes sans mouvement présumé. Aucun nouveau jeton ni animation.
+
+### Modèles d'exemple de l'atelier — 20 novembre 2026
+
+- Le sélecteur propose exactement quatre modèles réels, chacun en bouton
+  secondaire (`.mw-button.mw-secondary`) suivi d'une phrase d'usage en
+  `.t-caption` : une ligne, sans jargon de fichier ni d'animation.
+- Les crédits (titre, auteur, licence) sont une seule ligne `.t-caption`
+  `.mw-demo-credit` : liens soulignés dans la couleur du texte courant, focus
+  visible hérité, aucune couleur ni taille propre. Aucun lien de
+  téléchargement : les licences Sketchfab Standard ne le permettent pas.
+- Aucun mouvement n'est annoncé comme défini : une note commune rappelle que
+  pièces mobiles ou animation restent à choisir.
+

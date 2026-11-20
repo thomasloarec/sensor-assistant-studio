@@ -8,7 +8,8 @@ import { DemoButtons } from "../src/components/standex/workshop/machine-guide";
 
 /** The four files are hosted assets (one exceeds the Git size limit): they are
  *  read through the running app, the same URL the workshop fetches on demand. */
-const ORIGIN = process.env["EXAMPLE_MODELS_ORIGIN"] ?? "http://localhost:8080";
+// Integration only: set EXAMPLE_MODELS_ORIGIN (e.g. the preview URL) to load the real hosted files.
+const ORIGIN = process.env["EXAMPLE_MODELS_ORIGIN"];
 const bytes = async (url: string) => {
   const r = await fetch(ORIGIN + url);
   if (!r.ok) throw new Error("example model unavailable: " + url + " " + r.status);
@@ -55,7 +56,7 @@ describe("Modèles d'exemple proposés", () => {
     "builtin:hospital-bed-v2": { clips: [], minMm: 2000, maxMm: 3500 },
   };
   for (const m of EXAMPLE_MODELS)
-    test("le fichier réel " + m.key + " se charge à l'échelle prévue, pièces séparées et clips rigides", async () => {
+    test.skipIf(!ORIGIN)("[integration] le fichier réel " + m.key + " se charge à l'échelle prévue, pièces séparées et clips rigides", async () => {
       const a = EXAMPLE_ASSEMBLIES[m.key]!;
       // Under a shared DOM test environment, texture images never decode and the
       // loader waits forever; textures are irrelevant to geometry and clips here.

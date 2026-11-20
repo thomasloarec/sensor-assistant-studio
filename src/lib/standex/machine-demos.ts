@@ -104,13 +104,14 @@ const fresh = (assetKey: string, fileName: string, unitScale: number): MachineAs
     motionStatus: "unset",
   });
 export const EXAMPLE_MODELS: ExampleModel[] = [
-  { key: "builtin:blender-v2", name: "Robot de cuisine", detail: "Pièces séparées sélectionnables ; aucune animation dans le fichier, mouvement du couvercle à définir.", ...EXAMPLE_CREDITS["builtin:blender-v2"]! },
-  { key: "builtin:water-meter-v2", name: "Compteur d’eau", detail: "Mécanisme à engrenages ; animation du fichier « AnimationStack » disponible dans l’étape Mouvement.", ...EXAMPLE_CREDITS["builtin:water-meter-v2"]! },
-  { key: "builtin:cnc-v2", name: "Machine CNC", detail: "Animations du fichier Wheel, Vice, Holder et Spindle disponibles dans l’étape Mouvement ; mouvement du carter à définir.", ...EXAMPLE_CREDITS["builtin:cnc-v2"]! },
-  { key: "builtin:hospital-bed-v2", name: "Lit médical", detail: "Pièces séparées sélectionnables ; aucune animation dans le fichier, mouvement du lit à définir.", ...EXAMPLE_CREDITS["builtin:hospital-bed-v2"]! },
+  { key: "builtin:blender-v2", name: "Robot de cuisine", detail: "Couvercle fermé avant démarrage.", ...EXAMPLE_CREDITS["builtin:blender-v2"]! },
+  { key: "builtin:water-meter-v2", name: "Compteur d’eau", detail: "Comptage des rotations du mécanisme.", ...EXAMPLE_CREDITS["builtin:water-meter-v2"]! },
+  { key: "builtin:cnc-v2", name: "Machine CNC", detail: "Détection de fermeture d’un protecteur.", ...EXAMPLE_CREDITS["builtin:cnc-v2"]! },
+  { key: "builtin:hospital-bed-v2", name: "Lit médical", detail: "Détection d’une position limite du lit.", ...EXAMPLE_CREDITS["builtin:hospital-bed-v2"]! },
 ];
-/** Unités des fichiers lues à la mesure : compteur en mètres, les trois autres
- *  en centimètres (robot ≈ 0,49 m de haut, CNC ≈ 2 m de large, lit ≈ 3,3 m). */
+/** Échelles ILLUSTRATIVES choisies parmi les unités proposées (compteur en mètres,
+ *  les trois autres en centimètres) : aucune dimension n'est lue ni certifiée par
+ *  un fabricant, et l'utilisateur peut changer d'unités. Les fichiers sont inchangés. */
 export const EXAMPLE_ASSEMBLIES: Record<string, MachineAssembly> = {
   "builtin:blender-v2": fresh("builtin:blender-v2", "blender.glb", 10),
   "builtin:water-meter-v2": fresh("builtin:water-meter-v2", "payton_water_meter_mechanism.glb", 1000),
