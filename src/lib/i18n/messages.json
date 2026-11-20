@@ -37984,5 +37984,41 @@
     "Некоторые зоны выходят за пределы отображаемого вида.",
     "Alcune zone si estendono oltre la vista mostrata.",
     "一部の領域は表示範囲を超えています。"
+  ],
+  "indicatif, à confirmer": [
+    "indicative, to be confirmed",
+    "仅供参考，待确认",
+    "Richtwert, zu bestätigen",
+    "orientativo, por confirmar",
+    "ориентировочно, требует подтверждения",
+    "indicativo, da confermare",
+    "参考値、要確認"
+  ],
+  "Distance typique publiée": [
+    "Published typical distance",
+    "已公布的典型距离",
+    "Veröffentlichter typischer Abstand",
+    "Distancia típica publicada",
+    "Опубликованное типовое расстояние",
+    "Distanza tipica pubblicata",
+    "公表されている代表距離"
+  ],
+  "Points de vigilance": [
+    "Points to check",
+    "注意事项",
+    "Zu beachten",
+    "Puntos de atención",
+    "На что обратить внимание",
+    "Punti di attenzione",
+    "確認事項"
+  ],
+  "Retenue mécanique à définir : douille ou adaptateur nécessaire.": [
+    "Mechanical retention to be defined: a sleeve or adapter is required.",
+    "机械固定方式待确定：需要衬套或适配器。",
+    "Mechanische Halterung festzulegen: Hülse oder Adapter erforderlich.",
+    "Retención mecánica por definir: se requiere un casquillo o adaptador.",
+    "Механическое крепление предстоит определить: необходима втулка или адаптер.",
+    "Fissaggio meccanico da definire: occorre una boccola o un adattatore.",
+    "機械的な保持方法は要検討：スリーブまたはアダプターが必要です。"
   ]
 }

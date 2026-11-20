@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
+import { PairFacts } from "./pair-facts";
 import { PairThumbnail } from "@/components/leadmagnet/pair-thumbnail";
 import { CUSTOM_SENSOR_ID, formatMm, sensorById, sensorDisplayTitle, sensorDisplayVariant, sizeLabel } from "@/lib/standex/sensor-catalog";
 import {
@@ -2747,20 +2748,17 @@ export function DesignSpace({
         : suggestedPairs.length === 1
           ? t("Un couple pour votre projet")
           : t("Une solution sur mesure pour votre projet");
-  /** Phrase de critères en langage courant, construite UNIQUEMENT à partir des
-   * filtres réellement actifs : aucune contrainte n'est inventée. */
-  const pairsSubtitle = activeFilterIds.length
-    ? msg("{0}. Testez-les dans votre montage.", [
-        shownFilters
-          .filter((f) => activeFilterIds.includes(f.id))
-          .map((f) => fl(f))
-          .join(", "),
-      ])
-    : t("Aucun critère actif : testez-les dans votre montage.");
-
   const pairCardView = (card: PairCard, index: number, compact = false) => {
     const chosen = dossier.selectedSensorId === card.sensorId;
-    const blocked = candidateRows.find(r => r.candidate.id === card.sensorId)?.blocked ?? [];
+    const candidate = candidateRows.find(r => r.candidate.id === card.sensorId)?.candidate;
+    // Exploration never erases the requirements supplied in the questionnaire.
+    const originalBlocked = blockedBy(sensorById(card.sensorId), answerFilters, answerFilters.map(f => f.id), filterInput);
+    const activeBlocked = candidateRows.find(r => r.candidate.id === card.sensorId)?.blocked ?? [];
+    const compromises = [...new Set([
+      ...answerFilters.filter(f => originalBlocked.includes(f.id)).map(fl),
+      ...shownFilters.filter(f => activeBlocked.includes(f.id)).map(fl),
+    ])];
+    const thermal = card.sensorId === CUSTOM_SENSOR_ID ? null : thermalWarning(card.sensorId, fit.sensorSiteC);
     return (
       <div
         key={card.sensorId}
@@ -2786,45 +2784,17 @@ export function DesignSpace({
         </div>
         {card.sensorId === CUSTOM_SENSOR_ID ? <p className="notice-info t-caption">{t("Conception sur mesure : forme, fixation et distances à définir avec Standex. Schéma illustratif, sans performance validée.")}</p> : null}
         {(() => {
-          // Avertissement thermique NON bloquant : la plage au capteur écrite par
-          // la personne dépasse (ou ne couvre que sous condition) la plage
-          // transcrite de la fiche. Aucune qualification n'est annoncée.
-          if (card.sensorId === CUSTOM_SENSOR_ID) return null;
-          const w = thermalWarning(card.sensorId, fit.sensorSiteC);
-          return w ? (
-            <p className="notice-warning t-body-s" data-testid="thermal-warning" data-status={w.status}>
-              <strong>{msg(THERMAL_SHORT[w.status], [w.asked])}</strong>
-            </p>
-          ) : null;
-        })()}
-        {(() => {
           const reason = compact ? null : ranking.find((r) => r.id === card.sensorId)?.reason;
-          return reason ? <p className="notice-info t-caption" data-testid="rank-reason">{t(reason)}</p> : null;
+          return reason ? <p className="t-caption" data-testid="rank-reason">{t(reason)}</p> : null;
         })()}
-        {compact && blocked.length > 0 ? <p className="notice-warning t-caption">{t("Compromis nécessaire avec vos critères")} : {shownFilters.filter(f => blocked.includes(f.id)).map(f => fl(f)).join(" · ")}</p> : null}
-        {card.sensorId !== CUSTOM_SENSOR_ID ? (
-          <dl className="pair-card-facts" aria-label={t("Données de choix")}>
-            {card.materialLabel ? <div><dt>{t("Matériau de l'aimant")}</dt><dd>{t(card.materialLabel)}</dd></div> : null}
-            {card.sensorMaterialLabel ? <div data-testid="pair-sensor-material"><dt>{t("Boîtier du capteur")}</dt><dd>{t(card.sensorMaterialLabel)}</dd></div> : null}
-            {card.threadLabel ? <div data-testid="pair-thread"><dt>{t("Filetage")}</dt><dd className="t-metric">{card.threadLabel}</dd></div> : null}
-            <div><dt>{t("Montage du capteur")}</dt><dd>{t(card.fixingLabel)}</dd></div>
-            <div><dt>{t("Dimensions du capteur")}</dt><dd className="t-metric">{card.size}</dd></div>
-          </dl>
-        ) : null}
-        {card.sensorId !== CUSTOM_SENSOR_ID ? (
-          <div className="pair-card-documentation">
-            {card.guideUpMm !== null && card.guideToMm !== null ? (
-              <>
-                <p className="t-label">{t("Plage indicative d'activation")}</p>
-                <p className="t-metric">{formatMm(card.guideUpMm)} – {formatMm(card.guideToMm)} mm</p>
-                <p className="t-caption">{t("Plage documentaire indicative, sans validation de la simulation.")}</p>
-                <p className="t-caption"><strong>{t("Référence documentaire")}</strong> · {card.guideReference} · {card.guideApproach}</p>
-              </>
-            ) : card.maxPullInMm !== null ? (
-              <p className="t-body"><strong>{msg("Distance typique publiée : {0} mm · indicatif, à confirmer", [formatMm(card.maxPullInMm)])}</strong></p>
-            ) : (
-              <p className="t-caption">{t("Distances non publiées pour ce couple")}</p>
-            )}
+        {card.sensorId !== CUSTOM_SENSOR_ID ? <PairFacts card={card} /> : null}
+        {thermal || compromises.length > 0 || candidate?.retention === "adapter_required" || candidate?.electricalIncompatible ? (
+          <div className="notice-warning space-y-2" data-testid="pair-vigilance">
+            <p className="t-body flex items-center gap-2"><AlertTriangle className="size-4 shrink-0" aria-hidden="true" /><strong>{t("Points de vigilance")}</strong></p>
+            {compromises.length > 0 ? <p className="t-caption">{t("Compromis nécessaire avec vos critères")} : {compromises.join(" · ")}</p> : null}
+            {thermal ? <p className="t-caption" data-testid="thermal-warning" data-status={thermal.status}>{msg(THERMAL_SHORT[thermal.status], [thermal.asked])}</p> : null}
+            {candidate?.retention === "adapter_required" ? <p className="t-caption">{t("Retenue mécanique à définir : douille ou adaptateur nécessaire.")}</p> : null}
+            {candidate?.electricalIncompatible ? <p className="t-caption">{t("Cette taille du MK06 ne couvre pas les valeurs électriques indiquées avec un même contact documenté.")}</p> : null}
           </div>
         ) : null}
         <div className="mt-4">
@@ -2873,9 +2843,9 @@ export function DesignSpace({
             {t("Aucune recommandation : vous n'avez pas encore décrit ce que le capteur doit détecter. Ces couples correspondent seulement à vos choix mécaniques. Décrivez votre besoin, ou confiez la demande à Standex pour une étude sur mesure.")}
           </p>
         ) : (
-          <p className="t-body mt-2">{pairsSubtitle}</p>
+          activeFilterIds.length === 0 ? <p className="t-body mt-2">{t("Aucun critère actif : testez-les dans votre montage.")}</p> : null
         )}
-        {/* Une seule rangée de puces sous le sous-titre ; tout le réglage fin
+        {/* Les critères ne sont écrits que dans les puces ; tout le réglage fin
             est replié derrière « Ajuster les critères ». */}
         {filterChips ? <div className="mt-3">{filterChips}</div> : null}
         <div className="mt-1">{filterAdjust}</div>
@@ -4615,23 +4585,20 @@ export function DesignSpace({
         {t("Configurer votre capteur")}
       </h2>
       {dossier.selectedSensorId ? (
-        <>
-          <p className="t-body">
-            {msg("Vous avez choisi le capteur {0}.", [dossier.selectedSensorId])}
-          </p>
-          {pcbSelected ? (
-            <p className="notice notice-info" data-testid="configure-pcb">
-              {t("Capteur pour circuit imprimé : le câble et le connecteur ne s'appliquent pas.")}
-            </p>
-          ) : (
-            <>
-              <p className="t-body">
-                {t("Voici les possibilités de câble et de connecteur pour ce capteur.")}
-              </p>
-              {optionalQuestions}
-            </>
-          )}
-        </>
+        <div className="sensor-configuration-layout">
+          <figure className="sensor-configuration-preview" data-testid="configured-sensor-preview">
+            <CandidateThumbnail key={dossier.selectedSensorId} sensorId={dossier.selectedSensorId} cabled fitToView size="large" legend="sensor" quiet />
+            <figcaption>
+              <strong className="t-title-m">{sensorDisplayTitle(dossier.selectedSensorId)}</strong>
+              {sensorDisplayVariant(dossier.selectedSensorId) ? <span className="t-caption block">{t(sensorDisplayVariant(dossier.selectedSensorId)!)}</span> : null}
+              <p className="t-caption mt-1">{msg("Vous avez choisi le capteur {0}.", [dossier.selectedSensorId])}</p>
+            </figcaption>
+          </figure>
+          <div className="min-w-0 space-y-3">
+            <p className="t-body">{t("Voici les possibilités de câble et de connecteur pour ce capteur.")}</p>
+            {optionalQuestions}
+          </div>
+        </div>
       ) : (
         <div className="notice notice-info space-y-3" data-testid="configure-no-sensor">
           <p>
