@@ -1,5 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { PairFacts } from "@/components/leadmagnet/pair-facts";
 import { maxPublishedPullIn, pairCardFor, pairCards } from "@/lib/leadmagnet/pair-cards";
 import { CUSTOM_SENSOR_ID, sensorById } from "@/lib/standex/sensor-catalog";
 import { defaultMagnetFor } from "@/lib/standex/default-pairs";
@@ -21,15 +24,25 @@ describe("couples proposés — écran d'après les six questions", () => {
   });
 
   it("présente des faits stables et qualifie la plage du guide", () => {
+    const facts = renderToStaticMarkup(createElement(PairFacts, { card: pairCardFor(sensorById("MK15")) }));
     for (const label of [
       "Matériau de l'aimant",
       "Montage du capteur",
       "Dimensions du capteur",
-      "Plage indicative d'activation",
+      "Distance d’activation",
       "Référence documentaire",
       "Plage documentaire indicative, sans validation de la simulation.",
-      "Distances non publiées pour ce couple",
-    ]) expect(source).toContain(label);
+    ]) expect(facts.replaceAll("&#x27;", "'")).toContain(label);
+    expect(facts).toContain("indicatif, à confirmer");
+    expect(facts).toContain("15,4 – 20,1 mm");
+    expect(facts).toContain("MK15-B-X");
+    const typical = renderToStaticMarkup(createElement(PairFacts, { card: pairCardFor(sensorById("MK04")) }));
+    expect(typical).toContain("15 mm");
+    expect(typical).toContain("Distance typique publiée");
+    expect(typical).toContain("indicatif, à confirmer");
+    const unknown = renderToStaticMarkup(createElement(PairFacts, { card: pairCardFor(sensorById("MK03")) }));
+    expect(unknown).toContain("Distances non publiées pour ce couple");
+    expect(unknown).not.toContain("indicatif, à confirmer");
   });
 
   it("la distance annoncée est la fermeture maximale RÉELLEMENT publiée pour ce couple", () => {

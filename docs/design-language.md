@@ -1,5 +1,24 @@
 # Langage de design Standex DETECT
 
+### Suggestions et configuration — 20 novembre 2026
+
+Les critères actifs ne sont affichés qu'une fois dans les bulles bleues de l'en-tête.
+Les fiches regroupent les caractéristiques dans une liste à libellés, avec une icône
+16 px décorative par ligne. La distance d’activation rejoint cette liste : la valeur
+reste qualifiée « indicatif, à confirmer ». La plage documentaire et sa référence,
+la distance typique publiée ou l'absence de publication restent distinctes.
+Un unique encart « Points de vigilance » par produit conserve les réserves thermiques,
+les compromis mécaniques, le besoin d'adaptateur et les incompatibilités électriques.
+Désactiver ou remplacer un filtre n'efface pas les écarts aux réponses initiales.
+
+Dans Résultat, la vignette 3D du capteur sélectionné réutilise le rendu des suggestions.
+À partir de 1024 px, elle occupe une colonne compacte à gauche des réglages ; sur
+mobile, l'image de 128 px et sa référence composent une seule rangée. Les champs
+ne sont jamais repoussés sous une grande image. Un seul aperçu est monté, indexé
+sur le capteur réellement choisi. Les cas sans sélection et PCB restent inchangés.
+Surfaces, typographie, couleurs et rayons réutilisent les jetons existants.
+
+
 ### Atelier : expliquer l’instant et alléger la lecture — 9 novembre 2026
 
 Dans l’atelier client, « À cette position » précède l’état de détection, issu du même calcul nominal que le circuit. Le départ MK04/M04 hors détection n’est plus présenté comme un verdict défavorable sur tout le mouvement. Un obstacle ou un mouvement non défini conserve une explication d’action spécifique ; aucun état positif n’est forcé et aucun montage n’est déplacé.

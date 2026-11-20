@@ -673,6 +673,7 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
     const config = view.getByTestId("configure-sensor");
     const sensorId = config.textContent?.match(/capteur (\S+)\./)?.[1] ?? "";
     expect(sensorId).not.toBe("");
+    expect(within(config).getByTestId("configured-sensor-preview").querySelector("[data-sensor]")?.getAttribute("data-sensor")).toBe(sensorId);
     expect(within(config).getByTestId("connector-choice")).toBeTruthy();
     expect(view.container.querySelector("#section-cablage")).not.toBeNull();
     // Longueur standard : les options viennent de standardLengthsMm pour CE capteur.
@@ -757,5 +758,32 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
     expect(view.getByTestId("configure-sensor").textContent).not.toContain("Vous avez choisi");
     await act(async () => fireEvent.click(stepButton(view, /4\. Avec Standex/)));
     expect(view.getByTestId("review-config-sensor").textContent).toBe("Aucun capteur choisi, et aucun choix confié à Standex.");
+  }, 30000);
+});
+
+
+describe("lecture compacte des couples et vigilance", () => {
+  test("un filtre désactivé ne masque pas les écarts au besoin initial", async () => {
+    const view = renderQuestionnaire(390);
+    await changeValue(view.container.querySelector("#guide-detection_goal")!, "Détecter un capot avec un aimant");
+    await goToQuestion(view, 4);
+    await act(async () => fireEvent.click(view.getByRole("button", { name: /Collerette ou boîtier fixé par vis/ })));
+    await changeValue(view.getByLabelText("Longueur"), "40");
+    await changeValue(view.getByLabelText("Largeur"), "40");
+    await changeValue(view.getByLabelText("Hauteur"), "20");
+    await act(async () => fireEvent.click(view.getByRole("button", { name: /2\. Couples proposés/ })));
+    const title = await waitFor(() => view.getByRole("heading", { name: "Trois couples pour votre projet" }));
+    const header = title.parentElement!;
+    expect(header.querySelectorAll("p.t-body")).toHaveLength(0);
+    const chip = within(header).getAllByRole("button").find(b => b.textContent?.includes("Fixation par vis"));
+    expect(chip).toBeTruthy();
+    await act(async () => fireEvent.click(chip!));
+    await act(async () => fireEvent.click(view.getByRole("button", { name: /Voir tous les couples possibles/ })));
+    const other = view.getAllByTestId("pair-card").find(c => c.getAttribute("data-sensor-id") === "MK03")!;
+    expect(within(other).getByTestId("pair-vigilance").textContent).toContain("Compromis nécessaire avec vos critères");
+    expect(within(other).getByTestId("pair-vigilance").textContent).toContain("Fixation par vis");
+    const distance = within(other).getByTestId("pair-activation-distance");
+    expect(distance.closest("dl")).toBeTruthy();
+    expect(distance.textContent).toContain("Distances non publiées pour ce couple");
   }, 30000);
 });
