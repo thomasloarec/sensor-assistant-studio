@@ -1,3 +1,4 @@
+import { UsageChoice } from "@/components/leadmagnet/usage-choice";
 import { t } from "@/lib/i18n/core";
 /** Accueil client : découverte interactive, puis espace projet unifié à la même URL.
  *
@@ -212,6 +213,7 @@ function HomeRoute() {
           requestedDossierId={requestedDossierId || null}
         />
       </div>
+      <UsageChoice />
     </div>
   );
 }

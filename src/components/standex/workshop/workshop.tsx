@@ -1,3 +1,5 @@
+import { trackUsage } from "@/lib/usage/client";
+import type { UsageEvent, UsageProps } from "@/lib/usage/model";
 import { ClientPlacementStatus, ClientZoneLegend, clientPlacementTitle } from "./client-guidance";
 import { initialMagnetAttachment } from '@/lib/standex/machine-magnet-orientation';
 import { useWorkshopDesktop } from "./use-workshop-desktop";
@@ -255,6 +257,7 @@ export interface WorkshopCableRouting {
 }
 
 export interface WorkshopProps {
+  usageVisible?: boolean;
   /** Staff experiment uses pilots; client integration requires a separate explicit boundary. */
   clientPedagogical?: boolean;
   onExplorationChange?: (exploring:boolean)=>void;
@@ -288,6 +291,7 @@ export interface WorkshopProps {
   onSaveState?: (state: "saved" | "saving" | "draft") => void;
 }
 export default function MagneticWorkshop({
+  usageVisible = false,
   pedagogical: staffPedagogical = false,
   clientPedagogical = false, onClientPedagogicalResult, onExplorationChange,
   initialPedagogicalDraft, onPedagogicalDraftChange,
@@ -308,6 +312,13 @@ export default function MagneticWorkshop({
   onRequestTrial,
   onSaveState,
 }: WorkshopProps) {
+  const usageImport = useRef<string>("");
+  if (!usageImport.current) usageImport.current = crypto.randomUUID();
+  const usageTrial = useRef<string | null>(null);
+  const importSelection = useRef(false);
+  const importMeta = useRef<UsageProps>({});
+  const importPending = useRef<string | null>(null);
+  const importChoice = () => { usageImport.current=crypto.randomUUID(); importSelection.current=true; emitUsage("import_clicked", {source:"personal",import_id:usageImport.current}); };
   const importHelpId = useId();
   useLocale();
   const pedagogical = staffPedagogical || clientPedagogical;
@@ -474,6 +485,7 @@ export default function MagneticWorkshop({
   const importAbortRef = useRef<AbortController | null>(null);
   const [importPhase, setImportPhase] = useState<"prepare" | "convert" | "validate" | null>(null);
   const cancelModelImport = () => {
+    importPending.current = null;
     importSeqRef.current++; importAbortRef.current?.abort(); importAbortRef.current = null; setImportPhase(null);
   };
   useEffect(() => () => { importSeqRef.current++; importAbortRef.current?.abort(); }, []);
@@ -606,6 +618,23 @@ export default function MagneticWorkshop({
   }, [machine?.assetKey, machine?.unitScale, storageMode, assetEpoch]);
   /** Toute opération sur le montage passe ici : historique annulable, et une
    * pose modifiée librement libère honnêtement son attache. */
+  function emitUsage(name: UsageEvent, props: UsageProps = {}, once = false) {
+    if (!usageVisible || !clientPedagogical || exploring) return;
+    const source = machine ? machine.assetKey.startsWith("builtin:") ? "demo" : "personal" : "basic";
+    trackUsage(name, {source, ...(source === "personal" ? {import_id:usageImport.current,...importMeta.current} : {}), ...props}, once);
+  }
+  function usageReady() {
+    emitUsage("workshop_ready");
+    if (importPending.current === machine?.assetKey && machineAsset && machine && !machine.assetKey.startsWith("builtin:")) { emitUsage("import_ready", {}, true); importPending.current=null; }
+  }
+  useEffect(() => {
+    if (playing && usageVisible) { emitUsage("workshop_active", {}, true); emitUsage("trial_started", {}, true); usageTrial.current=JSON.stringify(config); }
+  }, [playing, usageVisible]);
+  function usageResult(unavailable: boolean) {
+    if (usageTrial.current !== JSON.stringify(config)) return;
+    emitUsage("result_viewed");
+    if (unavailable) emitUsage("result_unavailable");
+  }
   function machineChange(patch: Partial<MachineAssembly>, opts: { keepTime?: boolean } = {}) {
     if (!machine) return;
     const keepTime = opts.keepTime ?? ["sensorAttach", "magnetAttach", "sensorPosition", "magnetPosition", "sensorRotation", "magnetRotation", "closedAtEnd"]
@@ -628,6 +657,10 @@ export default function MagneticWorkshop({
       dimsFor(bodyConfig, "magnet"),
     );
     if (!parseWorkshopConfig({ ...config, machine: next })) return;
+    emitUsage("workshop_active", {}, true);
+    if (movingSelection(next).length && ("movingNodes" in patch || "movingNode" in patch)) emitUsage("parts_defined", {}, true);
+    if (patch.motionStatus === "confirmed") emitUsage("motion_confirmed", {}, true);
+    if (next.sensorAttach && next.magnetAttach && ("sensorAttach" in patch || "magnetAttach" in patch)) emitUsage("installation_completed", {}, true);
     const h = historyRef.current;
     if (h.key !== machine.assetKey) {
       h.key = machine.assetKey;
@@ -773,7 +806,11 @@ export default function MagneticWorkshop({
    *  d'échec, le montage précédent, le capteur et l'aimant restent intacts.
    *  Seul le dernier import demandé est appliqué. */
   async function importMachine(file: File | undefined) {
-    if (!file) return;
+    if (!file) { emitUsage("import_cancelled", {source:"personal",import_id:usageImport.current}); return; }
+    if (!importSelection.current) importChoice();
+    importSelection.current=false;
+    importMeta.current={format:/\.(step|stp)$/i.test(file.name)?"step":/\.glb$/i.test(file.name)?"glb":"other",size:file.size<1024*1024?"small":file.size<10*1024*1024?"medium":"large"};
+    emitUsage("import_selected", {source:"personal",import_id:usageImport.current,...importMeta.current});
     cancelModelImport();
     const abort = new AbortController();
     importAbortRef.current = abort;
@@ -786,9 +823,14 @@ export default function MagneticWorkshop({
       const assetKey = await storeMachineFileWithMode(file, storageMode, { signal: abort.signal, onPhase: phase => { if (seq === importSeqRef.current) setImportPhase(phase); } });
       if (seq !== importSeqRef.current) return;
       const same = machine?.assetKey === assetKey;
+      importPending.current=assetKey;
       await installMachine(assetKey, file.name, same ? machine!.unitScale : COFFEE_ASSEMBLY.unitScale, seq, abort.signal);
+      // Re-selecting an already rendered file also constitutes a successful import.
+      if(same && machineAsset && !sceneError && view === "3d") usageReady();
     } catch (e) {
       if (seq !== importSeqRef.current) return;
+      importPending.current=null;
+      emitUsage("import_failed", {source:"personal",import_id:usageImport.current,...importMeta.current});
       setError(e instanceof Error ? e.message : t("Import impossible."));
     } finally {
       if (seq === importSeqRef.current) { setImportPhase(null); importAbortRef.current = null; }
@@ -801,11 +843,14 @@ export default function MagneticWorkshop({
     const p = pendingUnits;
     setError(null);
     const seq = ++importSeqRef.current;
+    importPending.current=p.assetKey;
     try {
       await installMachine(p.assetKey, p.fileName, p.choice, seq);
       if (seq === importSeqRef.current) setPendingUnits(null);
     } catch (e) {
       if (seq !== importSeqRef.current) return;
+      importPending.current=null;
+      emitUsage("import_failed", {source:"personal",import_id:usageImport.current,...importMeta.current});
       setError(e instanceof Error ? e.message : t("Import impossible."));
     }
   }
@@ -872,6 +917,7 @@ export default function MagneticWorkshop({
     setResetEpoch((v) => v + 1);
   }
   function failed3d() {
+    emitUsage("render_failed");
     setSceneError(true);
     // Remain in 3D: the existing renderer error/retry UI handles context loss.
   }
@@ -2349,7 +2395,7 @@ export default function MagneticWorkshop({
               </button>
             </div>);
   return (
-    <main className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${clientPedagogical ? "mw-client-pedagogical" : ""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
+    <main onChangeCapture={() => emitUsage("workshop_active", {}, true)} className={`mw mw-stage immersive ${pedagogical?"mw-pedagogical":""} ${clientPedagogical ? "mw-client-pedagogical" : ""} ${embedded ? "mw-embedded" : "mw-autonomous"} ${machine ? "mw-imported" : ""}`} aria-label={t("Atelier 3D")}>
       {productCard && !pedagogical && (
         <SensorCard
           key={sensor.id}
@@ -2519,6 +2565,8 @@ export default function MagneticWorkshop({
                   type="file"
                   accept=".glb,.step,.stp,model/gltf-binary,model/step"
                   aria-describedby={importHelpId}
+                  onClick={importChoice}
+                  ref={node => { if (node) node.oncancel = () => emitUsage("import_cancelled", {source:"personal",import_id:usageImport.current}); }}
                   onChange={(e) => {
                     void importMachine(e.target.files?.[0]);
                     e.target.value = "";
@@ -2531,7 +2579,7 @@ export default function MagneticWorkshop({
             </div>
             {importPhase && <div className="mw-model-import" aria-busy="true">
               <p className="t-caption" role="status">{t(importPhase === "prepare" ? "Préparation du modèle…" : importPhase === "convert" ? "Conversion STEP…" : "Vérification du modèle…")}</p>
-              <button className="mw-button mw-secondary" onClick={cancelModelImport}>{t("Annuler l'import")}</button>
+              <button className="mw-button mw-secondary" onClick={() => {emitUsage("import_cancelled", {source:"personal",import_id:usageImport.current});cancelModelImport();}}>{t("Annuler l'import")}</button>
             </div>}
             {pendingUnits && (
               <div className="mw-units-retry notice-warning" role="group" data-testid="units-retry"
@@ -2572,7 +2620,7 @@ export default function MagneticWorkshop({
             <button
               className="mw-button"
               onClick={() => {
-                if(clientPedagogical){const product=exploring?originalConfig.current:config;if(!product)return;onClientPedagogicalResult?.(clientPedagogicalResult(product,exploring?originalProgress.current:progress));if(exploring)endExploration();return;}
+                if(clientPedagogical){const product=exploring?originalConfig.current:config;if(!product)return;const result=clientPedagogicalResult(product,exploring?originalProgress.current:progress);usageResult(result.indicative?.state === "unavailable");onClientPedagogicalResult?.(result);if(exploring)endExploration();return;}
                 if(staffPedagogical){onClose();return;}if(onResult)onResult(testedPair());else onClose();
               }}
             >
@@ -2723,6 +2771,7 @@ export default function MagneticWorkshop({
                       onMarkers={setMarkers}
                       onPlaced={() => setTool("navigate")}
                       onContextLost={failed3d}
+                      onReady={usageReady}
                       ghost={ghost}
                       guide={overlay}
                       routing={
@@ -2784,6 +2833,7 @@ export default function MagneticWorkshop({
                     config={config}
                     resetEpoch={resetEpoch}
                     onContextLost={failed3d}
+                    onReady={usageReady}
                     sample={pedagogical ? {...sample,contact:circuitContact??"unknown"} : sample}
                     samples={pedagogical ? result.samples.map(s=>({...s,contact:"unknown" as const})) : result.samples}
                     view={view}

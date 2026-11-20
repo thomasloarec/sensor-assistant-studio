@@ -1,3 +1,4 @@
+import { ProductUsage } from "@/components/leadmagnet/product-usage";
 /** Réglages de la plateforme.
  *
  *  Cet écran n'a pas le même rôle que Projets, Tâches et Dossiers : il règle
@@ -66,6 +67,7 @@ const SECTIONS = [
   { id: "directory", label: "Annuaire" },
   { id: "accounts", label: "Comptes et droits" },
   { id: "audit", label: "Journal" },
+  { id: "usage", label: "Usage produit" },
 ] as const;
 type SectionId = (typeof SECTIONS)[number]["id"];
 
@@ -210,7 +212,7 @@ export function AdminScreen() {
         </p>
       </div>
 
-      <dl className="kpi-row">
+      {section !== "usage" && <dl className="kpi-row">
         <div className="kpi">
           <dt>{t("Personnes actives")}</dt>
           <dd className="t-metric">{activePeople}</dd>
@@ -227,7 +229,7 @@ export function AdminScreen() {
           <dt>{t("Version de l'espace de travail")}</dt>
           <dd className="t-metric">{overview?.crmVersion ?? t("inconnue")}</dd>
         </div>
-      </dl>
+      </dl>}
 
       <div
         role="tablist"
@@ -256,8 +258,9 @@ export function AdminScreen() {
         ))}
       </div>
 
-      {error ? <ErrorBlock text={error} onRetry={load} /> : null}
-      {overview === null ? <LoadingBlock /> : null}
+      {section === "usage" ? <ProductUsage sessionGeneration={sessionGeneration} /> : null}
+      {section !== "usage" && error ? <ErrorBlock text={error} onRetry={load} /> : null}
+      {section !== "usage" && overview === null ? <LoadingBlock /> : null}
 
       {overview ? (
         <>

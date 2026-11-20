@@ -1,3 +1,4 @@
+import { SceneReady } from "./scene-ready";
 import { changeoverBlades } from "@/lib/standex/changeover-contacts";
 import { insertionParts } from '@/lib/standex/insertion-profile';
 import { cableConstruction } from "@/lib/leadmagnet/product-presentation";
@@ -885,6 +886,7 @@ export default function WorkshopScene({
   reduced = false,
   resetEpoch = 0,
   onContextLost,
+  onReady,
   ghost,
   pedagogicalLayer, hideElectrical = false, showIllustrativeContacts=false,
 }: {
@@ -907,6 +909,7 @@ export default function WorkshopScene({
   reduced?: boolean;
   resetEpoch?: number;
   onContextLost?: () => void;
+  onReady?: () => void;
   /** Prévisualisation seule : le fantôme n'écrit rien dans la configuration. */
   ghost?: GhostPose | null | undefined;
 }) {
@@ -1042,6 +1045,7 @@ export default function WorkshopScene({
           target.map((n) => Math.round(n * 10)).join(","),
         ].join(":")}
       />
+      <SceneReady key={resetEpoch} onReady={onReady} />
     </Canvas>
   );
 }

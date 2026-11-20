@@ -12,6 +12,12 @@ export const isSupabaseConfigured = Boolean(url && key);
 export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(url as string, key as string, {
       auth: { persistSession: true, autoRefreshToken: true },
+      // Small measurement batches may finish while the visitor closes the page.
+      // All other requests retain the client's normal fetch behavior.
+      global: { fetch: (input, init) => fetch(input, {
+        ...init,
+        ...(String(input).includes('/rpc/product_usage_') ? { keepalive: true } : {}),
+      }) },
     })
   : null;
 
