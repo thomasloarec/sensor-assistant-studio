@@ -6,12 +6,11 @@ import { t } from "@/lib/i18n/core";
  *
  * Contraintes tenues ici :
  * - un contexte WebGL n'est créé QUE lorsque la vignette entre à l'écran ;
- * - le nombre de contextes simultanés est plafonné, les vignettes en attente
- *   affichent le repli 2D jusqu'à ce qu'une place se libère ;
+ * - le mode animé partage un contexte entre toutes les vignettes visibles ;
+ * - le mode historique plafonne ses contextes et affiche un repli en attente ;
  * - la 3D est démontée (et sa place rendue) dès que la vignette sort de vue ;
- * - dès qu'une autre vignette visible attend une place, le rendu est FIGÉ en
- *   image et le contexte est rendu : les six objets de trois cartes sont donc
- *   tous rendus en 3D, à tour de rôle, sans dépendre du survol ;
+ * - seul le mode historique fige son rendu pour rendre sa place : les couples
+ *   et la configuration restent animés, indépendamment du cache d'images ;
  * - aucune rotation automatique sous `prefers-reduced-motion: reduce` ;
  * - sans WebGL, le repli 2D dessine LA silhouette du capteur concerné : il ne
  *   substitue jamais une autre référence.
@@ -190,6 +189,7 @@ export function CandidateThumbnail({
   sensorId,
   hostSensorId,
   livePreview = true,
+  animated = false,
   cabled = true,
   pair,
   fitToView = false,
@@ -205,6 +205,8 @@ export function CandidateThumbnail({
    *  2D comme en 3D. */
   hostSensorId?: string;
   livePreview?: boolean;
+  /** Continuous 3D through one shared renderer, without freezing cached images. */
+  animated?: boolean;
   cabled?: boolean;
   pair?: { magnetId: string; approach: string };
   fitToView?: boolean;
@@ -243,11 +245,12 @@ export function CandidateThumbnail({
   // garde son dessin coté et le dit.
   // Une vignette déjà figée ne redemande PAS de contexte : sa place revient
   // immédiatement aux vignettes visibles encore en attente.
-  const { host, hasSlot, reduced, crowded } = useWebglSlot(
-    livePreview && supported && !lost && snapshot === null,
+  const { host, inView, hasSlot, reduced, crowded } = useWebglSlot(
+    !animated && livePreview && supported && !lost && snapshot === null,
   );
 
-  const live = hasSlot;
+  const live = animated ? livePreview && supported && !lost && inView : hasSlot;
+  const displayedSnapshot = animated ? null : snapshot;
   const reason = !livePreview
     ? t("Vue plane")
     : !supported
@@ -256,7 +259,7 @@ export function CandidateThumbnail({
         ? t("Aperçu 3D indisponible : dessin coté à la place")
         : live
           ? t("Aperçu 3D")
-          : snapshot
+          : displayedSnapshot
             ? t("Aperçu 3D figé")
             : t("Dessin coté : aperçu 3D en attente d'une place");
   const roleLabel = legend === "magnet" ? t("Aimant") : legend === "sensor" ? t("Capteur") : null;
@@ -264,15 +267,15 @@ export function CandidateThumbnail({
     <div
       ref={host as React.RefObject<HTMLDivElement>}
       className={size === "large" ? "candidate-thumb candidate-thumb-large" : "candidate-thumb"}
-      data-live={live ? "3d" : snapshot ? "snapshot" : "2d"}
+      data-live={live ? "3d" : displayedSnapshot ? "snapshot" : "2d"}
       data-role={legend}
       data-sensor={model.id}
       {...(quiet ? { title: `${model.name} — ${reason}` } : {})}
     >
-      {!live && snapshot ? (
+      {!live && displayedSnapshot ? (
         // Image du rendu 3D réel de CETTE vignette : le contexte a été rendu
         // pour qu'une autre carte visible puisse être rendue à son tour.
-        <img className="candidate-thumb-snapshot" src={snapshot} alt={`${model.name} — ${reason}`} />
+        <img className="candidate-thumb-snapshot" src={displayedSnapshot} alt={`${model.name} — ${reason}`} />
       ) : live ? (
         // Un renderer qui refuse de se créer doit retomber sur le dessin 2D,
         // au même titre qu'un contexte perdu en cours de route.
@@ -298,9 +301,10 @@ export function CandidateThumbnail({
               scaleBar={scaleBar}
               {...(pair ? { pair } : {})}
               reduced={reduced}
+              shared={animated}
               /* Figer dès qu'une autre vignette visible attend, ou d'emblée
                  quand l'animation est désactivée par préférence système. */
-              snapshotWhenSettled={crowded || reduced}
+              snapshotWhenSettled={!animated && (crowded || reduced)}
               onSnapshot={(dataUrl) => {
                 storeThumbnailSnapshot(snapshotKey, dataUrl);
                 setSnapshot(dataUrl);

@@ -8,6 +8,7 @@ import { pairedMagnetModel } from "@/lib/standex/paired-magnets";
  * vignette ne peut donc pas montrer une géométrie différente de l'atelier.
  * Chargé paresseusement et monté uniquement quand la vignette est visible.
  */
+import { SharedThumbnailCanvas } from "./shared-thumbnail-canvas";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { Body, Contacts, ContextGuard } from "./scene";
@@ -49,6 +50,7 @@ export default function CandidateThumbnailScene({
   fitToView = false,
   reduced,
   scaleBar = false,
+  shared = false,
   snapshotWhenSettled = false,
   onSnapshot,
   onContextLost,
@@ -66,6 +68,7 @@ export default function CandidateThumbnailScene({
   scaleBar?: boolean;
   /** Figer le rendu en image dès qu'il est stabilisé, puis rendre le contexte. */
   snapshotWhenSettled?: boolean;
+  shared?: boolean;
   onSnapshot?: (dataUrl: string) => void;
   onContextLost: () => void;
 }) {
@@ -89,8 +92,7 @@ export default function CandidateThumbnailScene({
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-  const rule =
-    scaleBar && hostWidth > 0 ? projectedScaleBar(span, zoom, hostWidth * 0.42) : null;
+  const rule = scaleBar && hostWidth > 0 ? projectedScaleBar(span, zoom, hostWidth * 0.42) : null;
   const side = model.cableSide ?? -1;
   const magnet = pair ? pairedMagnetModel(pair.magnetId, model.id) : null;
   const layout = magnet ? pairLayout(model, magnet, pair!.approach) : null;
@@ -100,30 +102,12 @@ export default function CandidateThumbnailScene({
   const electrical = electricalDetailsAllowed(model);
   const showContacts = electrical && model.shape === "glass";
 
-  return (
-    <div className="candidate-thumb-stage" ref={host}>
-      <Canvas
-      orthographic
-      camera={{
-        zoom,
-        position: [dist * 0.68, dist * 0.55, dist * 0.86],
-        fov: 38,
-        near: 0.1,
-        far: dist * 12,
-      }}
-      dpr={[1, 1.5]}
-      /* `preserveDrawingBuffer` est nécessaire pour lire le rendu : sans lui,
-         `toDataURL` renvoie une image vide après la présentation de la frame. */
-      gl={{
-        antialias: true,
-        alpha: true,
-        powerPreference: "low-power",
-        preserveDrawingBuffer: true,
-      }}
-      onCreated={({ gl }) => gl.setClearColor("#000000", 0)}
-    >
+  const content = (
+    <>
       <ContextGuard onLost={onContextLost} />
-      {snapshotWhenSettled && onSnapshot ? <SnapshotCapture onSnapshot={onSnapshot} /> : null}
+      {!shared && snapshotWhenSettled && onSnapshot ? (
+        <SnapshotCapture onSnapshot={onSnapshot} />
+      ) : null}
       <ambientLight intensity={2.1} />
       <directionalLight position={[span * 2, span * 3, span * 1.8]} intensity={2.2} />
       <directionalLight position={[-span * 2, span, -span * 2]} intensity={0.8} />
@@ -149,21 +133,61 @@ export default function CandidateThumbnailScene({
         makeDefault
         enablePan={false}
         enableZoom={false}
+        enableDamping={!reduced}
         autoRotate={!reduced}
         autoRotateSpeed={0.8}
         target={pair ? [offset[0] / 2, 0, offset[2] / 2] : [cableVisible ? side * 6 : 0, 0, 0]}
       />
-      </Canvas>
+    </>
+  );
+
+  return (
+    <div className="candidate-thumb-stage" ref={host}>
+      {shared ? (
+        <SharedThumbnailCanvas
+          zoom={zoom}
+          position={[dist * 0.68, dist * 0.55, dist * 0.86]}
+          far={dist * 12}
+          reduced={reduced}
+          onLost={onContextLost}
+        >
+          {content}
+        </SharedThumbnailCanvas>
+      ) : (
+        <Canvas
+          orthographic
+          camera={{
+            zoom,
+            position: [dist * 0.68, dist * 0.55, dist * 0.86],
+            fov: 38,
+            near: 0.1,
+            far: dist * 12,
+          }}
+          dpr={[1, 1.5]}
+          /* `preserveDrawingBuffer` est nécessaire pour lire le rendu : sans lui,
+         `toDataURL` renvoie une image vide après la présentation de la frame. */
+          gl={{
+            antialias: true,
+            alpha: true,
+            powerPreference: "low-power",
+            preserveDrawingBuffer: true,
+          }}
+          onCreated={({ gl }) => gl.setClearColor("#000000", 0)}
+        >
+          {content}
+        </Canvas>
+      )}
       {rule ? (
         <div className="candidate-thumb-rule" aria-hidden="true">
-          <span className="candidate-thumb-rule-line" style={{ inlineSize: `${rule.lengthPx}px` }} />
+          <span
+            className="candidate-thumb-rule-line"
+            style={{ inlineSize: `${rule.lengthPx}px` }}
+          />
           <span className="candidate-thumb-rule-text">{`${formatMm(rule.stepMm)} mm`}</span>
         </div>
       ) : null}
       {rule ? (
-        <span className="sr-only">
-          {`${t("Échelle")} : ${formatMm(rule.stepMm)} mm`}
-        </span>
+        <span className="sr-only">{`${t("Échelle")} : ${formatMm(rule.stepMm)} mm`}</span>
       ) : null}
     </div>
   );

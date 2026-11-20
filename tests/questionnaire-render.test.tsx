@@ -671,6 +671,8 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
     const view = renderQuestionnaire(390);
     await chooseFirstPairAndOpenResult(view);
     const config = view.getByTestId("configure-sensor");
+    expect(view.queryByTestId("result-empty")).toBeNull();
+    expect(config.textContent).not.toContain("Voici les possibilités de câble et de connecteur");
     const sensorId = config.textContent?.match(/capteur (\S+)\./)?.[1] ?? "";
     expect(sensorId).not.toBe("");
     expect(within(config).getByTestId("configured-sensor-preview").querySelector("[data-sensor]")?.getAttribute("data-sensor")).toBe(sensorId);

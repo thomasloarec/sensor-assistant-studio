@@ -162,14 +162,7 @@ export function ResultView({
       <div className="space-y-5" data-testid="result-blocked-empty">
         {fitPanel}
       </div>
-    ) : (
-      <div className="panel-block-lg space-y-4" data-testid="result-empty">
-        <p className="t-title-m">{t("Testez un couple pour voir son résultat ici.")}</p>
-        <Button onClick={onSeePairs} className="min-h-11">
-          {t("Voir les couples proposés")}
-        </Button>
-      </div>
-    );
+    ) : null;
 
 
   const word = detectedObjectWord(detectionGoal);

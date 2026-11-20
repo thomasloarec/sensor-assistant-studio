@@ -70,6 +70,7 @@ export function PairThumbnail({
           de l'autre, avec le repère de pôles. Le rendu 3D est demandé dès que
           la vignette est visible, sans survol. */}
       <CandidateThumbnail
+        animated
         sensorId={sensorId}
         cabled={true}
         fitToView
@@ -82,6 +83,7 @@ export function PairThumbnail({
       </span>
       {magnetDrawn ? (
         <CandidateThumbnail
+          animated
           sensorId={magnetId}
           // Capteur du couple : la fiche peut donner un boîtier par variante
           // (M11S en M5 ou en M8). Sans lui, l'aimant serait dessiné dans une
