@@ -18,7 +18,7 @@ export interface Attachment {
   partPath: string;
   /** Point d'appui (surface) ou point d'entrée (traversant), en mm. */
   point: Vec3;
-  /** Normale unitaire sortante de la face. */
+  /** Normale unitaire vers le côté sélectionné de la face (pose statique). */
   normal: Vec3;
   /** Surface : écart face d'appui → plan. Traversant : profondeur de la référence
    *  au-delà de la face (positif = en retrait dans la paroi, négatif = dépasse). */
