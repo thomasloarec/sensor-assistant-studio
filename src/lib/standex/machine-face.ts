@@ -3,7 +3,7 @@
  * The conservative rectangular mounting footprint must be entirely covered,
  * including its interior (four corner raycasts would miss holes).
  */
-import { Triangle, Vector3 } from "three";
+import { BackSide, FrontSide, Triangle, Vector3 } from "three";
 import type { MachineAsset } from "./machine-assets";
 import type { Attachment } from "./machine-mounting";
 import type { Vec3 } from "./magnetic-workshop";
@@ -53,7 +53,8 @@ export function mountingFace(
   a: Attachment,
 ): MountingFace | null {
   if (a.kind !== "surface") return null;
-  const g = asset.parts.find((p) => p.path === a.partPath)?.geometry;
+  const part = asset.parts.find((p) => p.path === a.partPath);
+  const g = part?.geometry;
   const positions = g?.getAttribute("position");
   if (!positions) return null;
   const [x, y] = faceTangents(a.normal),
@@ -84,12 +85,24 @@ export function mountingFace(
       new Vector3().fromBufferAttribute(positions, g!.index ? g!.index.getX(i + k) : i + k),
     );
     const tri = new Triangle(vs[0]!, vs[1]!, vs[2]!);
+    // Respect the clicked side and the original material, including per-face
+    // materials. Double-sided sheets support mounting from either direction;
+    // the plane, anchor and edge-connected boundary are still unchanged.
+    const material = Array.isArray(part!.material)
+      ? part!.material[
+          g!.groups.find((group) => i >= group.start && i < group.start + group.count)
+            ?.materialIndex ?? -1
+        ]
+      : part!.material;
+    const alignment = tri.getNormal(new Vector3()).dot(n);
     if (
       vs.some(
         (v) => !v.toArray().every(Number.isFinite) || Math.abs(v.clone().sub(origin).dot(n)) > EPS,
       ) ||
       tri.getArea() < EPS * EPS ||
-      tri.getNormal(new Vector3()).dot(n) < 1 - 1e-5
+      !material ||
+      Math.abs(alignment) < 1 - 1e-5 ||
+      (alignment < 0 ? material.side === FrontSide : material.side === BackSide)
     )
       continue;
     const keys = vs.map(key),

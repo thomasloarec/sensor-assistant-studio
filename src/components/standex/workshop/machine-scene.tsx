@@ -14,13 +14,13 @@ import {
   DoubleSide,
   Euler,
   Group,
-  Matrix3,
   Quaternion,
   Vector3,
   MeshStandardMaterial,
 } from "three";
 import type { TransformControls as TransformImpl } from "three-stdlib";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
+import { visibleFaceNormal } from "@/lib/standex/machine-picking";
 import type { MachineAssembly, Marker } from "@/lib/standex/machine-assembly";
 import {
   movingRotation,
@@ -333,10 +333,7 @@ function Assembly({
   },[moveFrame,moveProxy]);
   const hitOf = (event: ThreeEvent<MouseEvent>, path: string, moving: boolean): SceneHit | null => {
     if (!event.face) return null;
-    const normal = event.face.normal
-      .clone()
-      .applyMatrix3(new Matrix3().getNormalMatrix(event.object.matrixWorld))
-      .normalize();
+    const normal = visibleFaceNormal(event.face.normal, event.object.matrixWorld, event.ray.direction);
     // Le point affiché est ramené à la pose statique du fichier : base commune
     // des attaches et repères, quel que soit l'instant du clip.
     const rest = toRest(machine, path, event.point.toArray() as Vec3, normal.toArray() as Vec3, u);
@@ -391,10 +388,7 @@ function Assembly({
       onPlaced();
       return;
     }
-    const normal = event.face.normal
-      .clone()
-      .applyMatrix3(new Matrix3().getNormalMatrix(event.object.matrixWorld))
-      .normalize();
+    const normal = visibleFaceNormal(event.face.normal, event.object.matrixWorld, event.ray.direction);
     const q = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), normal),
       e = new Euler().setFromQuaternion(q);
     const height = tool === "sensor" ? model.body[1] : magnetSize(config)[1];
