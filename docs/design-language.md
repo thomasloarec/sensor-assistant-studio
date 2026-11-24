@@ -1,5 +1,25 @@
 # Langage de design Standex DETECT
 
+### Enfoncement et confirmation de pose — 24 novembre 2026
+
+Installation réutilise le même outil de déplacement après fixation : deux axes
+tangents sur une surface, un axe d’insertion dans un trou. « Régler l’enfoncement »
+expose cette seconde possibilité sans ouvrir Position précise. Le centre désigné,
+l’axe, le support, l’orientation et le mouvement sont conservés ; seule la profondeur
+change. L’aperçu suit le geste, le relâchement enregistre un réglage annulable.
+
+Chaque tâche propose une confirmation explicite de position. Confirmer le capteur
+ouvre l’aimant ; les deux restent accessibles dans n’importe quel ordre. Les cartes
+confirmées gardent une coche, le texte « Position confirmée » et les jetons
+`--success-soft` / `--success`, même lorsqu’une autre carte est ouverte. L’état
+actif reste distinct par l’élévation et un repère latéral. Les confirmations sont
+des repères de progression de la session d’atelier, jamais une validation de
+détection. Elles portent sur la référence et la pose exactes : modifier un composant
+demande sa reconfirmation, naviguer ou lire le mouvement ne l’efface pas. Revenir à
+la pose confirmée par Annuler retrouve sa confirmation. Un nouveau modèle ou une
+nouvelle session recommence ce suivi. Aucun changement du centrage initial ni de
+la politique de propositions. Traductions, focus et cibles suivent le socle existant.
+
 ### Sélection pédagogique de l’aimant — 24 novembre 2026
 
 Dans les caractéristiques de l’aimant, trois champs natifs ordonnés portent la

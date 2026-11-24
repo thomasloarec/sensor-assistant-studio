@@ -40,7 +40,7 @@ import type { CycleSample, WorkshopConfig, Vec3 } from "@/lib/standex/magnetic-w
 import { sensorById, sizeLabel } from "@/lib/standex/sensor-catalog";
 import { Body, Contacts, Magnet, CameraRig, ContextGuard, GhostMagnet } from "./scene";
 import type { GhostPose } from "./scene";
-import { surfaceMoveFrame, surfaceMovePatch } from "@/lib/standex/machine-surface-move";
+import { mountingMoveFrame, mountingMovePatch } from "@/lib/standex/machine-surface-move";
 import { mountingFace } from "@/lib/standex/machine-face";
 
 export type MachineTool =
@@ -322,9 +322,9 @@ function Assembly({
   const editable = (tool === "sensor" || tool === "magnet") && (!!guide || sample.t === 0);
   const selected = tool === "sensor" ? sensorRef : magnetRef;
   const moveTarget=tool==="move-sensor"?"sensor":tool==="move-magnet"?"magnet":null;
-  const moveFrame=useMemo(()=>moveTarget?surfaceMoveFrame(machine,moveTarget,u):null,[machine,moveTarget,u]);
+  const moveFrame=useMemo(()=>moveTarget?mountingMoveFrame(machine,moveTarget,u):null,[machine,moveTarget,u]);
   const moveAttach=moveTarget==="sensor"?machine.sensorAttach:moveTarget==="magnet"?machine.magnetAttach:undefined;
-  const moveFace=useMemo(()=>moveAttach?mountingFace(asset,moveAttach):null,[asset,moveAttach]);
+  const moveFace=useMemo(()=>moveAttach?.kind==="surface"?mountingFace(asset,moveAttach):null,[asset,moveAttach]);
   const moveProxy=useMemo(()=>new Group(),[]);
   const [moveRejected,setMoveRejected]=useState(false);
   useEffect(()=>{
@@ -531,15 +531,15 @@ function Assembly({
       {moveTarget && moveFrame && <>
         <primitive object={moveProxy}/>
         <TransformControls object={moveProxy} mode="translate" space="local"
-          showX showY showZ={false} size={0.75} translationSnap={0.1}
+          showX showY={moveAttach?.kind === "surface"} showZ={false} size={0.75} translationSnap={0.1}
           onObjectChange={()=>{
-            const patch=surfaceMovePatch(config,asset,moveTarget,moveProxy.position.toArray() as Vec3,u,moveFace);
+            const patch=mountingMovePatch(config,asset,moveTarget,moveProxy.position.toArray() as Vec3,u,moveFace);
             const object=(moveTarget==="sensor"?sensorRef:magnetRef).current;
             const position=moveTarget==="sensor"?patch?.sensorPosition:patch?.magnetPosition;
             if(object&&position)object.position.set(...position);
           }}
           onMouseUp={()=>{
-            const patch=surfaceMovePatch(config,asset,moveTarget,moveProxy.position.toArray() as Vec3,u,moveFace);
+            const patch=mountingMovePatch(config,asset,moveTarget,moveProxy.position.toArray() as Vec3,u,moveFace);
             if(patch){setMoveRejected(false);onChange(patch);}
             else {
               moveProxy.position.set(...moveFrame.position);moveProxy.updateMatrixWorld(true);
@@ -549,7 +549,9 @@ function Assembly({
             }
           }}/>
         {moveRejected && <Html position={moveFrame.position} center>
-          <span className="mw-scene-label" role="status">{t("Déplacement refusé : restez sur la face de fixation.")}</span>
+          <span className="mw-scene-label" role="status">{t(moveAttach?.kind === "through"
+            ? "Déplacement refusé : limite de profondeur atteinte."
+            : "Déplacement refusé : restez sur la face de fixation.")}</span>
         </Html>}
       </>}
       {guide?.holePlane && tool === "pick" && <HolePlanePreview plane={guide.holePlane} onRay={(o, d) => guide.onHoleRay?.({ origin: o, direction: d })} />}

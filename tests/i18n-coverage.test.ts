@@ -135,7 +135,7 @@ describe("Couverture des langues de l'interface", () => {
     // + 20 entries: concise instant feedback and progressive workshop explanations.
     // + 4 entries: compact activation facts and product-specific vigilance.
     // + 30 entries: workshop magnet form, dimensions, comparative strength and material discovery.
-    expect(Object.keys(dictionary)).toHaveLength(4335);
+    expect(Object.keys(dictionary)).toHaveLength(4347);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

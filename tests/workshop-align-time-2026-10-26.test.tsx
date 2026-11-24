@@ -34,6 +34,55 @@ afterAll(() => {
 });
 
 describe("Positions de détection dans le Workshop intégré", () => {
+  test('MK07 insertion and explicit installation confirmations survive navigation, edits and undo', async () => {
+    const { setLocale } = await import('../src/lib/i18n/core'); setLocale('fr');
+    const { default: Workshop } = await import('../src/components/standex/workshop/workshop');
+    const { DEFAULT_WORKSHOP, parseWorkshopConfig } = await import('../src/lib/standex/magnetic-workshop');
+    const { DEMO_ASSEMBLIES } = await import('../src/lib/standex/machine-demos');
+    const { attachPatch } = await import('../src/components/standex/workshop/machine-guide');
+    const { mountingMoveFrame, mountingMovePatch } = await import('../src/lib/standex/machine-surface-move');
+    const { Vector3 } = await import('three');
+    let config = { ...DEFAULT_WORKSHOP, sensorId: 'MK07', magnetModel: 'M04', machine: structuredClone(DEMO_ASSEMBLIES['builtin:wall-v1']!) };
+    const a = { kind: 'through' as const, support: 'fixed' as const, partPath: '0/0', point: [0, 40, 0] as [number, number, number],
+      normal: [0, 0, 1] as [number, number, number], offsetMm: -15, spinDeg: 0, flip: false, depthRef: 'collar' as const, axisSource: 'plane-centre' as const };
+    config.machine = { ...config.machine, ...attachPatch('sensor', a, config) };
+    const view = render(<Workshop embedded clientPedagogical initialConfig={config} onDraftChange={c => config = c as typeof config} onClose={() => {}} onSave={async () => {}} />);
+    try {
+      await waitFor(() => expect(currentScene?.asset).toBeTruthy());
+      await act(async () => fireEvent.click(view.getByTestId('guide-step-install')));
+      const sensor = () => view.getByTestId('guide-target-sensor');
+      const magnet = () => view.getByTestId('guide-target-magnet');
+      expect(sensor().getAttribute('data-confirmed')).toBe('false');
+      expect((view.getByTestId('guide-precise') as HTMLDetailsElement).open).toBe(false);
+      await act(async () => fireEvent.click(view.getByRole('button', { name: 'Régler l’enfoncement' })));
+      expect(currentScene.tool).toBe('move-sensor');
+      const frame = mountingMoveFrame(config.machine, 'sensor')!;
+      const requested = new Vector3(...frame.position).add(new Vector3(5, 0, 0).applyQuaternion(frame.quaternion));
+      await act(async () => currentScene.onChange(mountingMovePatch(config, currentScene.asset, 'sensor', requested.toArray() as [number, number, number])));
+      expect(config.machine.sensorAttach?.offsetMm).toBeCloseTo(-10, 7);
+      expect(config.machine.sensorAttach?.point).toEqual(a.point);
+      expect(config.machine.sensorAttach?.normal).toEqual(a.normal);
+      expect(parseWorkshopConfig(JSON.parse(JSON.stringify(config)))?.machine?.sensorAttach).toEqual(config.machine.sensorAttach);
+      await act(async () => fireEvent.click(view.getByRole('button', { name: 'Confirmer la position du capteur' })));
+      expect(sensor().getAttribute('data-confirmed')).toBe('true');
+      expect(sensor().textContent).toContain('Position confirmée');
+      expect(magnet().getAttribute('aria-pressed')).toBe('true');
+      expect(currentScene.tool).toBe('navigate');
+      await act(async () => fireEvent.click(view.getByRole('button', { name: 'Confirmer la position de l’aimant' })));
+      expect(magnet().getAttribute('data-confirmed')).toBe('true');
+      await act(async () => fireEvent.click(view.getByRole('button', { name: 'Passer à l’essai' })));
+      await act(async () => fireEvent.click(view.getByTestId('guide-step-install')));
+      expect(sensor().getAttribute('data-confirmed')).toBe('true');
+      expect(magnet().getAttribute('data-confirmed')).toBe('true');
+      await act(async () => fireEvent.click(sensor()));
+      await act(async () => currentScene.onChange(attachPatch('sensor', { ...config.machine.sensorAttach!, offsetMm: -8 }, config)));
+      expect(sensor().getAttribute('data-confirmed')).toBe('false');
+      expect(magnet().getAttribute('data-confirmed')).toBe('true');
+      await act(async () => fireEvent.click(view.getByRole('button', { name: 'Annuler le dernier réglage' })));
+      expect(config.machine.sensorAttach?.offsetMm).toBeCloseTo(-10, 7);
+      expect(sensor().getAttribute('data-confirmed')).toBe('true');
+    } finally { view.unmount(); currentScene = null; }
+  }, 20000);
   test('installation scrubs the moving part and preserves its pose through tools, edits and undo',async()=>{
     const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
     const {default:Workshop}=await import('../src/components/standex/workshop/workshop');

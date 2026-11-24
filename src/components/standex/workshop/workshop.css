@@ -3464,6 +3464,11 @@
 .mw-guide .mw-install-task { display: flex; width: 100%; gap: 12px; padding: 12px; text-align: start; background: var(--surface); color: var(--foreground); border-radius: var(--r-sm); box-shadow: var(--e-1); }
 .mw-guide .mw-install-task[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--e-2); }
 .mw-guide .mw-install-task[aria-pressed="true"] :is(strong, .t-caption) { color: inherit; }
+.mw-guide .mw-install-task[data-confirmed="true"] { background: var(--success-soft); color: var(--success); }
+.mw-guide .mw-install-task[data-confirmed="true"] :is(strong, .t-caption) { color: inherit; }
+.mw-guide .mw-install-task[data-confirmed="true"][aria-pressed="true"] { box-shadow: var(--e-2), inset 3px 0 0 var(--success); }
+.mw-guide .mw-install-task[data-confirmed="true"] .mw-task-number { background: transparent; }
+.mw-placement-confirm { display: grid; gap: 8px; }
 .mw-task-number { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: var(--r-pill); background: var(--surface-sunken); }
 .mw-task-label { display: grid; gap: 2px; flex: 1; }
 .mw-guide .mw-install-task:focus-visible, .mw-motion-decision:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
