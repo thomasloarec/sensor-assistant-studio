@@ -3209,6 +3209,10 @@
 .immersive .mw-guide .mw-secondary[aria-pressed="true"] {
   background: var(--surface-tint);
 }
+.mw-guide .mw-placement-tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-top: 8px; }
+.immersive .mw-placement-tools .mw-secondary[aria-pressed="true"] {
+  box-shadow: var(--e-2), inset 3px 0 0 var(--ring);
+}
 .immersive .mw-guide .mw-text-button {
   color: var(--heading);
 }
@@ -3462,13 +3466,15 @@
 .mw-position-ends > button { flex: 1 1 100px; }
 .mw-install-tasks { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
 .mw-guide .mw-install-task { display: flex; width: 100%; gap: 12px; padding: 12px; text-align: start; background: var(--surface); color: var(--foreground); border-radius: var(--r-sm); box-shadow: var(--e-1); }
-.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--e-2); }
+.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--surface-tint); color: var(--heading); box-shadow: var(--e-2), inset 3px 0 0 var(--ring); }
 .mw-guide .mw-install-task[aria-pressed="true"] :is(strong, .t-caption) { color: inherit; }
 .mw-guide .mw-install-task[data-confirmed="true"] { background: var(--success-soft); color: var(--success); }
 .mw-guide .mw-install-task[data-confirmed="true"] :is(strong, .t-caption) { color: inherit; }
 .mw-guide .mw-install-task[data-confirmed="true"][aria-pressed="true"] { box-shadow: var(--e-2), inset 3px 0 0 var(--success); }
 .mw-guide .mw-install-task[data-confirmed="true"] .mw-task-number { background: transparent; }
-.mw-placement-confirm { display: grid; gap: 8px; }
+.mw-placement-confirm { display: grid; gap: 12px; margin-top: 8px; padding: 16px 12px; background: var(--surface-tint); border-radius: var(--r-md); }
+.mw-placement-confirm > .mw-button { width: 100%; min-height: 44px; }
+.mw-placement-confirm > .mw-button svg { flex-shrink: 0; }
 .mw-task-number { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: var(--r-pill); background: var(--surface-sunken); }
 .mw-task-label { display: grid; gap: 2px; flex: 1; }
 .mw-guide .mw-install-task:focus-visible, .mw-motion-decision:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
