@@ -117,6 +117,8 @@ import "./workshop.css";
 import { COFFEE_ASSEMBLY } from "@/lib/standex/machine-assembly";
 import type { MachineAssembly, Marker as MarkerT } from "@/lib/standex/machine-assembly";
 import type { MachineAsset } from "@/lib/standex/machine-assets";
+import { machineScaleError } from "@/lib/standex/machine-scale";
+import MachineScaleRecovery from "./machine-scale-recovery";
 import type { MachineTool } from "./machine-scene";
 import type { TestedPair } from "@/lib/leadmagnet/tested-pairs";
 import MachineControls from "./machine-controls";
@@ -164,12 +166,6 @@ import { PedagogicalLayer, PedagogicalCut } from "./pedagogical-layer";
 import { PedagogicalControls, PedagogicalBanner, PivotNotes, usePedagogicalVolume, usePedagogicalCut, preparePivot, volumeKey, PLACEMENT_LABEL } from "./pedagogical-controls";
 import { DEFAULT_EXPERIMENT, EXPERIMENT, experimentAvailable, evaluatePlacement, placementTimeline, classThresholds, type ExperimentSettings } from "@/lib/detection-lab/workshop-experiment";
 
-/* i18n-canonical : libellés traduits au rendu par t(). */
-const UNIT_LABEL: Record<number, string> = {
-  1000: "Mètres · standard GLB",
-  1: "Millimètres",
-  10: "Centimètres",
-};
 const Scene = lazy(() => import("./scene"));
 const MachineScene = lazy(() => import("./machine-scene"));
 /* i18n-canonical : libellés stockés en français, traduits au rendu par t(). */
@@ -486,6 +482,7 @@ export default function MagneticWorkshop({
   const [importPhase, setImportPhase] = useState<"prepare" | "convert" | "validate" | null>(null);
   const cancelModelImport = () => {
     importPending.current = null;
+    setPendingUnits(null);
     importSeqRef.current++; importAbortRef.current?.abort(); importAbortRef.current = null; setImportPhase(null);
   };
   useEffect(() => () => { importSeqRef.current++; importAbortRef.current?.abort(); }, []);
@@ -501,7 +498,7 @@ export default function MagneticWorkshop({
     assetKey: string;
     fileName: string;
     tried: number;
-    choice: number;
+    sizeMm: Vec3;
   } | null>(null);
   /** Lecture « montage guidé » recalculée à chaque changement d'entrée : un verdict
    * n'est jamais conservé ni importé, il est toujours recalculé ici. */
@@ -814,22 +811,26 @@ export default function MagneticWorkshop({
       if (seq === importSeqRef.current) { setImportPhase(null); importAbortRef.current = null; }
     }
   }
-  /** Nouvel essai explicite d'un fichier refusé pour son échelle, avec les
-   *  unités choisies : rien n'est deviné et les limites ne changent pas. */
-  async function retryUnits() {
-    if (!pendingUnits) return;
+  /** The user confirms a real size or units before any assembly is replaced. */
+  async function retryUnits(scale: number) {
+    if (!pendingUnits || importPhase) return;
     const p = pendingUnits;
     setError(null);
     const seq = ++importSeqRef.current;
+    const abort = new AbortController();
+    importAbortRef.current = abort;
+    setImportPhase("validate");
     importPending.current=p.assetKey;
     try {
-      await installMachine(p.assetKey, p.fileName, p.choice, seq);
-      if (seq === importSeqRef.current) setPendingUnits(null);
+      const installed = await installMachine(p.assetKey, p.fileName, scale, seq, abort.signal);
+      if (installed && seq === importSeqRef.current) setPendingUnits(null);
     } catch (e) {
       if (seq !== importSeqRef.current) return;
       importPending.current=null;
       emitUsage("import_failed", {source:"personal",import_id:usageImport.current,...importMeta.current});
       setError(e instanceof Error ? e.message : t("Import impossible."));
+    } finally {
+      if (seq === importSeqRef.current) { setImportPhase(null); importAbortRef.current = null; }
     }
   }
   async function installMachine(assetKey: string, fileName: string, scale: number, seq: number, signal?: AbortSignal) {
@@ -837,7 +838,7 @@ export default function MagneticWorkshop({
     const same = machine?.assetKey === assetKey && machine.unitScale === scale;
     if (same && machineAsset) {
       // Même fichier déjà chargé : rien ne change, aucune ressource en double.
-      return;
+      return true;
     }
     let asset: MachineAsset;
     try {
@@ -845,18 +846,21 @@ export default function MagneticWorkshop({
     } catch (e) {
       if ((e as { code?: string }).code === "scale" && /\.(step|stp)$/i.test(fileName))
         throw new Error(t("Dimensions STEP hors limites : le modèle doit mesurer entre 0,1 mm et 20 m."));
-      if (seq === importSeqRef.current && (e as { code?: string }).code === "scale")
+      const scaleIssue = machineScaleError(e);
+      if (seq === importSeqRef.current && scaleIssue) {
         setPendingUnits({
           assetKey,
           fileName,
           tried: scale,
-          choice: scale === 1 ? 1000 : 1,
+          sizeMm: scaleIssue.sizeMm,
         });
+        return false;
+      }
       throw e;
     }
     if (seq !== importSeqRef.current) {
       asset.dispose();
-      return;
+      return false;
     }
     preloadedRef.current?.asset.dispose();
     preloadedRef.current = { key: assetKey, scale, asset };
@@ -865,7 +869,7 @@ export default function MagneticWorkshop({
       // toucher aux réglages, attaches, clip ni repères, et on relance le chargement.
       setAssetEpoch((v) => v + 1);
       setSceneError(false);
-      return;
+      return true;
     }
     const keepSame = machine?.assetKey === assetKey;
     if (!keepSame) freshImportRef.current = assetKey + "|" + scale;
@@ -893,6 +897,7 @@ export default function MagneticWorkshop({
     setFocus("assembly");
     setSceneError(false);
     setResetEpoch((v) => v + 1);
+    return true;
   }
   function failed3d() {
     emitUsage("render_failed");
@@ -2549,37 +2554,12 @@ export default function MagneticWorkshop({
               <p className="t-caption" role="status">{t(importPhase === "prepare" ? "Préparation du modèle…" : importPhase === "convert" ? "Conversion STEP…" : "Vérification du modèle…")}</p>
               <button className="mw-button mw-secondary" onClick={() => {emitUsage("import_cancelled", {source:"personal",import_id:usageImport.current});cancelModelImport();}}>{t("Annuler l'import")}</button>
             </div>}
-            {pendingUnits && (
-              <div className="mw-units-retry notice-warning" role="group" data-testid="units-retry"
-                aria-label={t("Unités du nouveau fichier")}>
-                <p className="t-body">
-                  {msg("{0} : refusé avec les unités « {1} ». Choisissez les unités du fichier puis réessayez. Le montage actuel reste inchangé.", [
-                    pendingUnits.fileName,
-                    UNIT_LABEL[pendingUnits.tried] ? t(UNIT_LABEL[pendingUnits.tried]!) : String(pendingUnits.tried),
-                  ])}
-                </p>
-                <label className="mw-select-label">
-                  {t("Unités du fichier")}
-                  <select
-                    data-testid="units-retry-select"
-                    value={pendingUnits.choice}
-                    onChange={(e) => setPendingUnits({ ...pendingUnits, choice: Number(e.target.value) })}
-                  >
-                    {[1000, 1, 10].map((v) => (
-                      <option key={v} value={v}>{t(UNIT_LABEL[v]!)}</option>
-                    ))}
-                  </select>
-                </label>
-                <div className="mw-guide-row">
-                  <button className="mw-button" data-testid="units-retry-go" onClick={() => void retryUnits()}>
-                    {t("Réessayer avec ces unités")}
-                  </button>
-                  <button className="mw-button mw-secondary" onClick={() => { setPendingUnits(null); setError(null); }}>
-                    {t("Annuler l'import")}
-                  </button>
-                </div>
-              </div>
-            )}
+            {pendingUnits && <MachineScaleRecovery
+              key={pendingUnits.assetKey + "|" + pendingUnits.tried}
+              fileName={pendingUnits.fileName} sizeMm={pendingUnits.sizeMm} triedScale={pendingUnits.tried}
+              busy={!!importPhase} onConfirm={scale => void retryUnits(scale)}
+              onCancel={() => { emitUsage("import_cancelled", {source:"personal",import_id:usageImport.current}); cancelModelImport(); setError(null); }}
+            />}
             <details className="mw-demo-shortcut" data-testid="demo-shortcut">
               <summary>{t("Essayer un modèle de démonstration")}</summary>
               <DemoButtons onDemo={openDemo} />

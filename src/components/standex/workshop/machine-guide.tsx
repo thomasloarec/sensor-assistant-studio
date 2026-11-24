@@ -472,6 +472,7 @@ export default function MachineGuide({
             value={m.unitScale}
             onChange={(e) => onChange({ unitScale: Number(e.target.value) })}
           >
+            {![1, 10, 1000].includes(m.unitScale) && <option value={m.unitScale}>{t("Taille personnalisée")}</option>}
             <option value={1000}>{t("Mètres · standard GLB")}</option>
             <option value={1}>{t("Millimètres")}</option>
             <option value={10}>{t("Centimètres")}</option>

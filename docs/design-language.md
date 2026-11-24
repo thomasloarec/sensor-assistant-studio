@@ -1,5 +1,17 @@
 # Langage de design Standex DETECT
 
+### Correction d’échelle à l’import — 24 novembre 2026
+
+Un GLB lisible mais hors échelle ouvre « Ajuster la taille du modèle » dans un
+encart informatif, sans message d’échec doublonné. Les dimensions lues restent
+visibles. Un champ demande la plus grande dimension réelle en cm, sans valeur
+supposée ; les trois dimensions résultantes apparaissent avant l’action principale
+« Importer à cette taille ». Les unités connues restent dans un volet secondaire,
+avec dimensions calculées et choix hors limites désactivés. Annuler conserve le
+montage précédent. Le facteur confirmé est enregistré et restauré avec le montage.
+Les styles, surfaces, focus et cibles de 44 px existants sont réutilisés ; aucun
+nouveau jeton. Les huit langues sont couvertes.
+
 ### Hiérarchie des actions d’installation — 24 novembre 2026
 
 La sélection Capteur / Aimant est une navigation teintée avec repère latéral,
