@@ -1,4 +1,5 @@
 import { Euler, Quaternion, Vector3 } from "three";
+import { validMachineScale } from "./machine-scale";
 import type { Vec3 } from "./magnetic-workshop";
 import { parseAttachment } from "./machine-mounting";
 import type { Attachment } from "./machine-mounting";
@@ -338,7 +339,7 @@ export function parseMachine(value: unknown): MachineAssembly | null {
     x["movingNode"].length > 250
   )
     return null;
-  if (![1, 10, 1000].includes(x["unitScale"] as number)) return null;
+  if (!validMachineScale(x["unitScale"])) return null;
   for (const k of [
     "sensorPosition",
     "sensorRotation",
