@@ -1268,18 +1268,18 @@ export default function MachineGuide({
     test: (
       <>
         {clipMode ? (
-          <p className="t-body t-metric" data-testid="guide-clip-time">
-            {sampler
-              ? msg("Animation {0} : {1} s / {2} s ({3} %)", [
-                  sampler.name,
-                  (u * sampler.duration).toFixed(2),
-                  sampler.duration.toFixed(2),
-                  (u * 100).toFixed(0),
-                ])
-              : t("Animation non disponible : aucune pose animée n'est lue.")}
-          </p>
+          <div className="t-body mw-playback-reading" data-testid="guide-clip-time">
+            {sampler ? <>
+              <span>{t("Animation")}</span>
+              <span className="mw-playback-name" title={sampler.name}>{sampler.name}</span>
+              <div className="t-metric mw-playback-numbers">
+                <span>{(u * sampler.duration).toFixed(2)} s / {sampler.duration.toFixed(2)} s</span>
+                <span>{(u * 100).toFixed(0)} %</span>
+              </div>
+            </> : t("Animation non disponible : aucune pose animée n'est lue.")}
+          </div>
         ) : (
-          <p className="t-body" data-testid="guide-test-opening">
+          <p className="t-body t-metric mw-playback-opening" data-testid="guide-test-opening">
             {msg("Ouverture du mécanisme : {0} {1} · {2}", [
               opening.value.toFixed(1),
               opening.unit,
@@ -1291,9 +1291,10 @@ export default function MachineGuide({
             ])}
           </p>
         )}
-        <p className="t-body">
-          {msg("Distance entre centres capteur–aimant : {0} mm", [formatMm(sample.distance, 1)])}
-        </p>
+        <div className="t-body mw-playback-reading" data-testid="guide-distance">
+          <span>{t("Distance entre centres capteur–aimant")}</span>
+          <span className="t-metric mw-playback-distance">{formatMm(sample.distance, 1)} mm</span>
+        </div>
         <div className="mw-guide-row">
           <Button
             className="mw-button mw-secondary"

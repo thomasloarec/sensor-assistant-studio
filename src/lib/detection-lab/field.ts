@@ -118,6 +118,19 @@ export function cylinderField(body: CylinderMagnetBody, q: Vec3): Vec3 {
   return [bZ * u[0] + s * r[0], bZ * u[1] + s * r[1], bZ * u[2] + s * r[2]];
 }
 
+/** Exterior X component for repeated reed integration. Same local field and
+ * projection as cylinderField, but compute cylindrical coordinates only once
+ * for both the interior exclusion and the field. No approximation or new tolerance. */
+export function cylinderExteriorFieldX(body: CylinderMagnetBody, q: Vec3): number {
+  const dx=q[0]-body.center[0],dy=q[1]-body.center[1],dz=q[2]-body.center[2],u=body.axis;
+  const z=dx*u[0]+dy*u[1]+dz*u[2];
+  const rx=dx-z*u[0],ry=dy-z*u[1],rz=dz-z*u[2];
+  const rho=Math.hypot(rx,ry,rz);
+  if(rho<=body.radiusMm&&Math.abs(z)<=body.lengthMm/2)return NaN;
+  const {bRho,bZ}=cylinderFieldLocal(body.radiusMm,body.lengthMm,body.jT,rho,z);
+  return rho<1e-12?bZ*u[0]:bZ*u[0]+(bRho/rho)*rx;
+}
+
 /** Distance signée point → cylindre plein (négative à l'intérieur). */
 export function cylinderSignedDistance(body: CylinderMagnetBody, q: Vec3): number {
   const d: Vec3 = [q[0] - body.center[0], q[1] - body.center[1], q[2] - body.center[2]];

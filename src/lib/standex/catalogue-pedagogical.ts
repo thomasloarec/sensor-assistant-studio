@@ -13,11 +13,11 @@ import type { Vec3 } from './magnetic-workshop';
 import { momentFor, magnetSize, poseAt, type WorkshopConfig } from './magnetic-workshop';
 import { PILOT_MAGNETS, type PilotMagnet } from '../detection-lab/magnets';
 import { gaussLegendre, reedResponse, type MagnetPose, type PoseEvaluation } from '../detection-lab/pose';
-import { cylinderField, cylinderSignedDistance } from '../detection-lab/field';
+import { cylinderExteriorFieldX } from '../detection-lab/field';
 import { PROFILE, type ReedScenario } from '../detection-lab/profile';
 import { prepareBlockField } from './magnetics/field';
 import { axisNodes, type PlacementEvidence, type SampledVolume, type TableSample } from '../detection-lab/workshop-experiment';
-import { magnetObb, obstacleOverlap, obstacleCacheData, type Obb } from '../detection-lab/obstacles';
+import { magnetObb, obstacleOverlap, prepareObstacleOverlap, obstacleCacheData, type Obb } from '../detection-lab/obstacles';
 import { publishedRowsForCouple, publishedRowsSourceUrl, PUBLISHED_REGISTRY } from './magnetics/registries';
 import { CATALOGUE_RESPONSE, catalogueThresholds as classThresholds, catalogueScenarios, catalogueNominalScenario as nominalScenario } from './catalogue-response';
 
@@ -140,7 +140,7 @@ export function prepareCatalogueEvaluation(m:ReturnType<typeof catalogueModel>,d
   if(Math.hypot(...center.map((v,i)=>v-(m.centre[i]??0)))>PROFILE.domain.maxCenterMm)return {ok:false,reason:'domain'};
   const body=fd.kind==='cylinder'?{radiusMm:fd.radiusMm,lengthMm:fd.lengthMm,jT:fd.jT*s.momentFactor,center,axis}:null;
   const B=(q:Vec3):number=>{
-   if(body)return cylinderSignedDistance(body,q)<=0?NaN:cylinderField(body,q)[0];
+   if(body)return cylinderExteriorFieldX(body,q);
    const d=q.map((v,i)=>v-(center[i]??0)) as Vec3,local=frame.map(r=>dot(r,d)) as Vec3;
    const r=block!(local);if(!r.ok)return NaN;return frame.reduce((sum,row,i)=>sum+(r.vector[i]??0)*(row[0]??0),0);
   };
@@ -156,10 +156,10 @@ export function prepareCatalogueEvaluation(m:ReturnType<typeof catalogueModel>,d
 export function catalogueNominalSampler(c:WorkshopConfig,axis:Vec3,frame:Frame,obstacles:readonly Obb[]=[],model=catalogueModel(c)){
  const evaluate=prepareCatalogueEvaluation(model,axis,nominalScenario(),frame),bodies=[...catalogueBodyObbs(c),...obstacles];
  const half=model.magnetBody.map(n=>n/2) as Vec3,validAxis=Math.hypot(...axis)>0;
+ const overlaps=bodies.map(o=>prepareObstacleOverlap({path:'magnet',c:[0,0,0],a:frame,h:half},o));
  return (center:Vec3)=>{
   if(!validAxis||!center.every(Number.isFinite))return {response:null,blocked:false};
-  const magnet:Obb={path:'magnet',c:center,a:frame,h:half};
-  const blocked=bodies.some(o=>obstacleOverlap(magnet,o));
+  const blocked=overlaps.some(overlap=>overlap(center));
   const e=blocked?null:evaluate(center);
   return {response:e?.ok?e.response:null,blocked};
  };
@@ -258,10 +258,12 @@ export function catalogueVolume(c:WorkshopConfig,axis:Vec3,planeZ:number,obstacl
   const response=reuse<index?field.values[reuse]??null:e!.response;
   const blocked=reuse<index?field.blocked[reuse]??false:e!.blocked;
   const zone:0|1|2=response===null?0:response>=th.high?2:th.low!==null&&response>=th.low?1:0;
-  const [x0,x1]=nodeBounds(xs,i),[y0,y1]=nodeBounds(ys,j),[z0,z1]=nodeBounds(zs,k);
-  const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response,blocked};
-  field.values.push(cell.response);field.blocked.push(cell.blocked);
-  if(zone)cells.push(cell);if(z===planeZ)cut.push(cell);
+  field.values.push(response);field.blocked.push(blocked);
+  if(zone||z===planeZ){
+   const [x0,x1]=nodeBounds(xs,i),[y0,y1]=nodeBounds(ys,j),[z0,z1]=nodeBounds(zs,k);
+   const cell={i,j,k,x,y,z,x0,x1,y0,y1,z0,z1,zone,response,blocked};
+   if(zone)cells.push(cell);if(z===planeZ)cut.push(cell);
+  }
  }
  const truncated=cells.some(p=>p.i===0||p.i===xs.length-1||p.j===0||p.j===ys.length-1||p.k===0||p.k===zs.length-1||Math.hypot(p.x-model.centre[0],p.y-model.centre[1],p.z-model.centre[2])>=PROFILE.domain.maxCenterMm-Math.sqrt(3));
  return {key:JSON.stringify([CATALOGUE_MODEL_VERSION,c,axis,frame??null,planeZ,obstacleCacheData(obstacles)]),cells,cut,field,axis,planeZ,extent:displayedExtent,computeMs:performance.now()-start,nodeCount:xs.length*ys.length*zs.length,truncated};

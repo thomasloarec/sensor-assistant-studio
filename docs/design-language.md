@@ -1140,3 +1140,12 @@ Le bouton actif emploie la surface primaire ; l'encart réutilise `--e-2` et les
 jetons existants, sans animation. La course saisie avant la direction reste
 visible et s'applique dès que le trajet est défini, sans direction inventée.
 
+
+### Lecture stable pendant l’essai — 24 novembre 2026
+
+Le nom du clip occupe une ligne dédiée, tronquée avec son nom complet au survol.
+Le temps et le pourcentage utilisent des colonnes distinctes et des chiffres
+à largeur fixe. La distance occupe une ligne propre sous son libellé. Les valeurs
+ne changent donc plus la hauteur du bloc ni la position des commandes de lecture.
+Les classes typographiques et les jetons existants sont conservés, sans animation
+ajoutée ni annonce vocale répétée à chaque image.
