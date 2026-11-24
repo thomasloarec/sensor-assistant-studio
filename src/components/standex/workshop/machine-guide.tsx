@@ -68,6 +68,8 @@ export interface GuideState {
   target: "sensor" | "magnet";
   kind: { sensor: MountKind; magnet: MountKind };
   freed: ("sensor" | "magnet")[];
+  /** UI acknowledgements of exact component poses, not detection validation. */
+  confirmedPlacement?: Partial<Record<"sensor" | "magnet", string>>;
   /** Attaches libérées parce que le produit choisi ne permet plus ce montage. */
   incompatible?: ("sensor" | "magnet")[];
   /** Explication d'un pointage refusé (points confondus, supports distincts). */
@@ -102,6 +104,19 @@ export function dimsFor(config: WorkshopConfig, which: "sensor" | "magnet") {
   if (pilot) return { ...pilot[which] };
   const body = which === "sensor" ? sensorById(config.sensorId).body : magnetSize(config);
   return { lengthMm: body[0], heightMm: body[1] };
+}
+
+/** Excludes playback, camera and the other component: navigating never erases
+ * progress, but a changed product/pose must be confirmed again. Session UI only. */
+export function placementKey(config: WorkshopConfig, which: "sensor" | "magnet"): string | null {
+  const m = config.machine;
+  if (!m) return null;
+  return JSON.stringify([m.assetKey, m.unitScale,
+    which === "sensor" ? config.sensorId : config.magnetModel, dimsFor(config, which),
+    which === "sensor" ? m.sensorAttach : m.magnetAttach,
+    which === "sensor" ? m.sensorPosition : m.magnetPosition,
+    which === "sensor" ? m.sensorRotation : m.magnetRotation,
+    which === "sensor" ? m.sensorMount : m.magnetMount]);
 }
 
 /** Attache construite à partir d'un point cliqué (normale de la face). */
@@ -353,8 +368,10 @@ export default function MachineGuide({
   };
   const target = state.target;
   const moveTool = target === "sensor" ? "move-sensor" : "move-magnet";
-  const movingOnFace = tool === moveTool;
+  const movingPlacement = tool === moveTool;
   const attach = target === "sensor" ? m.sensorAttach : m.magnetAttach;
+  const placementConfirmed = (which: "sensor" | "magnet") =>
+    state.confirmedPlacement?.[which] === placementKey(config, which);
   const kind = state.kind[target];
   const canThrough = target === "sensor" && throughAllowed(sensor.shape);
   const centring = state.pick?.purpose === "hole-centre";
@@ -857,12 +874,14 @@ export default function MachineGuide({
         <ol className="mw-install-tasks" aria-label={t("Composants à installer")}>
           {([ ["sensor", "Capteur"], ["magnet", "Aimant"] ] as const).map(([v, label], i) => {
             const fixed = !!(v === "sensor" ? m.sensorAttach : m.magnetAttach);
+            const confirmed = placementConfirmed(v);
             return <li key={v}><Button className="mw-install-task" aria-pressed={target === v}
+              data-confirmed={confirmed}
               data-testid={"guide-target-" + v} onClick={() => {
                 setTool("navigate"); setState(s => ({ ...s, target: v, pick: null }));
               }}>
-              <span className="mw-task-number t-metric" aria-hidden="true">{i + 1}</span>
-              <span className="mw-task-label"><strong className="t-body">{t(label)}</strong><span className="t-caption">{t(fixed ? "Face choisie" : "À placer")}</span></span>
+              <span className="mw-task-number t-metric" aria-hidden="true">{confirmed ? <Check size={18}/> : i + 1}</span>
+              <span className="mw-task-label"><strong className="t-body">{t(label)}</strong><span className="t-caption">{t(confirmed ? "Position confirmée" : fixed ? "À confirmer" : "À placer")}</span></span>
               <ChevronRight size={18} aria-hidden="true"/>
             </Button></li>;
           })}
@@ -909,10 +928,10 @@ export default function MachineGuide({
           >
             {t(tool === target ? "Annuler le pointage" : attach ? "Changer de face de fixation" : "Choisir la face de fixation")}
           </Button>
-          {attach?.kind === "surface" && <Button className="mw-button mw-secondary"
-            data-testid="guide-move" aria-pressed={movingOnFace}
-            onClick={() => setTool(movingOnFace ? "navigate" : moveTool)}>
-            {t(movingOnFace ? "Terminer le déplacement" : "Déplacer sur la face")}
+          {attach && <Button className="mw-button mw-secondary"
+            data-testid="guide-move" aria-pressed={movingPlacement}
+            onClick={() => setTool(movingPlacement ? "navigate" : moveTool)}>
+            {t(movingPlacement ? "Terminer le déplacement" : attach.kind === "through" ? "Régler l’enfoncement" : "Déplacer sur la face")}
           </Button>}
           {kind === "through" && (
             <Button
@@ -925,9 +944,31 @@ export default function MachineGuide({
             </Button>
           )}
         </div>
-        {movingOnFace && <p className="notice-info" role="status">
-          {t("Glissez les flèches pour déplacer le composant sur sa face. Un déplacement hors de cette face est refusé.")}
+        {movingPlacement && <p className="notice-info" role="status">
+          {t(attach?.kind === "through"
+            ? "Glissez la flèche pour enfoncer ou retirer le capteur. Le centre et l’axe du trou restent fixés."
+            : "Glissez les flèches pour déplacer le composant sur sa face. Un déplacement hors de cette face est refusé.")}
         </p>}
+        </div>
+        <div className="mw-placement-confirm" data-testid="guide-placement-confirm">
+          {placementConfirmed(target) ? <p className="notice-success" role="status">
+            {t(target === "sensor" ? "Position du capteur confirmée." : "Position de l’aimant confirmée.")}
+          </p> : <>
+            <p className="t-body">{t(target === "sensor" ? "Le capteur est-il bien placé ?" : "L’aimant est-il bien placé ?")}</p>
+            <Button className="mw-button" disabled={!asset || picking}
+              data-testid="guide-confirm-placement" onClick={() => {
+                const key = placementKey(config, target);
+                if (!key) return;
+                setTool("navigate");
+                setState(s => ({ ...s, pick: null,
+                  confirmedPlacement: { ...s.confirmedPlacement, [target]: key },
+                  target: target === "sensor" ? "magnet" : target }));
+              }}>
+              {t(target === "sensor" ? "Confirmer la position du capteur" : "Confirmer la position de l’aimant")}
+            </Button>
+          </>}
+          {placementConfirmed("sensor") && placementConfirmed("magnet") &&
+            <Button className="mw-button" onClick={() => go("test")}>{t("Passer à l’essai")}</Button>}
         </div>
         {state.pick?.purpose === "hole-centre" && (
           <div className="notice-info mw-pick-steps" data-testid="guide-hole-centre-steps" role="status">
