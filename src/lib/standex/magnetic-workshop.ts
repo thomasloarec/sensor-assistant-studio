@@ -198,6 +198,12 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     x["machine"] = machine;
   }
   if (typeof x["sensorId"] !== "string" || !isKnownSensorId(x["sensorId"])) return null;
+  // V1/V2 did not save a magnet choice: preserve their historical generated
+  // default. V3 stores an explicit choice and must never replace it by shape.
+  if (legacy && x["mode"] === "reference" && isShapeIncompatible(x["sensorId"], "M02")) {
+    x["magnetModel"] = defaultMagnetFor(x["sensorId"]);
+    x["guideReference"] = null;
+  }
   const choices: Record<string, readonly unknown[]> = {
     mode: ["reference", "education"],
     // La colonne publiée acceptée : classes Academy A–E, plus tout libellé
@@ -247,18 +253,9 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     (x["targetStart"] as number) >= (x["targetEnd"] as number)
   )
     return null;
-  /* Couple enregistré AVANT la règle de compatibilité de forme (un ancien
-     fichier « mode référence » portait MK03 + M02, aimant bloc sur corps
-     tubulaire) : l'aimant est ramené au défaut du capteur. Le fichier n'est pas
-     refusé et aucune distance n'est reprise de l'aimant écarté. */
-  if (
-    typeof x["magnetModel"] === "string" &&
-    x["magnetModel"] !== "generic" &&
-    isShapeIncompatible(x["sensorId"] as string, x["magnetModel"])
-  ) {
-    x["magnetModel"] = defaultMagnetFor(x["sensorId"] as string);
-    x["guideReference"] = null;
-  }
+  // The allowlist above validates identity. A saved workshop selection is an
+  // explicit mechanical choice, not a new initial recommendation: keep blocks
+  // and screw-mounted housings even with tubular sensors, across dossier reloads.
   // Allow only schema keys; ignore potential result/provenance properties on imported objects.
   return Object.fromEntries(
     Object.keys(DEFAULT_WORKSHOP).map((k) => [k, x[k]]),
