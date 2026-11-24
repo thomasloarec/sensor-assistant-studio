@@ -87,8 +87,7 @@ describe("Documented body sizes and source plans", () => {
 describe("Existing saved assemblies remain readable", () => {
   test("V1 reference and education snapshots migrate to explicit V3 sensor identities", () => {
     const old = { ...MK03_EXAMPLE, version: 1, sensorId: undefined };
-    // MK03 est tubulaire : un enregistrement d'avant la règle de forme est ramené
-    // au couple par défaut du capteur, sans inventer de distance.
+    // V1 ne sauvegardait aucun choix d'aimant : conserver le défaut historique.
     expect(parseWorkshopConfig(old)).toEqual({ ...MK03_EXAMPLE, magnetModel: defaultMagnetFor("MK03") });
     expect(
       parseWorkshopNote(

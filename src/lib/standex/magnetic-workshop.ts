@@ -2,6 +2,7 @@ import { housingYawDeg, transverseApproach, workshopHousingYawDeg } from "./hous
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
 import { defaultMagnetFor, normalizedMagnetFor } from "./default-pairs";
+import { isShapeIncompatible } from "./shape-compatibility";
 /** Magnetic workshop V0.3. Geometry, field illustration and switching are separate.
  * Reference distances are typical published values; education is NOT a product model.
  */
@@ -197,6 +198,12 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     x["machine"] = machine;
   }
   if (typeof x["sensorId"] !== "string" || !isKnownSensorId(x["sensorId"])) return null;
+  // V1/V2 did not save a magnet choice: preserve their historical generated
+  // default. V3 stores an explicit choice and must never replace it by shape.
+  if (legacy && x["mode"] === "reference" && isShapeIncompatible(x["sensorId"], "M02")) {
+    x["magnetModel"] = defaultMagnetFor(x["sensorId"]);
+    x["guideReference"] = null;
+  }
   const choices: Record<string, readonly unknown[]> = {
     mode: ["reference", "education"],
     // La colonne publiée acceptée : classes Academy A–E, plus tout libellé
