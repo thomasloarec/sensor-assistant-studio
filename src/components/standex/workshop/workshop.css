@@ -3470,13 +3470,13 @@
 .mw-guide .mw-pick-methods > button { display: grid; justify-items: start; text-align: start; gap: 2px; padding: 10px 12px; }
 .mw-guide .mw-segmented button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .mw-position-ends > button { flex: 1 1 100px; }
-.mw-install-tasks { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
+.mw-install-tasks { --mw-selection: var(--standex-blue); --mw-selection-ink: var(--primary-foreground); list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
 .mw-guide .mw-install-task { display: flex; width: 100%; gap: 12px; padding: 12px; text-align: start; background: var(--surface); color: var(--foreground); border-radius: var(--r-sm); box-shadow: var(--e-1); }
-.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--surface-tint); color: var(--heading); box-shadow: var(--e-2), inset 3px 0 0 var(--ring); }
+.mw-guide .mw-install-task[aria-pressed="true"] { background: var(--surface-tint); color: var(--heading); box-shadow: var(--e-2), inset 0 0 0 2px var(--mw-selection), inset 5px 0 0 var(--mw-selection); }
 .mw-guide .mw-install-task[aria-pressed="true"] :is(strong, .t-caption) { color: inherit; }
 .mw-guide .mw-install-task[data-confirmed="true"] { background: var(--success-soft); color: var(--success); }
 .mw-guide .mw-install-task[data-confirmed="true"] :is(strong, .t-caption) { color: inherit; }
-.mw-guide .mw-install-task[data-confirmed="true"][aria-pressed="true"] { box-shadow: var(--e-2), inset 3px 0 0 var(--success); }
+.mw-guide .mw-install-task[data-confirmed="true"][aria-pressed="true"] { box-shadow: var(--e-2), inset 0 0 0 2px var(--mw-selection), inset 5px 0 0 var(--mw-selection); }
 .mw-guide .mw-install-task[data-confirmed="true"] .mw-task-number { background: transparent; }
 .mw-placement-confirm { display: grid; gap: 12px; margin-top: 8px; padding: 16px 12px; background: var(--surface-tint); border-radius: var(--r-md); }
 .mw-placement-confirm > .mw-button { width: 100%; min-height: 44px; }
@@ -3565,3 +3565,10 @@
 .mw-playback-numbers > span:last-child { text-align: end; }
 .mw-playback-distance { white-space: nowrap; }
 .mw-playback-opening { min-block-size: 3lh; }
+
+/* Selection is cyan in the immersive workshop; green still means confirmed. */
+.immersive .mw-install-tasks { --mw-selection: var(--signal); --mw-selection-ink: var(--standex-abyss); }
+.mw-guide .mw-install-task[aria-pressed="true"][data-confirmed="false"] .mw-task-number { background: var(--mw-selection); color: var(--mw-selection-ink); }
+.mw-task-selected { min-block-size: 1lh; font-weight: 700; }
+.mw-change-sensor-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0; background: transparent; color: var(--heading); font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.mw-change-sensor-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--r-sm); }

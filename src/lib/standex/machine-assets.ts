@@ -40,6 +40,10 @@ export interface MachineAsset {
 /** Fichiers intégrés servis par l'application, chargés à la demande. Les clés
  *  v1 ne sont plus proposées : elles restent résolues pour les anciens montages. */
 export const BUILTIN_FILES: Record<string, string> = {
+  "builtin:window-v3": "/models/window-opening-v3.glb",
+  "builtin:wall-flap-v3": "/models/wall-flap-v3.glb",
+  "builtin:rotary-counter-v3": "/models/rotary-counter-v3.glb",
+  "builtin:pneumatic-cylinder-v3": "/models/pneumatic-cylinder-v3.glb",
   "builtin:blender-v2": blenderGlb.url,
   "builtin:water-meter-v2": waterMeterGlb.url,
   "builtin:cnc-v2": cncGlb.url,

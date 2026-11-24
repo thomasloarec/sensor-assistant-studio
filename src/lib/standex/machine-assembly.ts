@@ -326,7 +326,7 @@ const finiteVec = (v: unknown, max = 10000): v is Vec3 =>
   v.length === 3 &&
   v.every((n) => typeof n === "number" && Number.isFinite(n) && Math.abs(n) <= max);
 
-const BUILTIN = /^(builtin:(?:(?:coffee|drawer|door|wall|arm)-v1|(?:blender|water-meter|cnc|hospital-bed)-v2)|sha256:[a-f0-9]{64})$/;
+const BUILTIN = /^(builtin:(?:(?:coffee|drawer|door|wall|arm)-v1|(?:blender|water-meter|cnc|hospital-bed)-v2|(?:window|wall-flap|rotary-counter|pneumatic-cylinder)-v3)|sha256:[a-f0-9]{64})$/;
 
 export function parseMachine(value: unknown): MachineAssembly | null {
   if (!value || typeof value !== "object") return null;

@@ -75,8 +75,7 @@ export const DEMO_ASSEMBLIES: Record<string, MachineAssembly> = {
   }),
 };
 
-/** Modèles d'exemple PROPOSÉS (lot 2026-11-20) : quatre GLB réels fournis par
- *  Standex, chargés à la demande. Aucun mouvement n'est validé : pièces mobiles,
+/** Modèles proposés (2026-11-24) : quatre GLB pédagogiques, chargés à la demande. Aucun mouvement n'est validé : pièces mobiles,
  *  course et clips restent à configurer par l'utilisateur. Les anciens exemples
  *  ci-dessus ne sont plus proposés ; ils restent lisibles pour les montages
  *  enregistrés et les tests. */
@@ -91,6 +90,7 @@ export interface ExampleModel {
   license: string;
   licenseUrl: string;
   source: string;
+  adapted?: boolean;
 }
 const fresh = (assetKey: string, fileName: string, unitScale: number): MachineAssembly =>
   base({
@@ -103,18 +103,18 @@ const fresh = (assetKey: string, fileName: string, unitScale: number): MachineAs
     motion: "translation",
     motionStatus: "unset",
   });
+/* i18n-canonical : noms et descriptions traduits au rendu. */
 export const EXAMPLE_MODELS: ExampleModel[] = [
-  { key: "builtin:blender-v2", name: "Robot de cuisine", detail: "Couvercle fermé avant démarrage.", ...EXAMPLE_CREDITS["builtin:blender-v2"]! },
-  { key: "builtin:water-meter-v2", name: "Compteur d’eau", detail: "Comptage des rotations du mécanisme.", ...EXAMPLE_CREDITS["builtin:water-meter-v2"]! },
-  { key: "builtin:cnc-v2", name: "Machine CNC", detail: "Détection de fermeture d’un protecteur.", ...EXAMPLE_CREDITS["builtin:cnc-v2"]! },
-  { key: "builtin:hospital-bed-v2", name: "Lit médical", detail: "Détection d’une position limite du lit.", ...EXAMPLE_CREDITS["builtin:hospital-bed-v2"]! },
+  { key: "builtin:window-v3", name: "Fenêtre ouvrante", detail: "Détecter l’ouverture d’une fenêtre.", adapted: true, ...EXAMPLE_CREDITS["builtin:window-v3"]! },
+  { key: "builtin:wall-flap-v3", name: "Volet et paroi percée", detail: "Installer un capteur cylindrique dans un passage de 8 mm.", ...EXAMPLE_CREDITS["builtin:wall-flap-v3"]! },
+  { key: "builtin:rotary-counter-v3", name: "Compteur à roues dentées", detail: "Compter les rotations de deux roues indépendantes.", adapted: true, ...EXAMPLE_CREDITS["builtin:rotary-counter-v3"]! },
+  { key: "builtin:pneumatic-cylinder-v3", name: "Vérin à piston", detail: "Détecter la position du piston dans un corps transparent.", adapted: true, ...EXAMPLE_CREDITS["builtin:pneumatic-cylinder-v3"]! },
 ];
-/** Échelles ILLUSTRATIVES choisies parmi les unités proposées (compteur en mètres,
- *  les trois autres en centimètres) : aucune dimension n'est lue ni certifiée par
- *  un fabricant, et l'utilisateur peut changer d'unités. Les fichiers sont inchangés. */
+/** Fichiers en mètres, sans mouvement ni montage imposé. Les clips réparés du
+ * compteur et du vérin restent disponibles dans « Animation du fichier ». */
 export const EXAMPLE_ASSEMBLIES: Record<string, MachineAssembly> = {
-  "builtin:blender-v2": fresh("builtin:blender-v2", "blender.glb", 10),
-  "builtin:water-meter-v2": fresh("builtin:water-meter-v2", "payton_water_meter_mechanism.glb", 1000),
-  "builtin:cnc-v2": fresh("builtin:cnc-v2", "cnc_meachine.glb", 10),
-  "builtin:hospital-bed-v2": fresh("builtin:hospital-bed-v2", "hospital_bed.glb", 10),
+  "builtin:window-v3": fresh("builtin:window-v3", "window-opening-v3.glb", 1000),
+  "builtin:wall-flap-v3": fresh("builtin:wall-flap-v3", "wall-flap-v3.glb", 1000),
+  "builtin:rotary-counter-v3": fresh("builtin:rotary-counter-v3", "rotary-counter-v3.glb", 1000),
+  "builtin:pneumatic-cylinder-v3": fresh("builtin:pneumatic-cylinder-v3", "pneumatic-cylinder-v3.glb", 1000),
 };

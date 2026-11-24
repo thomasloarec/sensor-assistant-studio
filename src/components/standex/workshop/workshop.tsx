@@ -2437,6 +2437,7 @@ export default function MagneticWorkshop({
               setPlaying={(value) => { if(!value)stopPreparation(); setPlaying(value); }}
               reason={result.reason}
               onDemo={openDemo}
+              onCatalog={() => setCatalogOpen(true)}
               onMarkers={setMarkers}
               reduced={reduced}
               events={events}

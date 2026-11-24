@@ -38158,5 +38158,104 @@
   "Comptage des rotations du mécanisme.": ["Counting the mechanism’s rotations.", "计数机构的转动圈数。", "Zählen der Umdrehungen des Mechanismus.", "Conteo de las rotaciones del mecanismo.", "Подсчёт оборотов механизма.", "Conteggio delle rotazioni del meccanismo.", "機構の回転数のカウント。"],
   "Détection de fermeture d’un protecteur.": ["Detecting that a guard is closed.", "检测防护罩是否关闭。", "Erkennung, dass eine Schutzhaube geschlossen ist.", "Detección del cierre de una protección.", "Обнаружение закрытия защитного кожуха.", "Rilevamento della chiusura di una protezione.", "保護カバーが閉じていることの検出。"],
   "Détection d’une position limite du lit.": ["Detecting a bed end position.", "检测病床的极限位置。", "Erkennung einer Endposition des Betts.", "Detección de una posición límite de la cama.", "Обнаружение крайнего положения кровати.", "Rilevamento di una posizione limite del letto.", "ベッドの限界位置の検出。"],
-  "Le capteur et l'aimant restent votre sélection actuelle. Le mouvement de ces modèles n'est pas défini : choisissez les pièces mobiles ou une animation du fichier.": ["The sensor and magnet stay as you selected them. These models have no defined motion: choose the moving parts or a file animation.", "传感器和磁铁保持您当前的选择。这些模型未定义运动：请选择活动零件或文件动画。", "Sensor und Magnet bleiben Ihre aktuelle Auswahl. Für diese Modelle ist keine Bewegung definiert: Wählen Sie die beweglichen Teile oder eine Dateianimation.", "El sensor y el imán siguen siendo su selección actual. Estos modelos no tienen movimiento definido: elija las piezas móviles o una animación del archivo.", "Датчик и магнит остаются вашим текущим выбором. Движение этих моделей не задано: выберите подвижные детали или анимацию файла.", "Il sensore e il magnete restano la selezione attuale. Il movimento di questi modelli non è definito: scegliete le parti mobili o un’animazione del file.", "センサーと磁石は現在の選択のままです。これらのモデルの動きは未定義です。可動部品またはファイルのアニメーションを選択してください。"]
+  "Le capteur et l'aimant restent votre sélection actuelle. Le mouvement de ces modèles n'est pas défini : choisissez les pièces mobiles ou une animation du fichier.": ["The sensor and magnet stay as you selected them. These models have no defined motion: choose the moving parts or a file animation.", "传感器和磁铁保持您当前的选择。这些模型未定义运动：请选择活动零件或文件动画。", "Sensor und Magnet bleiben Ihre aktuelle Auswahl. Für diese Modelle ist keine Bewegung definiert: Wählen Sie die beweglichen Teile oder eine Dateianimation.", "El sensor y el imán siguen siendo su selección actual. Estos modelos no tienen movimiento definido: elija las piezas móviles o una animación del archivo.", "Датчик и магнит остаются вашим текущим выбором. Движение этих моделей не задано: выберите подвижные детали или анимацию файла.", "Il sensore e il magnete restano la selezione attuale. Il movimento di questi modelli non è definito: scegliete le parti mobili o un’animazione del file.", "センサーと磁石は現在の選択のままです。これらのモデルの動きは未定義です。可動部品またはファイルのアニメーションを選択してください。"],
+  "Fenêtre ouvrante": [
+    "Opening window",
+    "可开启窗户",
+    "Öffenbares Fenster",
+    "Ventana practicable",
+    "Открывающееся окно",
+    "Finestra apribile",
+    "開閉窓"
+  ],
+  "Détecter l’ouverture d’une fenêtre.": [
+    "Detect when a window opens.",
+    "检测窗户是否打开。",
+    "Das Öffnen eines Fensters erkennen.",
+    "Detectar la apertura de una ventana.",
+    "Определять открытие окна.",
+    "Rilevare l’apertura di una finestra.",
+    "窓の開放を検出します。"
+  ],
+  "Volet et paroi percée": [
+    "Flap and drilled wall",
+    "挡板与带孔壁板",
+    "Klappe und Wand mit Bohrung",
+    "Compuerta y pared perforada",
+    "Заслонка и стенка с отверстием",
+    "Sportello e parete forata",
+    "フラップと穴付き壁面"
+  ],
+  "Installer un capteur cylindrique dans un passage de 8 mm.": [
+    "Fit a cylindrical sensor into an 8 mm hole.",
+    "将圆柱形传感器装入 8 mm 孔中。",
+    "Einen zylindrischen Sensor in eine 8-mm-Bohrung einsetzen.",
+    "Instalar un sensor cilíndrico en un orificio de 8 mm.",
+    "Установить цилиндрический датчик в отверстие диаметром 8 мм.",
+    "Inserire un sensore cilindrico in un foro da 8 mm.",
+    "8 mmの穴に円筒形センサーを取り付けます。"
+  ],
+  "Compteur à roues dentées": [
+    "Gear rotation counter",
+    "齿轮转数计数器",
+    "Zahnrad-Umdrehungszähler",
+    "Contador de giros de engranajes",
+    "Счётчик оборотов шестерён",
+    "Contatore di giri a ingranaggi",
+    "歯車の回転カウンター"
+  ],
+  "Compter les rotations de deux roues indépendantes.": [
+    "Count the rotations of two independently moving gears.",
+    "对两个独立转动的齿轮进行转数计数。",
+    "Die Umdrehungen zweier unabhängig bewegter Zahnräder zählen.",
+    "Contar los giros de dos engranajes que se mueven de forma independiente.",
+    "Считать обороты двух независимо вращающихся шестерён.",
+    "Contare i giri di due ingranaggi che si muovono indipendentemente.",
+    "独立して動く2つの歯車の回転数を数えます。"
+  ],
+  "Vérin à piston": [
+    "Piston cylinder",
+    "活塞气缸",
+    "Kolbenzylinder",
+    "Cilindro de pistón",
+    "Поршневой цилиндр",
+    "Cilindro a pistone",
+    "ピストンシリンダー"
+  ],
+  "Détecter la position du piston dans un corps transparent.": [
+    "Detect the piston position inside a transparent housing.",
+    "在透明缸体内检测活塞位置。",
+    "Die Kolbenposition in einem transparenten Gehäuse erkennen.",
+    "Detectar la posición del pistón dentro de un cuerpo transparente.",
+    "Определять положение поршня в прозрачном корпусе.",
+    "Rilevare la posizione del pistone in un corpo trasparente.",
+    "透明な筐体内のピストン位置を検出します。"
+  ],
+  "Sélectionné": [
+    "Selected",
+    "已选择",
+    "Ausgewählt",
+    "Seleccionado",
+    "Выбрано",
+    "Selezionato",
+    "選択中"
+  ],
+  "Changer de capteur": [
+    "Change sensor",
+    "更换传感器",
+    "Sensor wechseln",
+    "Cambiar de sensor",
+    "Сменить датчик",
+    "Cambia sensore",
+    "センサーを変更"
+  ],
+  "Adapté pour Sensor Studio.": [
+    "Adapted for Sensor Studio.",
+    "已为 Sensor Studio 调整。",
+    "Für Sensor Studio angepasst.",
+    "Adaptado para Sensor Studio.",
+    "Адаптировано для Sensor Studio.",
+    "Adattato per Sensor Studio.",
+    "Sensor Studio向けに調整済み。"
+  ]
 }

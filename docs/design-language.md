@@ -1149,3 +1149,20 @@ Le temps et le pourcentage utilisent des colonnes distinctes et des chiffres
 ne changent donc plus la hauteur du bloc ni la position des commandes de lecture.
 Les classes typographiques et les jetons existants sont conservés, sans animation
 ajoutée ni annonce vocale répétée à chaque image.
+
+### Modèles et sélection d’installation — 24 novembre 2026
+
+Les quatre exemples sont Fenêtre ouvrante, Volet et paroi percée, Compteur à roues
+dentées et Vérin à piston. Noms, descriptions et mention d’adaptation sont traduits
+dans les huit langues ; auteurs et titres originaux restent dans les crédits.
+
+La carte d’installation sélectionnée garde une surface teintée, avec un contour
+intérieur de 2 px, un repère latéral plus large, un numéro contrasté et la mention
+« Sélectionné ». Les alias locaux --mw-selection / --mw-selection-ink utilisent
+Detect Blue sur fond clair et le signal turquoise / abyss en contexte immersif.
+La position confirmée conserve le vert et sa coche, indépendamment de la sélection.
+Le blanc reste réservé à l’action principale de confirmation. Aucun mouvement ajouté.
+
+Sous l’explication d’un montage traversant indisponible, « Changer de capteur »
+est une commande textuelle soulignée qui ouvre le catalogue existant. Elle conserve
+une cible de 44 px et un focus visible, sans ajouter un bouton plein concurrent.
