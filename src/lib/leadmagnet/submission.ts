@@ -263,6 +263,13 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
   return [
     `# ${dossier.title} — ${tr("révision")} ${dossier.revision}`,
     "",
+    ...(dossier.workshop ? [
+      `## ${tr("Atelier 3D")}`,
+      `- ${tr("Capteur")} : ${dossier.workshop.sensorId}`,
+      `- ${tr("Aimant")} : ${dossier.workshop.magnetModel}`,
+      `- ${tr("Simulation indicative · distances à confirmer avec Standex")}`,
+      "",
+    ] : []),
     `## ${tr("Exigences")}`,
     ...dossier.requirements.map(line),
     "",

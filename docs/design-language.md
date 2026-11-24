@@ -1,5 +1,25 @@
 # Langage de design Standex DETECT
 
+### Sélection pédagogique de l’aimant — 24 novembre 2026
+
+Dans les caractéristiques de l’aimant, trois champs natifs ordonnés portent la
+forme/fixation, les dimensions réelles puis les puissances disponibles. Cylindres,
+blocs, boîtiers à visser à plat, filetés et à emmancher sont accessibles quel que
+soit le capteur. Les dimensions sont triées par volume d’enveloppe croissant ;
+les moments scalaires publiés sont classés à dimensions identiques, sans classer
+les valeurs absentes ni les variantes à plusieurs moments. Un niveau unique est
+annoncé comme tel. Aucun curseur ne crée de puissance ou de dimension fictive.
+
+La référence et le matériau apparaissent en conséquence, dans une carte avec
+la silhouette exacte. Les variantes partageant dimensions et moment restent
+choisissables à ce stade. L’explication du matériau est visible ; la valeur du
+moment, sa limite et sa source sont repliées. Surfaces, typographie, focus et
+cibles de 44 px réutilisent les jetons existants, dans les huit langues.
+
+Le choix exact voyage dans le montage, sa reprise, le résultat et le dossier
+soumis. La politique des propositions initiales reste distincte et inchangée ;
+une forme différente n’est plus une raison de remplacer un choix enregistré.
+
 ### Usage produit — 20 novembre 2026
 
 L’administration accueille quatre blocs de lecture : indicateurs, parcours,

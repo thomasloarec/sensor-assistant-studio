@@ -2,7 +2,6 @@ import { housingYawDeg, transverseApproach, workshopHousingYawDeg } from "./hous
 import { BARE_MAGNETS, PACKAGED_MAGNET_IDS } from "./magnet-catalog";
 import { pairedMagnetModel } from "./paired-magnets";
 import { defaultMagnetFor, normalizedMagnetFor } from "./default-pairs";
-import { isShapeIncompatible } from "./shape-compatibility";
 /** Magnetic workshop V0.3. Geometry, field illustration and switching are separate.
  * Reference distances are typical published values; education is NOT a product model.
  */
@@ -247,18 +246,9 @@ export function parseWorkshopConfig(value: unknown): WorkshopConfig | null {
     (x["targetStart"] as number) >= (x["targetEnd"] as number)
   )
     return null;
-  /* Couple enregistré AVANT la règle de compatibilité de forme (un ancien
-     fichier « mode référence » portait MK03 + M02, aimant bloc sur corps
-     tubulaire) : l'aimant est ramené au défaut du capteur. Le fichier n'est pas
-     refusé et aucune distance n'est reprise de l'aimant écarté. */
-  if (
-    typeof x["magnetModel"] === "string" &&
-    x["magnetModel"] !== "generic" &&
-    isShapeIncompatible(x["sensorId"] as string, x["magnetModel"])
-  ) {
-    x["magnetModel"] = defaultMagnetFor(x["sensorId"] as string);
-    x["guideReference"] = null;
-  }
+  // The allowlist above validates identity. A saved workshop selection is an
+  // explicit mechanical choice, not a new initial recommendation: keep blocks
+  // and screw-mounted housings even with tubular sensors, across dossier reloads.
   // Allow only schema keys; ignore potential result/provenance properties on imported objects.
   return Object.fromEntries(
     Object.keys(DEFAULT_WORKSHOP).map((k) => [k, x[k]]),

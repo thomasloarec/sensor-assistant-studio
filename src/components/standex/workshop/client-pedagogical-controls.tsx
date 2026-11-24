@@ -1,11 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { t, msg } from '@/lib/i18n/core';
-import { VERIFIED_PILOTS } from '@/lib/standex/client-pedagogical';
+import { MagnetPicker } from './magnet-picker';
 import { approachOffset, type WorkshopConfig } from '@/lib/standex/magnetic-workshop';
 import { publishedClasses } from '@/lib/standex/magnetics/registries';
 import { catalogueClasses } from '@/lib/standex/catalogue-pedagogical';
 import { catalogueThresholds } from '@/lib/standex/catalogue-response';
-import { magnetOptionsFor } from '@/lib/standex/default-pairs';
 import { sensorById } from '@/lib/standex/sensor-catalog';
 import { ChevronRight } from 'lucide-react';
 import { useMemo, type ReactNode } from 'react';
@@ -24,7 +23,6 @@ export function ClientPedagogicalControls({config,update,onCatalog,approachContr
     .filter(c=>!(/^[A-G]$/.test(c))||catalogueThresholds(c)!==null);
   const classes=[...new Set([config.sensitivity,...available])].sort();
   const ordinalClasses=classes.every(c=>/^[A-G]$/.test(c));
-  const magnets=[...new Set([config.magnetModel,...magnetOptionsFor(config.sensorId,undefined,config.magnetModel),...VERIFIED_PILOTS])];
   const slideMax=useMemo(()=>config.motion==='slide'?slideGapLimit(config):15,[config.sensorId,config.magnetModel,config.sensitivity,config.motion,config.geometry,config.magnetAngle,config.magnetTilt,config.sensorAngle]);
   const motions:[WorkshopConfig['motion'],string][]=[['approach',t('Approche et retrait')],['slide',t('Passage latéral')]];
   return <div className="mw-ped-controls" data-testid="client-pedagogical-controls">
@@ -62,7 +60,7 @@ export function ClientPedagogicalControls({config,update,onCatalog,approachContr
       </>}
     </>}
     <details className="mw-advanced mw-disclosure"><summary><ChevronRight aria-hidden="true" className="mw-disclosure-chevron" size={20}/>{t('Caractéristiques de l’aimant')}</summary>
-      <label className="mw-select-label">{t('Aimant')}<select aria-label={t('Aimant')} value={config.magnetModel} onChange={e=>update({magnetModel:e.target.value})}>{magnets.map(id=><option key={id} value={id}>{id}</option>)}</select></label>
+      <MagnetPicker sensorId={config.sensorId} value={config.magnetModel} onChange={magnetModel=>update({magnetModel})}/>
       {config.guideReference&&<p className="t-caption">{t('Référence documentaire')} : {config.guideReference}</p>}
     </details>
 

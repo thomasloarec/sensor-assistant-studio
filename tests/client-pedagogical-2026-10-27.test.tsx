@@ -138,7 +138,9 @@ describe('real mounted client workshop',()=>{
     await waitFor(()=>expect(view.getByTestId('client-product-legend').textContent).toContain('MK04 + M04'));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Valider ce choix et voir le résultat'})));
     const first=results[0];expect(first?.state).toBe('unavailable');expect(first?.qualified).toBe(false);
-    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Aimant',exact:true}),{target:{value:'N45-4X19'}}));
+    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Forme et fixation'}),{target:{value:'cylinder'}}));
+    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Dimensions de l’aimant'}),{target:{value:JSON.stringify([[19,4,4],null])}}));
+    await act(async()=>fireEvent.change(view.getByRole('combobox',{name:'Puissance magnétique'}),{target:{value:'30.8'}}));
     await act(async()=>fireEvent.click(view.getByRole('button',{name:'Valider ce choix et voir le résultat'})));
     expect(results[1]?.magnetId).toBe('N45-4X19');expect(results[1]?.configKey).not.toBe(first?.configKey);
     view.unmount();draft={...draft,sensitivity:'C'};view=mount();

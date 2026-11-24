@@ -141,6 +141,8 @@ test("magnet disclosure has an explicit chevron and reveals the magnet selector"
   expect(summary.closest("details")!.open).toBe(false);
   fireEvent.click(summary);
   expect(summary.closest("details")!.open).toBe(true);
-  expect(view.getByRole("combobox", { name: "Aimant" })).toBeTruthy();
+  expect(view.getByRole("combobox", { name: "Forme et fixation" })).toBeTruthy();
+  expect(view.getByRole("combobox", { name: "Dimensions de l’aimant" })).toBeTruthy();
+  expect(view.getByRole("combobox", { name: "Puissance magnétique" })).toBeTruthy();
   expect(view.queryByRole("button", { name: "Pointer le câble dans la 3D" })).toBeNull();
 });

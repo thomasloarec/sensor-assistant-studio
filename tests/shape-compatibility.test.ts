@@ -145,11 +145,11 @@ describe("choix, défauts et reprises", () => {
     expect(c.magnetModel).not.toBe("M02");
     expect(isShapeCompatible("MK03", c.magnetModel)).toBe(true);
   });
-  test("un fichier enregistré avant la règle est normalisé, pas refusé", () => {
+  test("un choix explicite de l'atelier conserve sa forme à la reprise", () => {
     const saved = { ...DEFAULT_WORKSHOP, sensorId: "MK03", magnetModel: "M02", mode: "reference" };
     const parsed = parseWorkshopConfig(saved);
     expect(parsed).toBeTruthy();
-    expect(parsed!.magnetModel).not.toBe("M02");
+    expect(parsed!.magnetModel).toBe("M02");
     expect(parsed!.guideReference).toBeNull();
   });
 });
