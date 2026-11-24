@@ -1,0 +1,31 @@
+Sensor Studio - demonstration model credits (2026-11-24)
+
+window-opening-v3.glb
+Residential Window by AleixoAlonso
+https://sketchfab.com/3d-models/residential-window-ae11104237314463a61251fd46ded4b4
+CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+Changes: opaque frame, contrasting frame/sash materials, transparent glazing retained.
+
+wall-flap-v3.glb
+Original pedagogical model created for Sensor Studio.
+CC0 1.0 - https://creativecommons.org/publicdomain/zero/1.0/
+160 x 120 x 22 mm; wall with an 8 mm hole and a separately selectable flap.
+
+rotary-counter-v3.glb
+Payton Water Meter Mechanism by trinityscsp
+https://sketchfab.com/3d-models/payton-water-meter-mechanism-002b9cd069ea46d0bf3b27548104dc5b
+CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+Changes: static frame, two independently grouped wheels/rotors, repaired opposite
+rotations over a four-second loop. Original meshes and materials retained.
+
+pneumatic-cylinder-v3.glb
+Recreated pedagogical geometry inspired by Pneumatic Cylinder by agung117
+https://sketchfab.com/3d-models/pneumatic-cylinder-39718e30a915468d9cf578bd5dcad532
+CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+Changes: recreated simplified geometry, transparent casing, contrasting colours,
+6 mm sensor passages, separate piston/rod group and 70 mm travel animation.
+Illustrative dimensions only: body 120 mm, flanges 44 x 44 mm, casing outer/inner
+40/36 mm, piston 34 mm, rod 8 mm. No manufacturer dimensions or fabrication claim.
+
+All four GLB files use metres. Sensors and magnets are selected in the workshop,
+not incorporated into these models. Credits remain visible in the example picker.

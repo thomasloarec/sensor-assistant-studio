@@ -34,6 +34,29 @@ afterAll(() => {
 });
 
 describe("Positions de détection dans le Workshop intégré", () => {
+  test('incompatible through-hole hint opens the shared catalogue without losing the installation', async () => {
+    const {setLocale}=await import('../src/lib/i18n/core');setLocale('fr');
+    const {default:Workshop}=await import('../src/components/standex/workshop/workshop');
+    const {DEFAULT_WORKSHOP}=await import('../src/lib/standex/magnetic-workshop');
+    const {EXAMPLE_ASSEMBLIES}=await import('../src/lib/standex/machine-demos');
+    let draft={...DEFAULT_WORKSHOP,sensorId:'MK04',machine:{...structuredClone(EXAMPLE_ASSEMBLIES['builtin:wall-flap-v3']!),motionStatus:'confirmed' as const,movingNode:'0/1',movingNodes:['0/1'],travel:[0,0,20] as [number,number,number]}};
+    const view=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
+    try {
+      await waitFor(()=>expect(currentScene?.asset).toBeTruthy());
+      await act(async()=>fireEvent.click(view.getByTestId('guide-step-install')));
+      const original=JSON.stringify(draft.machine);
+      expect((view.getByRole('radio',{name:'À travers une paroi'}) as HTMLButtonElement).disabled).toBe(true);
+      await act(async()=>fireEvent.click(view.getByTestId('guide-change-sensor')));
+      expect(view.getByText('Le catalogue des capteurs')).toBeTruthy();
+      await act(async()=>fireEvent.click(view.getByRole('button',{name:'Fermer le catalogue'})));
+      expect(JSON.stringify(draft.machine)).toBe(original);
+      expect(view.getByTestId('guide-target-sensor').textContent).toContain('Sélectionné');
+      await act(async()=>fireEvent.click(view.getByTestId('guide-target-magnet')));
+      expect(view.queryByTestId('guide-change-sensor')).toBeNull();
+      expect(view.getByTestId('guide-target-magnet').textContent).toContain('Sélectionné');
+      expect(view.getByTestId('guide-target-sensor').textContent).not.toContain('Sélectionné');
+    } finally {view.unmount();}
+  });
   test('MK07 insertion and explicit installation confirmations survive navigation, edits and undo', async () => {
     const { setLocale } = await import('../src/lib/i18n/core'); setLocale('fr');
     const { default: Workshop } = await import('../src/components/standex/workshop/workshop');
@@ -127,11 +150,11 @@ describe("Positions de détection dans le Workshop intégré", () => {
       machine:structuredClone(DEMO_ASSEMBLIES['builtin:drawer-v1']!)};
     const view=render(<Workshop clientPedagogical embedded initialConfig={draft} onDraftChange={c=>{draft=c as typeof draft;}} onClose={()=>{}} onSave={async()=>{}}/>);
     try {
-      await act(async()=>fireEvent.click(view.getAllByTestId('demo-builtin:water-meter-v2')[0]!));
-      await waitFor(()=>expect(draft.machine.assetKey).toBe('builtin:water-meter-v2'),{timeout:10000});
+      await act(async()=>fireEvent.click(view.getAllByTestId('demo-builtin:rotary-counter-v3')[0]!));
+      await waitFor(()=>expect(draft.machine.assetKey).toBe('builtin:rotary-counter-v3'),{timeout:10000});
       expect(draft.sensorId).toBe('MK03');expect(draft.magnetModel).toBe('NDFEB250175H-6X10');
       expect(draft.machine.motionStatus).toBe('unset');expect(draft.machine.movingNodes).toEqual([]);
-      await waitFor(()=>expect(view.getAllByText('payton_water_meter_mechanism.glb').length).toBeGreaterThan(0));
+      await waitFor(()=>expect(view.getAllByText('rotary-counter-v3.glb').length).toBeGreaterThan(0));
     }finally{view.unmount();}
     // Rotations: a legacy saved coffee montage (confirmed motion) still opens and edits.
     draft={...draft,machine:structuredClone(DEMO_ASSEMBLIES['builtin:coffee-v1']!)};

@@ -2,6 +2,28 @@
  *  licences, jamais traduits (exclus de l'inventaire i18n). */
 export interface ExampleCredit { title: string; author: string; authorUrl: string; license: string; licenseUrl: string; source: string }
 export const EXAMPLE_CREDITS: Record<string, ExampleCredit> = {
+  "builtin:window-v3": {
+    title: "Residential Window", author: "AleixoAlonso",
+    authorUrl: "https://sketchfab.com/AleixoAlonso",
+    license: "CC BY 4.0", licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    source: "https://sketchfab.com/3d-models/residential-window-ae11104237314463a61251fd46ded4b4",
+  },
+  "builtin:wall-flap-v3": {
+    title: "Sensor Studio", author: "Sensor Studio", authorUrl: "", source: "",
+    license: "CC0 1.0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+  },
+  "builtin:rotary-counter-v3": {
+    title: "Payton Water Meter Mechanism", author: "trinityscsp",
+    authorUrl: "https://sketchfab.com/trinityscsp",
+    license: "CC BY 4.0", licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    source: "https://sketchfab.com/3d-models/payton-water-meter-mechanism-002b9cd069ea46d0bf3b27548104dc5b",
+  },
+  "builtin:pneumatic-cylinder-v3": {
+    title: "Pneumatic Cylinder", author: "agung117",
+    authorUrl: "https://sketchfab.com/agung.gov117",
+    license: "CC BY 4.0", licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    source: "https://sketchfab.com/3d-models/pneumatic-cylinder-39718e30a915468d9cf578bd5dcad532",
+  },
   "builtin:blender-v2": {
     title: "Blender",
     author: "assetfactory",

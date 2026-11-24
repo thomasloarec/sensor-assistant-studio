@@ -280,6 +280,7 @@ export default function MachineGuide({
   playControl,
   reason,
   onDemo,
+  onCatalog,
   onMarkers,
   reduced = false,
   events = [],
@@ -308,6 +309,7 @@ export default function MachineGuide({
   playControl?: ReactNode;
   reason: string | null;
   onDemo: (key: string) => void;
+  onCatalog?: () => void;
   onMarkers: (markers: Marker[]) => void;
   reduced?: boolean;
   events?: SwitchEvent[];
@@ -882,7 +884,11 @@ export default function MachineGuide({
                 setTool("navigate"); setState(s => ({ ...s, target: v, pick: null }));
               }}>
               <span className="mw-task-number t-metric" aria-hidden="true">{confirmed ? <Check size={18}/> : i + 1}</span>
-              <span className="mw-task-label"><strong className="t-body">{t(label)}</strong><span className="t-caption">{t(confirmed ? "Position confirmée" : fixed ? "À confirmer" : "À placer")}</span></span>
+              <span className="mw-task-label">
+                <strong className="t-body">{t(label)}</strong>
+                <span className="t-caption">{t(confirmed ? "Position confirmée" : fixed ? "À confirmer" : "À placer")}</span>
+                <span className="t-caption mw-task-selected">{target === v ? t("Sélectionné") : ""}</span>
+              </span>
               <ChevronRight size={18} aria-hidden="true"/>
             </Button></li>;
           })}
@@ -918,6 +924,7 @@ export default function MachineGuide({
                 ? "« À travers une paroi » est réservé aux corps cylindriques, filetés ou à insérer."
                 : "L'aimant se pose sur une surface.",
             )}
+            {target === "sensor" && onCatalog && <> <button type="button" className="mw-change-sensor-link" data-testid="guide-change-sensor" onClick={onCatalog}>{t("Changer de capteur")}</button></>}
           </p>
         )}
         <div className="mw-placement-tools" role="group" aria-label={t("Ajuster la position")}>
@@ -1604,12 +1611,12 @@ export function DemoButtons({ onDemo }: { onDemo: (key: string) => void }) {
           </Button>
           <span className="t-caption">{t(m.detail)}</span>
           <span className="t-caption mw-demo-credit" data-testid={"credit-" + m.key}>
-            <a href={m.source} target="_blank" rel="noopener noreferrer">{m.title}</a>
-            {" · "}
-            <a href={m.authorUrl} target="_blank" rel="noopener noreferrer">{m.author}</a>
+            {m.source && <><a href={m.source} target="_blank" rel="noopener noreferrer">{m.title}</a>{" · "}</>}
+            {m.authorUrl ? <a href={m.authorUrl} target="_blank" rel="noopener noreferrer">{m.author}</a> : m.author}
             {" · "}
             <a href={m.licenseUrl} target="_blank" rel="noopener noreferrer">{m.license}</a>
           </span>
+          {m.adapted && <span className="t-caption">{t("Adapté pour Sensor Studio.")}</span>}
         </li>
       ))}
       <li>
