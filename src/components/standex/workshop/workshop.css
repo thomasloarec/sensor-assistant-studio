@@ -3557,3 +3557,11 @@
 .mw-pick-methods > [aria-pressed="true"] .t-caption {
   color: inherit;
 }
+/* Playback labels and measurements keep independent, stable rows. */
+.mw-playback-reading { display: grid; gap: 4px; min-width: 0; }
+.mw-playback-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mw-playback-numbers { display: grid; grid-template-columns: minmax(0, 1fr) 5ch; gap: 8px; }
+.mw-playback-numbers > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mw-playback-numbers > span:last-child { text-align: end; }
+.mw-playback-distance { white-space: nowrap; }
+.mw-playback-opening { min-block-size: 3lh; }

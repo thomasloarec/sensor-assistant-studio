@@ -13,10 +13,14 @@ export function smoothSurface(field:VolumeField,threshold:number):BufferGeometry
   const coord=(i:number,j:number,k:number):[number,number,number]=>[xs[i]??0,ys[j]??0,zs[k]??0];
   const EDGES:[number,number,number][][]=[[[0,0,0],[1,0,0]],[[0,1,0],[1,1,0]],[[0,0,1],[1,0,1]],[[0,1,1],[1,1,1]],[[0,0,0],[0,1,0]],[[1,0,0],[1,1,0]],[[0,0,1],[0,1,1]],[[1,0,1],[1,1,1]],[[0,0,0],[0,0,1]],[[1,0,0],[1,0,1]],[[0,1,0],[0,1,1]],[[1,1,0],[1,1,1]]];
   const cellVertex=new Map<number,number>(),positions:number[]=[];
+  const cornerOffsets=[0,1,nx,nx+1,nx*ny,nx*ny+1,nx*ny+nx,nx*ny+nx+1];
   for(let k=0;k<nz-1;k++)for(let j=0;j<ny-1;j++)for(let i=0;i<nx-1;i++){
-    const corners=[0,1,0,1,0,1,0,1].map((_,e)=>at(i+(e&1),j+((e>>1)&1),k+((e>>2)&1)));
-    const mask=corners.map(inside);
-    if(mask.every(Boolean)||mask.every(m=>!m))continue;
+    const base=at(i,j,k),first=inside(base);
+    // Most cells do not cross a surface. Inspect identical corners without
+    // allocating two arrays per empty cell, per threshold, per orientation.
+    let crossing=false;
+    for(let e=1;e<8;e++)if(inside(base+cornerOffsets[e]!)!==first){crossing=true;break;}
+    if(!crossing)continue;
     let px=0,py=0,pz=0,crossings=0;
     for(const [ca,cb] of EDGES){
       const ia=at(i+(ca?.[0]??0),j+(ca?.[1]??0),k+(ca?.[2]??0)),ib=at(i+(cb?.[0]??0),j+(cb?.[1]??0),k+(cb?.[2]??0));

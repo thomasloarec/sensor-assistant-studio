@@ -9878,6 +9878,15 @@
     "Distanza tra i centri",
     "中心間距離"
   ],
+  "Distance entre centres capteur–aimant": [
+    "Sensor–magnet centre distance",
+    "传感器–磁铁中心距",
+    "Mittenabstand Sensor–Magnet",
+    "Distancia entre centros sensor–imán",
+    "Расстояние между центрами датчика и магнита",
+    "Distanza tra i centri sensore–magnete",
+    "センサー–磁石の中心間距離"
+  ],
   "Distance entre centres capteur–aimant : {0} mm": [
     "Sensor–magnet centre distance: {0} mm",
     "传感器–磁铁中心距：{0} mm",

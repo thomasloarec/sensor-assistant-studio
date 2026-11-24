@@ -28,6 +28,24 @@ export function obbOverlap(A: Obb, B: Obb, tol = CONTACT_TOLERANCE_MM): boolean 
 export function obstacleOverlap(body: Obb, obstacle: Obb, tol = CONTACT_TOLERANCE_MM): boolean {
   return obbOverlap(body, obstacle, tol) && (!obstacle.mesh || meshIntersects(body, obstacle, obstacle.mesh, tol));
 }
+/** Exact SAT batch with fixed orientations/sizes. Only the centre varies across
+ * a sampled volume; preparing the 15 separating axes avoids rebuilding them at
+ * every node. Mesh narrow phase and contact tolerance are unchanged. */
+export function prepareObstacleOverlap(body: Obb, obstacle: Obb, tol = CONTACT_TOLERANCE_MM) {
+  const axes: Vec3[] = [...body.a, ...obstacle.a];
+  for (const a of body.a) for (const b of obstacle.a) {
+    const n = cross(a, b), l = Math.hypot(...n);
+    if (l > 1e-9) axes.push([n[0] / l, n[1] / l, n[2] / l]);
+  }
+  const limits = axes.map(n => radius(body, n) + radius(obstacle, n) - tol);
+  const reach = bound(body) + bound(obstacle);
+  return (center: Vec3): boolean => {
+    const d: Vec3 = [obstacle.c[0] - center[0], obstacle.c[1] - center[1], obstacle.c[2] - center[2]];
+    if (Math.hypot(...d) > reach) return false;
+    if (!axes.every((n, i) => Math.abs(dot(d, n)) < limits[i]!)) return false;
+    return !obstacle.mesh || meshIntersects({...body, c:center}, obstacle, obstacle.mesh, tol);
+  };
+}
 /** Box enclosing the pilot cylinder (Ø × length along the magnetisation axis). */
 export function magnetObb(diameterMm: number, lengthMm: number, pose: MagnetPose): Obb | null {
   const l = Math.hypot(...pose.axis);
