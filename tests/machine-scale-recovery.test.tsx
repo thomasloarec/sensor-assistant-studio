@@ -66,7 +66,7 @@ test("recovery waits for a dimension, previews it, confirms once and allows canc
   const view=render(<MachineScaleRecovery {...props}/>);
   const button=view.getByRole("button",{name:"Importer à cette taille"}) as HTMLButtonElement;
   expect(button.disabled).toBe(true);
-  fireEvent.change(view.getByRole("textbox"),{target:{value:"180"}});
+  fireEvent.input(view.getByRole("textbox"),{target:{value:"180"}});
   expect(button.disabled).toBe(false);
   expect(view.getByRole("status").textContent).toContain("180");
   fireEvent.click(button);

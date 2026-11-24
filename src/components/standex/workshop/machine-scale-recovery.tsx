@@ -25,7 +25,7 @@ export default function MachineScaleRecovery({ fileName, sizeMm, triedScale, bus
       {t("Plus grande dimension réelle (cm)")}
       <input autoFocus inputMode="decimal" type="text" value={length} disabled={busy}
         aria-describedby={id + "-help"} aria-invalid={invalid || undefined}
-        onChange={e => { setLength(e.target.value); setUnit(null); }} />
+        onInput={e => { setLength(e.currentTarget.value); setUnit(null); }} />
     </label>
     <p className="t-caption" id={id + "-help"}>{t("Mesurez le côté le plus long de l’objet. Toutes les pièces seront redimensionnées ensemble. De 0,01 à 2 000 cm.")}</p>
     <details>
