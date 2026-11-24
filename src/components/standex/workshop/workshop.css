@@ -3507,3 +3507,12 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+.mw-pick-prompt {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  box-shadow: var(--e-2);
+}
+.mw-pick-methods > [aria-pressed="true"] .t-caption {
+  color: inherit;
+}

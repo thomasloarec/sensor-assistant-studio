@@ -1066,3 +1066,11 @@ Le contrôle unique « Importer mon modèle 3D » accepte GLB, STEP et STP, avec
 - Aucun mouvement n'est annoncé comme défini : une note commune rappelle que
   pièces mobiles ou animation restent à choisir.
 
+### Direction du mouvement — 24 novembre 2026
+
+Le pointage d'une face affiche sa consigne en gras dans un encart `notice-warning`
+au-dessus des méthodes, avec annulation directe et annonce `role=status`.
+Le bouton actif emploie la surface primaire ; l'encart réutilise `--e-2` et les
+jetons existants, sans animation. La course saisie avant la direction reste
+visible et s'applique dès que le trajet est défini, sans direction inventée.
+
