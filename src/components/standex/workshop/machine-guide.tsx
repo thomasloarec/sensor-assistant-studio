@@ -919,9 +919,11 @@ export default function MachineGuide({
             )}
           </p>
         )}
+        <div className="mw-placement-tools" role="group" aria-label={t("Ajuster la position")}>
+        <p className="t-label">{t("Ajuster la position")}</p>
         <div className="mw-guide-row">
           <Button
-            className="mw-button"
+            className="mw-button mw-secondary"
             aria-pressed={tool === target}
             data-testid="guide-place"
             onClick={() => setTool(tool === target ? "navigate" : target)}
@@ -935,7 +937,7 @@ export default function MachineGuide({
           </Button>}
           {kind === "through" && (
             <Button
-              className="mw-button"
+              className="mw-button mw-secondary"
               aria-pressed={state.pick?.purpose === "hole-centre"}
               data-testid="guide-hole-centre"
               onClick={() => (state.pick?.purpose === "hole-centre" ? cancelPick() : startPick("hole-centre"))}
@@ -949,6 +951,7 @@ export default function MachineGuide({
             ? "Glissez la flèche pour enfoncer ou retirer le capteur. Le centre et l’axe du trou restent fixés."
             : "Glissez les flèches pour déplacer le composant sur sa face. Un déplacement hors de cette face est refusé.")}
         </p>}
+        </div>
         </div>
         <div className="mw-placement-confirm" data-testid="guide-placement-confirm">
           {placementConfirmed(target) ? <p className="notice-success" role="status">
@@ -965,6 +968,7 @@ export default function MachineGuide({
                   target: target === "sensor" ? "magnet" : target }));
               }}>
               {t(target === "sensor" ? "Confirmer la position du capteur" : "Confirmer la position de l’aimant")}
+              <ChevronRight size={18} aria-hidden="true"/>
             </Button>
           </>}
           {placementConfirmed("sensor") && placementConfirmed("magnet") &&

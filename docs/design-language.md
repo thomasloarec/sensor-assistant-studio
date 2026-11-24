@@ -1,5 +1,19 @@
 # Langage de design Standex DETECT
 
+### Hiérarchie des actions d’installation — 24 novembre 2026
+
+La sélection Capteur / Aimant est une navigation teintée avec repère latéral,
+distincte de l’action principale. Les outils Choisir/changer de face, Déplacer
+et Centrer dans un trou sont regroupés sous « Ajuster la position » et utilisent
+tous le style secondaire. Un outil actif se distingue par sa surface et son
+repère latéral ; aucun outil de réglage ne prend le remplissage principal.
+
+La confirmation de position occupe un bloc séparé par de l’espace et une surface
+teintée. Elle reste l’unique action principale de ce groupe, avec un chevron pour
+la suite du parcours. Les coches de progression et tous les comportements sont
+conservés. Surfaces, élévations, focus et couleurs viennent des jetons existants ;
+le bouton principal garde une cible d’au moins 44 px et le texte revient à la ligne.
+
 ### Enfoncement et confirmation de pose — 24 novembre 2026
 
 Installation réutilise le même outil de déplacement après fixation : deux axes
