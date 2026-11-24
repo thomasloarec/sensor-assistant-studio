@@ -54,6 +54,8 @@ export type GuideStep = "model" | "parts" | "motion" | "install" | "test";
 export interface GuideState {
   step: GuideStep;
   isolate: boolean;
+  /** Course saisie avant la direction, appliquée dès que le trajet est défini. */
+  pendingTravelMm?: number | undefined;
   pick: null | {
     purpose: "axis-points" | "axis-face" | "hole-points" | "hole-centre";
     points: Vec3[];
@@ -139,11 +141,12 @@ export function motionFromPick(
   m: MachineAssembly,
   dir: Vec3,
   origin: Vec3,
+  travelMm = norm(m.travel),
 ): Partial<MachineAssembly> | null {
   const u = unit(dir);
   if (!u) return null;
   if (m.motion === "translation")
-    return { axisVector: u, travel: u.map((v) => v * norm(m.travel)) as Vec3, motionStatus: "draft" };
+    return { axisVector: u, travel: u.map((v) => v * travelMm) as Vec3, motionStatus: "draft" };
   return { axisVector: u, pivot: origin, motionStatus: "draft" };
 }
 
@@ -691,13 +694,19 @@ export default function MachineGuide({
 
           <section className="mw-motion-section" aria-label={t("Définir le trajet")}>
             <h3 className="t-title-s">{t(m.motion === "rotation" ? "Axe de rotation" : "Direction du déplacement")}</h3>
+            {state.pick?.purpose === "axis-face" && (
+              <div className="notice-warning mw-pick-prompt" role="status" aria-live="polite" data-testid="guide-face-prompt">
+                <strong className="t-title-s">{t("Cliquez une face du modèle")}</strong>
+                <Button className="mw-button mw-secondary" onClick={cancelPick}>{t("Annuler le pointage")}</Button>
+              </div>
+            )}
             <div className="mw-pick-methods">
               <Button className="mw-button mw-secondary" aria-pressed={state.pick?.purpose === "axis-points"}
                 data-testid="guide-axis-points" onClick={() => startPick("axis-points")}>
                 <span className="t-body">{t("Pointer deux points")}</span>
                 <span className="t-caption">{t(m.motion === "rotation" ? "Le long de la charnière" : "Le long de la glissière")}</span>
               </Button>
-              <Button className="mw-button mw-secondary" aria-pressed={state.pick?.purpose === "axis-face"}
+              <Button className={state.pick?.purpose === "axis-face" ? "mw-button" : "mw-button mw-secondary"} aria-pressed={state.pick?.purpose === "axis-face"}
                 data-testid="guide-axis-face" onClick={() => startPick("axis-face")}>
                 <span className="t-body">{t("Perpendiculaire à une face")}</span>
                 <span className="t-caption">{t("Cliquez une face du modèle")}</span>
@@ -708,7 +717,6 @@ export default function MachineGuide({
               {msg("Point {0} sur 2 : cliquez dans la scène.", [String(state.pick.points.length + 1)])}
             </p>
           )}
-          {state.pick?.purpose === "axis-face" && <p className="notice-info" role="status">{t("Cliquez une face du modèle")}</p>}
           </section>
           <section className="mw-motion-section">
           <h3 className="t-title-s">{t("Amplitude et sens")}</h3>
@@ -720,10 +728,13 @@ export default function MachineGuide({
               min={0}
               max={5000}
               testId="guide-stroke"
-              value={norm(m.travel)}
+              value={state.pendingTravelMm ?? norm(m.travel)}
               onCommit={(s) => {
                 const d = m.axisVector ? unit(m.axisVector) : unit(m.travel);
-                if (d) onChange({ travel: d.map((v) => v * s) as Vec3, axisVector: d, motionStatus: "draft" });
+                if (d) {
+                  onChange({ travel: d.map((v) => v * s) as Vec3, axisVector: d, motionStatus: "draft" });
+                  setState(g => ({ ...g, pendingTravelMm: undefined }));
+                } else setState(g => ({ ...g, pendingTravelMm: s }));
               }}
             />
           ) : (
@@ -738,7 +749,7 @@ export default function MachineGuide({
               onCommit={(openingAngle) => onChange({ openingAngle, motionStatus: "draft" })}
             />
           )}
-          {m.motion === "translation" && norm(m.travel) === 0 && (
+          {m.motion === "translation" && (state.pendingTravelMm ?? norm(m.travel)) === 0 && (
             <p className="notice-warning" data-testid="guide-zero-stroke">
               {t("Définissez la direction, puis une course supérieure à 0 mm.")}
             </p>
@@ -779,9 +790,11 @@ export default function MachineGuide({
                     d[i] = 1;
                     onChange(
                       m.motion === "translation"
-                        ? { axisVector: d, travel: d.map((v) => v * norm(m.travel)) as Vec3, motionStatus: "draft" }
+                        ? { axisVector: d, travel: d.map((v) => v * (state.pendingTravelMm ?? norm(m.travel))) as Vec3, motionStatus: "draft" }
                         : { axisVector: d, motionStatus: "draft" },
                     );
+                    setState(g => ({ ...g, pendingTravelMm: undefined, pick: null }));
+                    setTool("navigate");
                   }}
                 >
                   {msg("Axe {0}", [a])}
@@ -800,8 +813,12 @@ export default function MachineGuide({
                 onCommit={(v) => {
                   const d = [...motionAxis(m)] as Vec3;
                   d[i] = v;
-                  const p = motionFromPick(m, d, m.pivot);
-                  if (p) onChange(p);
+                  const p = motionFromPick(m, d, m.pivot, state.pendingTravelMm);
+                  if (p) {
+                    onChange(p);
+                    setState(g => ({ ...g, pendingTravelMm: undefined, pick: null }));
+                    setTool("navigate");
+                  }
                 }}
               />
             ))}
@@ -1570,9 +1587,9 @@ export function handlePick(
   if (!pick) return { state: base, patch: null, done: true };
   const fail = (notice: string) => ({ state: { ...state, pick: null, notice }, patch: null, done: true });
   if (pick.purpose === "axis-face") {
-    const p = motionFromPick(m, hit.normal, hit.point);
+    const p = motionFromPick(m, hit.normal, hit.point, state.pendingTravelMm);
     if (!p) return fail("Normale de face illisible : cliquez une autre face.");
-    return { state: { ...base, pick: null }, patch: p, done: true };
+    return { state: { ...base, pick: null, pendingTravelMm: undefined }, patch: p, done: true };
   }
   if (pick.purpose === "hole-centre") {
     // Premier clic : verrouille le support réel, le plan et sa normale, sans
@@ -1599,9 +1616,9 @@ export function handlePick(
     };
   if (pick.purpose === "axis-points") {
     const d = points[1]!.map((v, i) => v - points[0]![i]!) as Vec3;
-    const p = motionFromPick(m, d, points[0]!);
+    const p = motionFromPick(m, d, points[0]!, state.pendingTravelMm);
     if (!p) return fail("Les deux points sont confondus : choisissez deux points distincts sur l'axe.");
-    return { state: { ...base, pick: null }, patch: p, done: true };
+    return { state: { ...base, pick: null, pendingTravelMm: undefined }, patch: p, done: true };
   }
   const first = pick.support ?? { path: hit.path, moving: hit.moving, group: hit.group };
   // Les deux points doivent appartenir au même ensemble solidaire (tous deux
