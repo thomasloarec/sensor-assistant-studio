@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { INITIAL_CONTEXT, INITIAL_CONFIGURATION, assessConfiguration, architectureFamily, contextErrors,
-  configurationIssues, createLevelBrief, illustrativeReading, requestedFloats, setPointCount } from "../src/lib/level/configuration";
+  configurationIssues, createLevelBrief, illustrativeReading, requestedFloats, setPointCount,
+  floatCentres, verticalMechanics, FLOAT_HEIGHT_MM, FLOAT_CLEARANCE_MM } from "../src/lib/level/configuration";
 
 describe("level journey prototype guards", () => {
   const water = { ...INITIAL_CONTEXT, fluid: "water" as const, temperatureMin: "10", temperatureMax: "25" };
@@ -75,5 +76,47 @@ describe("level journey prototype guards", () => {
     expect(result.selected?.family).toBe("LS02");
     expect(result.selected?.reasons.join(" ")).toContain("56 mm");
     expect(c.reachMm).toBe(50);
+  });
+  test("four points from the initial compact sensor extend the stem and display two separate floats", () => {
+    const c = setPointCount(INITIAL_CONFIGURATION, 4);
+    expect(c.pointsMm).toEqual([20, 40, 60, 80]);
+    expect(c.reachMm).toBeGreaterThan(32.5);
+    expect(assessConfiguration(water, c).selected?.family).toBe("LS04");
+    expect(configurationIssues(c)).toEqual([]);
+    expect(verticalMechanics(c).floats).toHaveLength(2);
+    for (let level = 0; level <= c.tankHeightMm; level += 0.5) {
+      const centres = floatCentres(c, level);
+      expect(centres).toHaveLength(2);
+      expect(centres[1]! - centres[0]!).toBeGreaterThanOrEqual(FLOAT_HEIGHT_MM + FLOAT_CLEARANCE_MM);
+    }
+  });
+  test("filling and draining only translate fixed-size floats inside independent mechanical stops", () => {
+    for (const mounting of ["top", "bottom"] as const) {
+      const c = setPointCount({ ...INITIAL_CONFIGURATION, mounting, tankHeightMm: 250 }, 6);
+      const mechanics = verticalMechanics(c);
+      expect(mechanics.valid).toBe(true);
+      const geometry = structuredClone(mechanics);
+      const levels = Array.from({ length: 251 }, (_, n) => n);
+      for (const level of [...levels, ...levels.reverse()]) {
+        const positions = floatCentres(c, level);
+        positions.forEach((y, i) => {
+          expect(y).toBeGreaterThanOrEqual(mechanics.floats[i]!.lowerMm);
+          expect(y).toBeLessThanOrEqual(mechanics.floats[i]!.upperMm);
+          expect(mechanics.floats[i]!.heightMm).toBe(19);
+          if (i > 0) expect(y - positions[i - 1]!).toBeGreaterThanOrEqual(21);
+        });
+      }
+      expect(mechanics).toEqual(geometry);
+    }
+  });
+  test("a manually shortened rod or crowded floats never collapse into a stretched-looking body", () => {
+    const four = { ...setPointCount(INITIAL_CONFIGURATION, 4), reachMm: 32.5 };
+    expect(configurationIssues(four).length).toBeGreaterThan(0);
+    expect(floatCentres(four, 96)).toEqual([]);
+    expect(four.reachMm).toBe(32.5);
+    const crowded = setPointCount({ ...INITIAL_CONFIGURATION, tankHeightMm: 60 }, 12);
+    expect(configurationIssues(crowded).join(" ")).toContain("séparer les flotteurs");
+    expect(illustrativeReading(crowded, 30).usable).toBe(false);
+    expect(floatCentres(crowded, 30)).toEqual([]);
   });
 });

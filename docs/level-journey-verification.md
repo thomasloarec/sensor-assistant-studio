@@ -2,6 +2,8 @@
 
 25 novembre 2026. Branche locale `codex/level-interface-20261125`, base `40935b34`. Ce rapport concerne l’interface expérimentale et ses règles de démonstration, pas une validation du cerveau technique ni un gel de conception.
 
+Recette historique de la première version, synchronisée ensuite avec Lovable au commit `18061541`. La passe issue des retours de Thomas est décrite dans [level-journey-feedback-20261125.md](level-journey-feedback-20261125.md) ; elle met notamment à jour l’ordre des questions et corrige les courses des flotteurs. Les observations et captures ci-dessous correspondent à la première version.
+
 ## Corrections demandées par Thomas
 
 - En-tête commun avec logo, titre renommable, état, langue et menu.

@@ -5,6 +5,21 @@ import { Button } from "@/components/ui/button";
 
 // i18n-canonical: complete examples, never copied into the user's answers.
 const EXAMPLES: Record<string, readonly string[]> = {
+  level_application: [
+    "Dans une machine à café professionnelle, le réservoir d’eau alimente la pompe. Signaler le niveau bas pour éviter qu’elle fonctionne à sec.",
+    "Dans un climatiseur, le bac de condensats se trouve sous l’échangeur. Démarrer la pompe de relevage lorsque le niveau monte et déclencher une alarme avant débordement.",
+    "Dans un groupe hydraulique, la cuve d’huile est sous la machine. Avertir l’opérateur lorsqu’un appoint est nécessaire.",
+  ],
+  level_liquid: [
+    "Eau du réseau sans additif, de 5 à 40 °C en fonctionnement.",
+    "Huile hydraulique ISO VG 46, référence à préciser, de 10 à 70 °C en fonctionnement.",
+    "Condensats de climatisation sans additif, de 5 à 35 °C.",
+  ],
+  level_installation: [
+    "Cuve ouverte à pression atmosphérique ; corps du capteur immergé en permanence, sortie de câble et câble maintenus au sec.",
+    "Réservoir fermé sous pression ; pression à préciser. Le corps du capteur et la sortie de câble peuvent être immergés pendant le nettoyage.",
+    "Cuve à pression atmosphérique ; corps du capteur mouillé seulement lorsque le niveau monte. Préciser si les projections peuvent atteindre le câble.",
+  ],
   detection_goal: [
     "Détecter que le réservoir d’eau amovible est complètement inséré dans une machine à café professionnelle.",
     "Détecter la fermeture du tiroir de cartouche d’un appareil de diagnostic médical.",

@@ -132,8 +132,44 @@ export function assessConfiguration(context: LevelContext, c: LevelConfiguration
 }
 export function setPointCount(c: LevelConfiguration, count: number): LevelConfiguration {
   const n = Math.max(1, Math.min(12, Math.round(count)));
-  const points = n === c.count ? c.pointsMm : Array.from({ length: n }, (_, i) => Math.round(c.tankHeightMm * (i + 1) / (n + 1)));
-  return { ...c, count: n, pointsMm: points };
+  if (n === c.count) return c;
+  const points = Array.from({ length: n }, (_, i) => Math.round(c.tankHeightMm * (i + 1) / (n + 1)));
+  // Changing the number redistributes the requested points and extends a vertical
+  // stem when necessary. Manual length edits remain explicit and are never repaired.
+  const furthest = c.mounting === "top" ? c.tankHeightMm - points[0]! : points.at(-1)!;
+  const reachMm = c.orientation === "vertical" && n > 1
+    ? Math.max(c.reachMm, Math.min(c.tankHeightMm, furthest + FLOAT_HEIGHT_MM)) : c.reachMm;
+  return { ...c, count: n, pointsMm: points, reachMm };
+}
+/** Fixed envelope; animation may translate the float but must never resize it. */
+export const FLOAT_HEIGHT_MM = 19;
+export const FLOAT_CLEARANCE_MM = 2;
+export function verticalMechanics(c: LevelConfiguration, family: Family = architectureFamily(c)) {
+  const reachMm = family === "LS01" ? 32.5 : family === "LS02" ? 56 : c.reachMm;
+  const datumMm = c.mounting === "top" ? c.tankHeightMm : 0;
+  const endMm = c.mounting === "top" ? datumMm - reachMm : reachMm;
+  const margin = FLOAT_HEIGHT_MM / 2 + 1.5;
+  const stemLow = Math.min(datumMm, endMm) + margin;
+  const stemHigh = Math.max(datumMm, endMm) - margin;
+  const compact = family === "LS01" || family === "LS02";
+  const count = compact || c.mode === "continuous" ? 1 : requestedFloats(c);
+  const groups = Array.from({ length: count }, (_, i) => {
+    const first = c.pointsMm[i * c.pointsPerFloat] ?? c.tankHeightMm / 2;
+    const last = c.pointsMm[Math.min(c.pointsMm.length - 1, (i + 1) * c.pointsPerFloat - 1)] ?? first;
+    return { first, last };
+  });
+  const halfGap = (FLOAT_HEIGHT_MM + FLOAT_CLEARANCE_MM) / 2;
+  const floats = groups.map((group, i) => {
+    const previous = groups[i - 1], next = groups[i + 1];
+    const fullTravel = count === 1;
+    const lowerMm = Math.max(stemLow, fullTravel ? stemLow : group.first - 8,
+      previous ? (previous.last + group.first) / 2 + halfGap : stemLow);
+    const upperMm = Math.min(stemHigh, fullTravel ? stemHigh : group.last + 8,
+      next ? (group.last + next.first) / 2 - halfGap : stemHigh);
+    return { lowerMm, upperMm, heightMm: FLOAT_HEIGHT_MM };
+  });
+  return { reachMm, datumMm, endMm, floats,
+    valid: reachMm <= c.tankHeightMm && floats.every(f => f.lowerMm <= f.upperMm) };
 }
 export function configurationIssues(c: LevelConfiguration): string[] {
   const problems: string[] = [];
@@ -147,6 +183,8 @@ export function configurationIssues(c: LevelConfiguration): string[] {
     if (c.orientation === "vertical" && c.pointsMm.some(p => c.mounting === "top" ? p < c.tankHeightMm - c.reachMm : p > c.reachMm))
       problems.push("Un point souhaité dépasse la longueur de tige sous la fixation. Allonger la tige ou déplacer le point.");
   }
+  if (c.orientation === "vertical" && problems.length === 0 && !verticalMechanics(c).valid)
+    problems.push("L’espace ne permet pas de séparer les flotteurs et leurs courses. Espacer les points ou revoir la répartition des flotteurs.");
   return problems;
 }
 /** Animated output illustrates requested behaviour, not a physical switching prediction. */
@@ -160,16 +198,10 @@ export function illustrativeReading(c: LevelConfiguration, levelMm: number) {
 export function requestedFloats(c: LevelConfiguration): number {
   return c.mode === "continuous" ? 1 : Math.ceil(c.count / c.pointsPerFloat);
 }
-export function floatCentres(c: LevelConfiguration, levelMm: number): number[] {
-  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
-  if (c.mode === "continuous") return [c.mounting === "top"
-    ? clamp(levelMm - 4, Math.max(12, c.tankHeightMm - c.reachMm + 12), c.tankHeightMm - 12)
-    : clamp(levelMm - 4, 12, Math.min(c.tankHeightMm - 12, c.reachMm - 12))];
-  return Array.from({ length: requestedFloats(c) }, (_, i) => {
-    const first = c.pointsMm[i * c.pointsPerFloat] ?? c.tankHeightMm / 2;
-    const second = c.pointsPerFloat === 2 ? c.pointsMm[i * 2 + 1] : undefined;
-    return clamp(levelMm - 4, Math.max(10, first - 8), Math.min(c.tankHeightMm - 10, (second ?? first) + 8));
-  });
+export function floatCentres(c: LevelConfiguration, levelMm: number, family?: Family): number[] {
+  const mechanics = verticalMechanics(c, family);
+  if (!mechanics.valid) return [];
+  return mechanics.floats.map(f => Math.max(f.lowerMm, Math.min(f.upperMm, levelMm - 4)));
 }
 export function createLevelBrief(context: LevelContext, configuration: LevelConfiguration, cable: { lengthMm: string; connector: string }, contact: Record<string, string>) {
   const assessment = assessConfiguration(context, configuration);

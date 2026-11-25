@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
-import { Droplets, SlidersHorizontal, Thermometer, Play, Pause, Pencil, Download, Lightbulb, Check, ChevronDown } from "lucide-react";
+import { Droplets, SlidersHorizontal, Play, Pause, Pencil, Download, Lightbulb, ChevronDown } from "lucide-react";
 import { LevelProjectHeader } from "./level-project-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CandidateThumbnail } from "@/components/leadmagnet/candidate-thumbnail";
+import { NeedExamples } from "@/components/leadmagnet/need-examples";
+import { SceneLoading } from "./scene-loading";
 import { ConnectorChoices } from "@/components/leadmagnet/connector-choices";
 import { ProjectContextFields } from "@/components/leadmagnet/project-context-fields";
 import { IndustryField } from "@/components/leadmagnet/industry-field";
@@ -22,6 +23,7 @@ import { assessConfiguration, architectureFamily, configurationIssues, contextEr
 import "./level.css";
 
 const LevelScene = lazy(() => import("./level-scene"));
+const PositionChoiceScene = lazy(() => import("./position-choice-scene"));
 type Stage = "choice" | "questions" | "configure" | "review" | "standex";
 
 function Field({ label, children, hint, group = false }: { label: string; children: ReactNode; hint?: string; group?: boolean }) {
@@ -125,7 +127,12 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     return () => cancelAnimationFrame(request);
   }, [playing, reduced, active, stage, direction, config.tankHeightMm]);
   useEffect(() => { if ((direction === "up" && level >= config.tankHeightMm) || (direction === "down" && level <= 0)) setPlaying(false); }, [level, direction, config.tankHeightMm]);
-  const editApplication = () => { setReturnToConfig(true); setQuestion(0); go("questions"); };
+  const editApplication = () => { setReturnToConfig(true); setQuestion(1); go("questions"); };
+  const returnFromLiquid = returnToConfig && question === 1;
+  const advanceQuestion = () => {
+    if (returnFromLiquid || question === 2) { setReturnToConfig(false); go("configure"); }
+    else setQuestion(q => q + 1);
+  };
   const download = () => {
     const brief = { ...createLevelBrief(context, config, { lengthMm: cableLength, connector: terminationLabel(termination) }, {
       name: business.contactName ?? "", company: business.contactCompany ?? "", email: business.contactEmail ?? "",
@@ -135,7 +142,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     const anchor = document.createElement("a"); anchor.href = url; anchor.download = "Sensor-Studio-Niveau-Brouillon.json";
     anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); setExported(true);
   };
-  const scene = (productOnly = false) => <Suspense fallback={<div className="lv-scene-loading t-body">{t("Préparation de l’aperçu…")}</div>}>
+  const scene = (productOnly = false) => <Suspense fallback={<SceneLoading />}>
     {active ? <LevelScene configuration={config} family={family} material={selected?.material ?? "PP"} levelMm={level} oil={context.fluid === "oil"} productOnly={productOnly} /> : null}
   </Suspense>;
 
@@ -163,13 +170,15 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
       <p className="t-body-l text-muted-foreground">{t("Deux situations, un parcours adapté à votre application.")}</p>
       <div className="lv-choice-grid">
         <section className="lv-type-card">
-          <div className="lv-type-picture lv-proximity-picture" aria-hidden="true"><CandidateThumbnail sensorId="MK04" pair={{ magnetId: "M04", approach: "frontal" }} size="large" fitToView quiet /></div>
+          <div className="lv-type-picture" aria-hidden="true"><Suspense fallback={<SceneLoading />}>{active ? <PositionChoiceScene /> : null}</Suspense></div>
           <div className="lv-type-copy"><p className="t-label">{t("Capteur de position")}</p><h2 className="t-title-l">{t("Position et mouvement")}</h2>
             <p className="t-body">{t("Repérer une ouverture, une présence ou le déplacement d’une pièce.")}</p>
-            <Button variant="outline" onClick={classic}>{t("Choisir ce parcours")}</Button></div>
+            <Button onClick={classic}>{t("Configurer un capteur de position")}</Button></div>
         </section>
         <section className="lv-type-card">
-          <div className="lv-type-picture" aria-label={t("Capteur à flotteur dans une cuve")}>{scene()}</div>
+          <div className="lv-type-picture" aria-label={t("Capteur à flotteur dans une cuve")}><Suspense fallback={<SceneLoading />}>
+            {active ? <LevelScene configuration={INITIAL_CONFIGURATION} family="LS01" levelMm={75} material="PP" showMarkers={false} /> : null}
+          </Suspense></div>
           <div className="lv-type-copy"><p className="t-label">{t("Capteur à flotteur")}</p><h2 className="t-title-l">{t("Niveau de liquide")}</h2>
             <p className="t-body">{t("Détecter un niveau bas, plusieurs seuils ou suivre la hauteur du liquide.")}</p>
             <Button onClick={() => { setQuestion(0); setReturnToConfig(false); go("questions"); }}>{t("Configurer un capteur de niveau")}</Button></div>
@@ -180,13 +189,15 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     {stage === "questions" ? <main className="lv-question-main">
       <section className="questionnaire-card" aria-labelledby="level-question-title">
         <div className="questionnaire-meta"><p className="questionnaire-count t-caption">{t("Question")} {question + 1} {t("sur")} 3</p>
-          <p className="questionnaire-category t-label">{t(["Le liquide", "L’application", "La cuve"][question]!)}</p></div>
+          <p className="questionnaire-category t-label">{t(["L’application", "Le liquide", "La cuve"][question]!)}</p></div>
         <div className="questionnaire-progress" aria-hidden="true"><div style={{ width: `${(question + 1) / 3 * 100}%` }} /></div>
         <h1 id="level-question-title" className="t-title-l mt-5" ref={headingRef} tabIndex={-1}>
-          {t(["Quel liquide, à quelles températures ?", "À quoi servira la détection de niveau ?", "Dans quelles conditions le capteur sera-t-il installé ?"][question]!)}</h1>
+          {t(["Dans quel équipement, et pour quoi faire ?", "Quel liquide, à quelles températures ?", "Dans quelles conditions le capteur sera-t-il installé ?"][question]!)}</h1>
         <div className="questionnaire-grid mt-6">
           <div className="questionnaire-answer lv-fields">
-            {question === 0 ? <>
+            {question === 0 ? <Field label={t("Votre application")}><Textarea rows={4} value={context.purpose}
+              placeholder={t("Décrivez la machine, la cuve ou le réservoir, et l’action attendue.")}
+              onChange={e => changeContext({ purpose: e.target.value })} /></Field> : question === 1 ? <>
               <SelectField label={t("Liquide")} value={context.fluid} options={fluids} onChange={v => changeContext({ fluid: v as LevelContext["fluid"] })} />
               {context.fluid !== "unknown" ? <Field label={context.fluid === "water" ? t("Type d’eau et éventuels additifs") : t("Nom ou référence du liquide")}>
                 <Input value={context.fluidName} placeholder={context.fluid === "water" ? t("Eau du réseau, condensats, eau glycolée…") : t("Référence, composition…")} onChange={e => changeContext({ fluidName: e.target.value })} />
@@ -194,11 +205,6 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
               <div className="lv-two-fields"><Field label={t("Température minimale (°C)")}><Input type="number" value={context.temperatureMin} placeholder={t("À définir")} onChange={e => changeContext({ temperatureMin: e.target.value })} /></Field>
                 <Field label={t("Température maximale (°C)")}><Input type="number" value={context.temperatureMax} placeholder={t("À définir")} onChange={e => changeContext({ temperatureMax: e.target.value })} /></Field></div>
               {errors.map(e => <p key={e} className="notice-danger t-body" role="alert">{t(e)}</p>)}
-            </> : question === 1 ? <>
-              <Field label={t("Votre application")}><Textarea rows={4} value={context.purpose} placeholder={t("Ex. Arrêter une pompe avant que le réservoir soit vide, puis signaler le remplissage.")}
-                onChange={e => changeContext({ purpose: e.target.value })} /></Field>
-              <div className="lv-suggestions">{[t("Signaler un niveau bas"), t("Éviter un débordement"), t("Commander une pompe"), t("Suivre le niveau")].map(label =>
-                <Button key={label} variant="secondary" onClick={() => changeContext({ purpose: context.purpose ? `${context.purpose} ; ${label}` : label })}>{label}</Button>)}</div>
             </> : <>
               <SelectField label={t("Cuve")} value={context.tank} onChange={v => changeContext({ tank: v as LevelContext["tank"] })}
                 options={[["unknown", t("À définir")], ["vented", t("À pression atmosphérique")], ["pressurised", t("Sous pression ou sous vide")]]} />
@@ -211,21 +217,14 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             </>}
           </div>
           <aside className="questionnaire-examples">
-            {question === 0 ? <Thermometer size={26} aria-hidden="true" /> : question === 1 ? <Droplets size={26} aria-hidden="true" /> : <SlidersHorizontal size={26} aria-hidden="true" />}
-            <h2 className="t-title-s mt-4">{t(["Un premier filtre essentiel", "Décrivez l’action attendue", "Le montage se choisit ensuite"][question]!)}</h2>
-            <p className="t-body mt-3">{t([
-              "Le liquide et ses températures orientent le choix des matériaux. Vous pourrez revenir ici sans perdre votre configuration.",
-              "Le nombre de points et leur position seront réglables directement dans la cuve. Quelques seuils peuvent suffire, même si vous pensiez à une mesure continue.",
-              "Vous comparerez les montages verticaux et latéraux dans le configurateur. La partie sensible peut être mouillée sans que le câble le soit."
-            ][question]!)}</p>
+            <NeedExamples key={question} questionKey={["level_application", "level_liquid", "level_installation"][question]!} />
           </aside>
         </div>
         <div className="questionnaire-navigation lv-question-nav">
           <Button variant="ghost" onClick={() => question > 0 ? setQuestion(q => q - 1) : go("choice")}>{t("Précédent")}</Button>
-          <Button variant="secondary" onClick={() => question < 2 ? setQuestion(q => q + 1) : go("configure")} disabled={question === 0 && errors.length > 0}>{t("À préciser plus tard")}</Button>
-          <Button size="lg" disabled={question === 0 && errors.length > 0} onClick={() => {
-            if (returnToConfig || question === 2) { setReturnToConfig(false); go("configure"); } else setQuestion(q => q + 1);
-          }}>{t(returnToConfig ? "Revenir au configurateur" : question === 2 ? "Ouvrir le configurateur" : "Continuer")}</Button>
+          <Button variant="secondary" onClick={advanceQuestion} disabled={question === 1 && errors.length > 0}>{t("À préciser plus tard")}</Button>
+          <Button size="lg" disabled={question === 1 && errors.length > 0} onClick={advanceQuestion}>
+            {t(returnFromLiquid ? "Revenir au configurateur" : question === 2 ? "Ouvrir le configurateur" : "Continuer")}</Button>
         </div>
       </section>
     </main> : null}
@@ -244,7 +243,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           {config.mode === "points" ? <SelectField label={t("Points de détection souhaités")} value={String(config.count)} onChange={v => { setPlaying(false); setConfig(c => setPointCount(c, Number(v))); }}
             options={Array.from({ length: 12 }, (_, i) => [String(i + 1), `${i + 1} ${t(i === 0 ? "point" : "points")}`] as const)} /> :
             <p className="t-caption">{t("Un flotteur suit la hauteur. Le LS05 inox est la piste pour le continu.")}</p>}
-          {config.mode === "points" ? <p className="t-caption text-muted-foreground">{t("Changer le nombre répartit à nouveau les points dans la cuve.")}</p> : null}
+          {config.mode === "points" ? <p className="t-caption text-muted-foreground">{t("Changer le nombre répartit les points et allonge la tige si nécessaire.")}</p> : null}
           <Field group label={t("Orientation")}><Choice label={t("Orientation")} value={config.orientation} onChange={orientation => changeConfig({ orientation })}
             options={[["vertical", t("Verticale")], ["horizontal", t("Horizontale")]]} /></Field>
           {config.orientation === "vertical" ? <Field group label={t("Fixation dans la cuve")}><Choice label={t("Fixation")} value={config.mounting} onChange={mounting => changeConfig({ mounting })}
@@ -269,9 +268,9 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           <div className="lv-visual surface">
             <div className="lv-visual-title"><div><p className="t-label">{t("Dans votre cuve")}</p><p className="t-caption text-muted-foreground">{t("Vue en coupe · enveloppes reconstruites d’après les fiches")}</p></div>
               <span className="lv-preview t-caption">{t("Illustration du besoin")}</span></div>
-            <div className="lv-canvas" role="img" aria-label={t("Cuve, liquide et flotteurs mobiles")}>{!config.custom && selected ? scene() :
+            <div className="lv-canvas" role="img" aria-label={t("Cuve, liquide et flotteurs mobiles")}>{!config.custom && selected && issues.length === 0 ? scene() :
               <div className="lv-empty"><SlidersHorizontal size={40} /><h2 className="t-title-m">{t(config.custom ? "Une forme adaptée à votre application" : "Une configuration à étudier")}</h2>
-                <p className="t-body">{t("Votre besoin reste conservé. Décrivez les contraintes pour préparer l’étude avec Standex.")}</p></div>}</div>
+                <p className="t-body">{t(!config.custom && issues[0] ? issues[0] : "Votre besoin reste conservé. Décrivez les contraintes pour préparer l’étude avec Standex.")}</p></div>}</div>
             <div className="lv-playback">
               <div className="lv-between"><h2 className="t-title-s">{t("Faire varier le liquide")}</h2><output className="t-metric t-body">{Math.round(level)} / {config.tankHeightMm} mm</output></div>
               <input type="range" className="lv-range" aria-label={t("Hauteur du liquide")} min={0} max={config.tankHeightMm} value={level} step={1} onChange={e => { setPlaying(false); setLevel(Number(e.target.value)); }} />

@@ -15,6 +15,8 @@ Le panneau préfigure la future page de choix :
 
 « Standard » n’est pas retenu : un capteur de niveau peut aussi être standard. « Position et mouvement » décrit l’usage et laisse le parcours existant accueillir ses constructions spécifiques.
 
+Les deux actions utilisent le même bouton primaire bleu : « Configurer un capteur de position » et « Configurer un capteur de niveau ». La paire de position réutilise les corps de l’atelier, cadrés sur leur encombrement réel : câble sur le capteur, pôles rouge et bleu sur l’aimant. Aucune bordure interne ne coupe l’image. La vignette de niveau est une illustration fixe, sans repère P1 et indépendante de la configuration en cours. Un indicateur discret couvre les scènes jusqu’à leur premier rendu complet, sans modèle provisoire.
+
 La progression est **Mon besoin → Configuration → Résultat → Avec Standex**. Elle reprend la barre segmentée à quatre étapes du parcours actuel : mêmes classes, pouce actif, espacement et comportement fixe en haut de page. Seul « Couples proposés » devient « Configuration ». L’en-tête reprend également le logo, le nom de projet renommable, l’état Brouillon, la langue et le menu. Le composant de renommage est partagé avec le parcours classique, sans changement de comportement.
 
 Cette progression remplace, pour le niveau, l’idée d’un atelier magnétique évoquée dans les dossiers techniques antérieurs. Cela ne change pas les principes techniques du cerveau ni les décisions déjà validées sur les sorties codées.
@@ -23,7 +25,13 @@ Cette progression remplace, pour le niveau, l’idée d’un atelier magnétique
 
 Les écrans reprennent les composants et la présentation des questionnaires existants. Une donnée inconnue reste explicitement « À définir » ; elle n’est jamais remplie par une hypothèse cachée. « À préciser plus tard » permet d’explorer, mais n’équivaut pas à une compatibilité positive.
 
-### Écran 1 — Quel liquide, à quelles températures ?
+### Écran 1 — Dans quel équipement, et pour quoi faire ?
+
+Une réponse libre décrit la machine, la place de la cuve ou du réservoir et l’action attendue : remplissage, vidange, commande de pompe ou alarme. Aucun bouton ne préremplit la réponse. L’encart `NeedExamples` partagé avec le parcours classique propose trois exemples complets, consultables manuellement : machine à café, bac de condensats et réservoir hydraulique. Lire un exemple ne change jamais la saisie.
+
+Une demande de continu doit pouvoir être reformulée en actions concrètes. Si quelques seuils suffisent, l’utilisateur pourra comparer les deux modes sans perdre ce contexte. Le prototype recueille cette description ; il ne réalise pas encore la reformulation avec le cerveau conversationnel.
+
+### Écran 2 — Quel liquide, à quelles températures ?
 
 - Liquide : eau / huile / autre liquide / à définir.
 - Précision contextuelle : type d’eau et additifs, ou nom/référence/composition du liquide.
@@ -33,11 +41,7 @@ Les deux températures expriment une plage de fonctionnement, pas la températur
 
 Pour le cerveau final : distinguer eau seule, eau additivée, huile précisément identifiée et mélange. L’extension D5 aux eaux du réseau, déminéralisée, de pluie et de condensation vaut pour une référence de densité seulement. Elle ne prouve ni la propreté ni la compatibilité chimique. Le prototype ne calcule pas de flottabilité à partir d’une table de densité.
 
-### Écran 2 — À quoi servira la détection de niveau ?
-
-Une description courte, aidée de quatre exemples : signaler un niveau bas ; éviter un débordement ; commander une pompe ; suivre le niveau. Le nombre de seuils sera choisi dans le configurateur.
-
-Une demande de continu doit pouvoir être reformulée en actions concrètes. Si quelques seuils suffisent, l’utilisateur peut comparer les deux modes sans perdre son contexte. Le prototype propose les exemples ; il ne réalise pas encore cette reformulation avec le cerveau conversationnel.
+Les exemples de cet écran portent uniquement sur le fluide, ses additifs éventuels et sa plage de température.
 
 ### Écran 3 — Dans quelles conditions le capteur sera-t-il installé ?
 
@@ -48,6 +52,8 @@ Une demande de continu doit pouvoir être reformulée en actions concrètes. Si 
 
 Le corps mouillé et le câble mouillé sont deux informations distinctes. Une détection de bas de cuve peut imposer une immersion permanente sans immerger le câble. La pression chiffrée, les cycles, la durée de vie et les détails de nettoyage seront complétés lorsque la configuration l’exige ou lors du dossier Standex, plutôt que de bloquer cette découverte.
 
+Les exemples de cet écran combinent pression, immersion du corps et exposition du câble. Ils n’anticipent pas le choix d’orientation dans le configurateur.
+
 ## 3. Paramètres du configurateur
 
 Trois zones sur grand écran : **réglages à gauche**, **cuve et lecture au centre**, **piste et suite à droite**. Sur une tablette, les pistes descendent sous la scène. Sur un téléphone, les blocs se suivent verticalement. La scène utilise un angle fixe de vue en coupe ; aucun champ magnétique ni couple capteur–aimant n’est présenté.
@@ -55,7 +61,7 @@ Trois zones sur grand écran : **réglages à gauche**, **cuve et lecture au cen
 | Paramètre | Réglage et effet | Règle de conception |
 |---|---|---|
 | Mode | Par points / continu | Garder le besoin de continu si aucun montage proposé ne le couvre ; ne pas le transformer silencieusement en un point. |
-| Nombre de points | 1 à 12 dans l’aperçu | Nombre de commutations souhaitées, distinct des flotteurs, des contacts physiques et des fils. Changer le nombre redistribue les positions ; le texte l’annonce. |
+| Nombre de points | 1 à 12 dans l’aperçu | Nombre de commutations souhaitées, distinct des flotteurs, des contacts physiques et des fils. Changer le nombre redistribue les positions et allonge la tige verticale si nécessaire ; le texte l’annonce. Une longueur ajustée manuellement n’est pas réparée en arrière-plan. |
 | Orientation | Verticale / horizontale | Change la famille et sa mise en situation. Un LS03 seul ne couvre pas une demande multipoint ou continue. |
 | Fixation | Par le haut / par le fond en vertical | Ne pas confondre entrée du capteur dans la cuve et seuil haut/bas à détecter. |
 | Montage latéral | Standard / DK / DL / GZ | Le prototype conserve ce choix. Les géométries distinctes et le filtrage selon accès intérieur/extérieur restent à compléter après validation des plans. |
@@ -72,7 +78,7 @@ Pour la version aboutie, l’accès de montage intérieur/extérieur doit être 
 
 ## 4. Modification du liquide et des températures
 
-Le cartouche de contexte renvoie à l’écran 1 et présente un bouton « Revenir au configurateur ». Orientation, longueur, positions, besoin sur mesure et détail de câble sont conservés. Le calcul des pistes est refait depuis les nouvelles données ; une piste devenue incompatible ne reste pas sélectionnée.
+Le cartouche de contexte renvoie à l’écran 2 et présente un bouton « Revenir au configurateur ». Application, orientation, longueur, positions, besoin sur mesure et détail de câble sont conservés. Le calcul des pistes est refait depuis les nouvelles données ; une piste devenue incompatible ne reste pas sélectionnée.
 
 Le filtrage actuel emploie un sous-ensemble documentaire explicite, isolé du moteur de proximité. Les valeurs maximales du périmètre utilisé sont 80 °C pour les constructions plastiques LS01/LS02 et les plans LS03 fournis, 70 °C pour la fiche LS04 et 160 °C pour la ligne de fonctionnement LS05. La mention LS05 200 °C reste un point à confirmer sur la construction inox complète. Aucun plafond universel de 200 °C n’est affirmé.
 
@@ -83,6 +89,8 @@ Le liquide oriente ici une matière candidate très grossièrement ; cette inter
 ## 5. Animation et affichage du signal
 
 L’utilisateur fait monter ou descendre le liquide avec un curseur ou une lecture animée. Les flotteurs bougent dans leurs courses représentées. L’animation s’arrête à l’extrémité, à la fermeture du panneau ou lorsque l’onglet est masqué. Le mode système de réduction des mouvements conserve le curseur manuel.
+
+Chaque flotteur conserve la même géométrie pendant toute l’animation. Ses butées sont calculées depuis la configuration et restent fixes lorsque le liquide varie. Les courses voisines sont séparées pour empêcher toute superposition de corps. Dans la maquette, le flotteur illustratif mesure 19 mm de haut et le jeu entre corps est de 2 mm ; ces conventions de représentation ne valident pas une construction LS04/LS05. Une configuration impossible à représenter suspend la scène et le signal et indique le réglage à corriger, sans comprimer les flotteurs.
 
 | Demande | Lecture proposée |
 |---|---|
@@ -118,7 +126,7 @@ Le raccordement au dossier et à la soumission existants reste à réaliser avec
 
 ## 8. Mise en œuvre et limites du pilote
 
-Le travail est isolé sur `codex/level-interface-20261125`, depuis `origin/main` au commit `40935b34`. Les modules de niveau ne modifient ni le moteur magnétique, ni le dossier de proximité, ni l’authentification, ni la soumission de production. La route `/niveau` et l’entrée de menu sont préparées dans cette branche ; aucun changement n’est publié sur le site en ligne.
+Le travail est isolé sur `codex/level-interface-20261125`, depuis `origin/main` au commit `40935b34`. La première version d’interface a été synchronisée avec la branche connectée à Lovable au commit `18061541`, puis testée par Thomas. Les ajustements décrits ici répondent à ses retours du 25 novembre. Les modules de niveau ne modifient ni le moteur magnétique, ni le dossier de proximité, ni l’authentification, ni la soumission de production. La route `/niveau` et l’entrée de menu permettent de tester l’aperçu dans Lovable ; la synchronisation du code ne constitue pas une publication du site public.
 
 Le premier pilote permet de juger la compréhension du parcours, le nombre de questions, l’emplacement des réglages, la comparaison des orientations et la lecture multipoint. Il ne doit pas être utilisé comme outil de dimensionnement ou de qualification catalogue. Les nouveaux textes sont présents dans les huit langues du dictionnaire ; la relecture linguistique métier reste à effectuer.
 

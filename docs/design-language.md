@@ -1212,3 +1212,22 @@ Le blanc reste réservé à l’action principale de confirmation. Aucun mouveme
 Sous l’explication d’un montage traversant indisponible, « Changer de capteur »
 est une commande textuelle soulignée qui ouvre le catalogue existant. Elle conserve
 une cible de 44 px et un focus visible, sans ajouter un bouton plein concurrent.
+
+### Ajustements du parcours niveau — 25 novembre 2026
+
+Les deux cartes de choix ont la même action primaire bleue, alignée en bas de
+carte. La paire de position est cadrée sur ses volumes et reprend l’aimant rouge
+et bleu de l’atelier ; aucune séparation interne ni annotation de seuil ne
+subsiste dans ces illustrations. Un statut de chargement discret couvre la
+scène jusqu’au premier rendu complet, sans silhouette provisoire. Il utilise
+les surfaces, couleurs et durées existantes et respecte la réduction du mouvement.
+
+L’application vient en première question, en texte libre, puis le liquide et
+les températures, puis les conditions d’installation. Chaque écran réutilise
+le composant d’exemples du questionnaire classique avec des réponses adaptées
+à la question affichée. Les exemples ne préremplissent pas le champ.
+
+Le nombre de points met à jour simultanément la piste, la longueur illustrative
+et le nombre de flotteurs. Les flotteurs sont des corps rigides, mobiles entre
+des butées fixes et sans superposition. Une configuration incohérente affiche
+un état à corriger au lieu d’un assemblage déformé. Aucun nouveau jeton.

@@ -1,11 +1,13 @@
 /** Reconstructed product envelopes for visual discussion, not manufacturing CAD. */
-import { Component, useEffect, useMemo, type ReactNode } from "react";
+import { Component, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { ContactShadows, Html, Line } from "@react-three/drei";
 import { CatmullRomCurve3, DoubleSide, PMREMGenerator, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
-import { floatCentres, type Family, type LevelConfiguration } from "@/lib/level/configuration";
+import { FLOAT_HEIGHT_MM, floatCentres, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
+import { SceneLoading, SceneUnavailable } from "./scene-loading";
+import { SceneFrameReady } from "./scene-frame-ready";
 
 // Physical material colours are confined to the reconstructed scene, as in the existing workshop.
 const MAT = { pp: "#ebece3", pa: "#262b30", steel: "#adb6bd", seal: "#22282c", water: "#75bdd8", oil: "#b7954a" };
@@ -42,9 +44,10 @@ function Cylinder({ radius, height, y = 0, color, metal = false, sides = 64 }: {
   </mesh>;
 }
 function FloatBody({ steel, color }: { steel: boolean; color: string }) {
-  const points = useMemo(() => [new Vector2(3.6, -9.5), new Vector2(10.8, -9.5),
-    new Vector2(11.75, -8.5), new Vector2(11.75, 5), new Vector2(9, 9.5),
-    new Vector2(3.6, 9.5), new Vector2(3.6, -9.5)], []);
+  const half = FLOAT_HEIGHT_MM / 2;
+  const points = useMemo(() => [new Vector2(3.6, -half), new Vector2(10.8, -half),
+    new Vector2(11.75, -half + 1), new Vector2(11.75, 5), new Vector2(9, half),
+    new Vector2(3.6, half), new Vector2(3.6, -half)], [half]);
   return <group>
     <mesh castShadow><latheGeometry args={[points, 80]} />
       <meshStandardMaterial color={color} metalness={steel ? 0.92 : 0.02} roughness={steel ? 0.22 : 0.3} side={DoubleSide} />
@@ -68,15 +71,14 @@ function VerticalSensor({ config, family, level, material }: {
 }) {
   const steel = family === "LS05";
   const color = steel ? MAT.steel : material === "PA" ? MAT.pa : MAT.pp;
-  const reach = family === "LS01" ? 32.5 : family === "LS02" ? 56 : config.reachMm;
+  const mechanics = verticalMechanics(config, family);
+  const reach = mechanics.reachMm;
   const top = config.mounting === "top";
-  const datum = top ? config.tankHeightMm : 0;
-  const end = top ? datum - reach : reach;
+  const datum = mechanics.datumMm;
+  const end = mechanics.endMm;
   const centre = (datum + end) / 2;
-  const lo = Math.min(datum, end) + 11, hi = Math.max(datum, end) - 11;
-  const centres = family === "LS01" || family === "LS02" ? [level - 4] : floatCentres(config, level);
-  const floats = centres.map(y => Math.max(lo, Math.min(hi, y)));
-  return <group>
+  const floats = floatCentres(config, level, family);
+  return <group name={`level-sensor-${family}`}>
     <Cylinder radius={3.25} height={reach} y={centre} color={color} metal={steel} />
     <Cylinder radius={steel ? 13 : 8.5} height={6} y={datum + (top ? 5 : -5)} color={color} metal={steel} sides={6} />
     <Cylinder radius={steel ? 10.5 : 5} height={13} y={datum + (top ? 10 : -10)} color={color} metal={steel} />
@@ -86,9 +88,11 @@ function VerticalSensor({ config, family, level, material }: {
       <meshStandardMaterial color={color} metalness={steel ? 0.9 : 0} roughness={0.3} />
     </mesh>)}
     <Cylinder radius={5.8} height={1.2} y={end} color={steel ? MAT.steel : MAT.pa} metal={steel} />
-    {floats.map((y, i) => <group position={[0, y, 0]} key={i}><FloatBody steel={steel} color={color} /></group>)}
-    {family === "LS04" || family === "LS05" ? config.pointsMm.filter((_, i) => i % config.pointsPerFloat === 0).map((p, i) =>
-      <Cylinder key={i} radius={5} height={1.5} y={Math.max(lo - 10, Math.min(hi + 10, p - 11))} color={steel ? MAT.steel : MAT.pa} metal={steel} />) : null}
+    {floats.map((y, i) => <group name={`level-float-${i + 1}`} position={[0, y, 0]} key={i}><FloatBody steel={steel} color={color} /></group>)}
+    {mechanics.valid && (family === "LS04" || family === "LS05") ? mechanics.floats.flatMap((range, i) => [
+      <Cylinder key={`${i}-lower`} radius={5} height={1.5} y={range.lowerMm - FLOAT_HEIGHT_MM / 2 - 0.75} color={steel ? MAT.steel : MAT.pa} metal={steel} />,
+      <Cylinder key={`${i}-upper`} radius={5} height={1.5} y={range.upperMm + FLOAT_HEIGHT_MM / 2 + 0.75} color={steel ? MAT.steel : MAT.pa} metal={steel} />,
+    ]) : null}
     {top ? <Cable origin={[0, datum + 17, 0]} length={config.tankHeightMm * 0.3} /> :
       <group rotation={[Math.PI, 0, 0]}><Cable origin={[0, 17, 0]} /></group>}
   </group>;
@@ -135,19 +139,22 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
   static getDerivedStateFromError() { return { failed: true }; }
   override render() { return this.state.failed ? <p className="notice-info m-6">{t("L’aperçu du produit est indisponible. Les réglages et le récapitulatif restent accessibles.")}</p> : this.props.children; }
 }
-export default function LevelScene({ configuration, family, levelMm, material, oil = false, productOnly = false }: {
-  configuration: LevelConfiguration; family: Family; levelMm: number; material: string; oil?: boolean; productOnly?: boolean;
+export default function LevelScene({ configuration, family, levelMm, material, oil = false, productOnly = false, showMarkers = true }: {
+  configuration: LevelConfiguration; family: Family; levelMm: number; material: string; oil?: boolean; productOnly?: boolean; showMarkers?: boolean;
 }) {
-  return <SceneBoundary><Canvas orthographic dpr={[1, 2]} frameloop="demand" gl={{ antialias: true, alpha: true }}
-    camera={{ near: 0.1, far: 10000, zoom: 4 }} fallback={<p className="notice-info m-6">{t("L’aperçu nécessite un navigateur compatible WebGL.")}</p>}>
+  const [ready, setReady] = useState(false);
+  return <SceneBoundary><div className="lv-scene-stage" data-ready={ready} data-family={family}>
+    <div className="lv-scene-canvas"><Canvas orthographic dpr={[1, 2]} frameloop="demand" gl={{ antialias: true, alpha: true }}
+    camera={{ near: 0.1, far: 10000, zoom: 4 }} fallback={<SceneUnavailable />}>
     <StudioLight /><Framing height={configuration.tankHeightMm} portrait={productOnly} />
     {!productOnly ? <Tank height={configuration.tankHeightMm} level={levelMm} oil={oil} /> : null}
-    {!productOnly && configuration.mode === "points" ? configuration.pointsMm.map((point, index) =>
+    {!productOnly && showMarkers && configuration.mode === "points" ? configuration.pointsMm.map((point, index) =>
       <Html key={index} position={[configuration.tankHeightMm * 0.46, point, configuration.tankHeightMm * 0.22]} center style={{ pointerEvents: "none" }}>
         <span className="lv-point-marker t-caption t-metric">P{index + 1} · {point} mm</span>
       </Html>) : null}
     {family === "LS03" ? <HorizontalSensor config={configuration} level={levelMm} material={material} /> :
       <VerticalSensor config={configuration} family={family} level={levelMm} material={material} />}
     <ContactShadows position={[0, -5, 0]} scale={configuration.tankHeightMm * 3} opacity={0.3} blur={2.5} far={configuration.tankHeightMm * 1.4} resolution={256} color="#203343" />
-  </Canvas></SceneBoundary>;
+    <SceneFrameReady onReady={() => setReady(true)} />
+  </Canvas></div>{!ready ? <SceneLoading /> : null}</div></SceneBoundary>;
 }
