@@ -1231,3 +1231,25 @@ Le nombre de points met à jour simultanément la piste, la longueur illustrativ
 et le nombre de flotteurs. Les flotteurs sont des corps rigides, mobiles entre
 des butées fixes et sans superposition. Une configuration incohérente affiche
 un état à corriger au lieu d’un assemblage déformé. Aucun nouveau jeton.
+
+### Moniteur et réglages niveau — 25 novembre 2026
+
+Sur grand écran, le configurateur réserve la gauche aux réglages, à la piste
+et à la poursuite ; cette colonne défile indépendamment. La scène centrale et
+le moniteur de droite restent ancrés sous la navigation. Sur tablette le
+moniteur passe sous la scène ; sur téléphone les trois blocs se suivent.
+Un blocage apparaît en `notice-warning` avec des actions secondaires explicites
+et remonte la colonne de réglages, sans déplacer automatiquement le besoin.
+
+Le moniteur réutilise `ContactCircuit` pour un point. Le multipoint présente
+un escalier vertical, Niveau 0 en bas, avec libellés et plages chiffrées ;
+le niveau actif combine surface teintée, graisse et barre renforcée. Les
+couleurs proviennent de `--chart-1` et `--chart-2`, sans signification d’alarme.
+Le continu emploie une jauge verticale avec la même échelle de lecture que
+la valeur et le pourcentage. Aucun réglage dans cette colonne, aucune annonce
+vocale à chaque image, réduction du mouvement respectée. Aucun nouveau jeton.
+
+Les volumes LS03 distinguent le corps fixe du flotteur articulé ; le LS04
+reprend les rainures de tige et l’embout incurvé. Ces matériaux Three.js
+restent dans l’exception existante ; les détails non cotés sont documentés
+comme estimations, en attente des modèles du bureau d’études.

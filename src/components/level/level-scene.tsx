@@ -2,7 +2,7 @@
 import { Component, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { ContactShadows, Html, Line } from "@react-three/drei";
-import { CatmullRomCurve3, DoubleSide, PMREMGenerator, Vector2, Vector3 } from "three";
+import { CatmullRomCurve3, DoubleSide, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
 import { FLOAT_HEIGHT_MM, floatCentres, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
@@ -30,7 +30,7 @@ function Framing({ height, portrait }: { height: number; portrait: boolean }) {
     if (!("isOrthographicCamera" in camera)) return;
     camera.position.set(height * 0.9, height * 0.85 + 20, height * 2.4);
     camera.lookAt(0, height * 0.5 + 20, 0);
-    camera.zoom = Math.min(size.height / (height * (portrait ? 1.45 : 1.35) + 26), size.width / (height * 1.6 + 40));
+    camera.zoom = Math.min(size.height / (height * (portrait ? 1.35 : 1.2) + 65), size.width / ((tankWidth(height) + 110) * 1.18));
     camera.updateProjectionMatrix(); invalidate();
   }, [camera, height, size.width, size.height, portrait, invalidate]);
   return null;
@@ -43,20 +43,41 @@ function Cylinder({ radius, height, y = 0, color, metal = false, sides = 64 }: {
     <meshStandardMaterial color={color} roughness={metal ? 0.24 : 0.32} metalness={metal ? 0.88 : 0.02} />
   </mesh>;
 }
-function FloatBody({ steel, color }: { steel: boolean; color: string }) {
-  const half = FLOAT_HEIGHT_MM / 2;
-  const points = useMemo(() => [new Vector2(3.6, -half), new Vector2(10.8, -half),
+function FloatBody({ steel, color, grooved = false }: { steel: boolean; color: string; grooved?: boolean }) {
+  const half = grooved ? 18.5 / 2 : FLOAT_HEIGHT_MM / 2;
+  const points = useMemo(() => grooved ? [new Vector2(4.4, -half), new Vector2(12.6, -half),
+    new Vector2(13.5, -half + .9), new Vector2(13.5, half - .9), new Vector2(12.6, half),
+    new Vector2(4.4, half), new Vector2(4.4, -half)] : [new Vector2(3.6, -half), new Vector2(10.8, -half),
     new Vector2(11.75, -half + 1), new Vector2(11.75, 5), new Vector2(9, half),
-    new Vector2(3.6, half), new Vector2(3.6, -half)], [half]);
+    new Vector2(3.6, half), new Vector2(3.6, -half)], [half, grooved]);
   return <group>
     <mesh castShadow><latheGeometry args={[points, 80]} />
       <meshStandardMaterial color={color} metalness={steel ? 0.92 : 0.02} roughness={steel ? 0.22 : 0.3} side={DoubleSide} />
     </mesh>
-    <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, steel ? 0 : -8.6, 0]}>
+    {!grooved ? <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, steel ? 0 : -8.6, 0]}>
       <torusGeometry args={[11.7, steel ? 0.5 : 0.18, 8, 80]} />
       <meshStandardMaterial color={color} metalness={steel ? 0.95 : 0.02} roughness={0.4} />
-    </mesh>
+    </mesh> : null}
   </group>;
+}
+function GroovedStem({ reach, color }: { reach: number; color: string }) {
+  // Ø8.5 from LS04 p1. Groove pitch/depth are visual estimates from the drawing.
+  const profile = useMemo(() => {
+    const points = [new Vector2(0, -reach / 2), new Vector2(4.25, -reach / 2)];
+    for (let y = -reach / 2 + 10; y < reach / 2 - 2; y += 10)
+      points.push(new Vector2(4.25, y - .55), new Vector2(3.95, y - .3), new Vector2(3.95, y + .3), new Vector2(4.25, y + .55));
+    points.push(new Vector2(4.25, reach / 2), new Vector2(0, reach / 2));
+    return points;
+  }, [reach]);
+  return <mesh castShadow><latheGeometry args={[profile, 64]} /><meshStandardMaterial color={color} roughness={.38} /></mesh>;
+}
+function PlasticEndCap({ color }: { color: string }) {
+  // Curved, split retaining cap visible on LS04 p1; uncoted details remain illustrative.
+  const profile = useMemo(() => [[0, 0], [1.7, 0], [3.4, 1.5], [5.1, 5.5], [5.1, 8],
+    [3.5, 8], [2.7, 2], [0, 1]].map(([r, y]) => new Vector2(r!, y!)), []);
+  return <group><Cylinder radius={2.8} height={6} y={3} color={color} />
+    {[0,1,2,3].map(i => <mesh key={i} castShadow><latheGeometry args={[profile, 24, i * Math.PI / 2 + .07, Math.PI / 2 - .14]} />
+      <meshStandardMaterial color={color} roughness={.38} side={DoubleSide} /></mesh>)}</group>;
 }
 function Cable({ origin, length = 38 }: { origin: [number, number, number]; length?: number }) {
   const path = useMemo(() => new CatmullRomCurve3([new Vector3(...origin),
@@ -79,7 +100,8 @@ function VerticalSensor({ config, family, level, material }: {
   const centre = (datum + end) / 2;
   const floats = floatCentres(config, level, family);
   return <group name={`level-sensor-${family}`}>
-    <Cylinder radius={3.25} height={reach} y={centre} color={color} metal={steel} />
+    {family === "LS04" ? <group position={[0, centre + (top ? 4 : -4), 0]}><GroovedStem reach={reach - 8} color={color} /></group> :
+      <Cylinder radius={steel ? 4 : 3.25} height={reach} y={centre} color={color} metal={steel} />}
     <Cylinder radius={steel ? 13 : 8.5} height={6} y={datum + (top ? 5 : -5)} color={color} metal={steel} sides={6} />
     <Cylinder radius={steel ? 10.5 : 5} height={13} y={datum + (top ? 10 : -10)} color={color} metal={steel} />
     <Cylinder radius={steel ? 13 : 9} height={1.7} y={datum + (top ? 1 : -1)} color={MAT.seal} />
@@ -87,8 +109,9 @@ function VerticalSensor({ config, family, level, material }: {
       <torusGeometry args={[steel ? 10.5 : 5, 0.3, 6, 48]} />
       <meshStandardMaterial color={color} metalness={steel ? 0.9 : 0} roughness={0.3} />
     </mesh>)}
-    <Cylinder radius={5.8} height={1.2} y={end} color={steel ? MAT.steel : MAT.pa} metal={steel} />
-    {floats.map((y, i) => <group name={`level-float-${i + 1}`} position={[0, y, 0]} key={i}><FloatBody steel={steel} color={color} /></group>)}
+    {family === "LS04" ? <group position={[0, end, 0]} rotation={[0, 0, top ? 0 : Math.PI]}><PlasticEndCap color={color} /></group> :
+      <Cylinder radius={5.8} height={1.2} y={end} color={steel ? MAT.steel : MAT.pa} metal={steel} />}
+    {floats.map((y, i) => <group name={`level-float-${i + 1}`} position={[0, y, 0]} key={i}><FloatBody steel={steel} color={color} grooved={family === "LS04"} /></group>)}
     {mechanics.valid && (family === "LS04" || family === "LS05") ? mechanics.floats.flatMap((range, i) => [
       <Cylinder key={`${i}-lower`} radius={5} height={1.5} y={range.lowerMm - FLOAT_HEIGHT_MM / 2 - 0.75} color={steel ? MAT.steel : MAT.pa} metal={steel} />,
       <Cylinder key={`${i}-upper`} radius={5} height={1.5} y={range.upperMm + FLOAT_HEIGHT_MM / 2 + 0.75} color={steel ? MAT.steel : MAT.pa} metal={steel} />,
@@ -97,28 +120,50 @@ function VerticalSensor({ config, family, level, material }: {
       <group rotation={[Math.PI, 0, 0]}><Cable origin={[0, 17, 0]} /></group>}
   </group>;
 }
+/** LS03 standard plan: total 83, wet side 55.8, float Ø16.5, collar Ø21, M16×2, SW24. */
 function HorizontalSensor({ config, level, material }: { config: LevelConfiguration; level: number; material: string }) {
   const color = material === "PA" ? MAT.pa : MAT.pp;
-  const pivotHeight = config.pointsMm[0] ?? config.tankHeightMm * 0.5;
-  const angle = Math.max(-0.65, Math.min(0, (level - pivotHeight - 8) / 35));
-  return <group position={[-config.tankHeightMm * 0.4, pivotHeight, 0]}>
-    <group rotation={[0, 0, Math.PI / 2]}>
-      <Cylinder radius={6.8} height={29} y={0} color={color} />
-      <Cylinder radius={12} height={7} y={10} color={color} sides={6} />
-      <Cylinder radius={10} height={2} y={6} color={MAT.seal} />
+  const pivotHeight = config.pointsMm[0] ?? config.tankHeightMm * .5;
+  const angle = Math.asin(Math.max(-.8, Math.min(0, (level - pivotHeight) / 36)));
+  const fork = useMemo(() => {
+    const shape = new Shape();
+    shape.moveTo(-2.7, 2.7); shape.quadraticCurveTo(0, 4, 3, 2.7);
+    shape.lineTo(13, -3.3); shape.lineTo(25, -3.3); shape.lineTo(25, -8);
+    shape.lineTo(6, -8); shape.quadraticCurveTo(1, -6, -2.7, -2); shape.closePath();
+    return shape;
+  }, []);
+  const cable = useMemo(() => new CatmullRomCurve3([new Vector3(-27.2,0,0),new Vector3(-39,0,0),
+    new Vector3(-50,-10,0),new Vector3(-51,-30,6),new Vector3(-42,-42,12)]), []);
+  const axial = (radius: number, length: number, x: number, sides = 64) => <group position={[x,0,0]} rotation={[0,0,-Math.PI/2]}>
+    <Cylinder radius={radius} height={length} color={color} sides={sides} /></group>;
+  return <group position={[-tankWidth(config.tankHeightMm) / 2, pivotHeight, 0]} name="level-sensor-LS03">
+    <group name="horizontal-fixed-body">
+      {axial(5.77,8,-23.2,6)}
+      {axial(7.1,16,-11.2)}
+      {axial(24/Math.sqrt(3),8,-9.2,6)}
+      {axial(10.5,3,1.5)}
+      {axial(4.4,27,16.5)}
+      {Array.from({length:8},(_,i)=><mesh key={i} position={[-18.2+i*2,0,0]} rotation={[0,Math.PI/2,0]}>
+        <torusGeometry args={[7.5,.5,8,48]} /><meshStandardMaterial color={color} roughness={.4} /></mesh>)}
+      <mesh position={[-1.4,0,0]} rotation={[0,Math.PI/2,0]}><torusGeometry args={[8.8,1.3,16,64]} />
+        <meshStandardMaterial color={MAT.seal} roughness={.6} /></mesh>
+      <mesh><tubeGeometry args={[cable,32,1.8,12,false]} /><meshStandardMaterial color="#7d8588" roughness={.6} /></mesh>
     </group>
-    <group position={[12, 0, 0]} rotation={[0, 0, angle]}>
-      <mesh rotation={[0, 0, Math.PI / 2]} position={[21, 0, 0]} castShadow>
-        <cylinderGeometry args={[10.5, 10.5, 42, 64]} />
-        <meshStandardMaterial color={color} roughness={0.32} />
-      </mesh>
-      <mesh position={[0, 0, 0]}><sphereGeometry args={[3.5, 24, 16]} /><meshStandardMaterial color={color} /></mesh>
+    <group name="horizontal-pivoting-float" position={[7,0,0]} rotation={[0,0,angle]}>
+      {[-1,1].map(side=><mesh key={side} position={[0,0,side>0?4.7:-6.5]} castShadow>
+        <extrudeGeometry args={[fork,{depth:1.8,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.3,bevelThickness:.3}]} />
+        <meshStandardMaterial color={color} roughness={.45} /></mesh>)}
+      <mesh position={[35.8,0,0]} rotation={[0,0,Math.PI/2]} castShadow>
+        <cylinderGeometry args={[8.25,8.25,26,64]} /><meshStandardMaterial color={color} roughness={.4} /></mesh>
+      <mesh position={[16,-6.6,0]}><boxGeometry args={[20,2.5,11.2]} /><meshStandardMaterial color={color} roughness={.45} /></mesh>
+      <mesh rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[2.5,2.5,14,32]} />
+        <meshStandardMaterial color={MAT.seal} roughness={.35} /></mesh>
     </group>
-    <group rotation={[0, 0, Math.PI / 2]}><Cable origin={[0, 16, 0]} length={30} /></group>
   </group>;
 }
+const tankWidth = (height: number) => Math.max(90, Math.min(240, height * .8));
 function Tank({ height, level, oil }: { height: number; level: number; oil: boolean }) {
-  const width = height * 0.8, depth = height * 0.42;
+  const width = tankWidth(height), depth = Math.max(42, Math.min(120, height * .42));
   return <group>
     <mesh position={[0, -2, 0]} receiveShadow><boxGeometry args={[width + 6, 4, depth]} /><meshStandardMaterial color={MAT.steel} metalness={0.7} roughness={0.36} /></mesh>
     <mesh position={[0, height / 2, -depth / 2]} receiveShadow><boxGeometry args={[width, height, 2]} /><meshStandardMaterial color={MAT.steel} metalness={0.62} roughness={0.35} /></mesh>
@@ -149,7 +194,7 @@ export default function LevelScene({ configuration, family, levelMm, material, o
     <StudioLight /><Framing height={configuration.tankHeightMm} portrait={productOnly} />
     {!productOnly ? <Tank height={configuration.tankHeightMm} level={levelMm} oil={oil} /> : null}
     {!productOnly && showMarkers && configuration.mode === "points" ? configuration.pointsMm.map((point, index) =>
-      <Html key={index} position={[configuration.tankHeightMm * 0.46, point, configuration.tankHeightMm * 0.22]} center style={{ pointerEvents: "none" }}>
+      <Html key={index} position={[tankWidth(configuration.tankHeightMm) / 2 + 8, point, Math.max(42, Math.min(120, configuration.tankHeightMm * .42)) / 2]} center style={{ pointerEvents: "none" }}>
         <span className="lv-point-marker t-caption t-metric">P{index + 1} · {point} mm</span>
       </Html>) : null}
     {family === "LS03" ? <HorizontalSensor config={configuration} level={levelMm} material={material} /> :

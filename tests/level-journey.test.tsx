@@ -1,7 +1,7 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 if (typeof document === "undefined") GlobalRegistrator.register({ url: "https://example.invalid/" });
 import { afterEach, expect, test } from "bun:test";
-import { act, cleanup, fireEvent, render } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
 import { setLocale } from "../src/lib/i18n/core";
 import LevelJourney from "../src/components/level/level-journey";
 
@@ -34,7 +34,7 @@ test("level questions start with free application text; examples never fill it a
   await changeInput(view.getByLabelText("Température minimale (°C)"), "10");
   await changeInput(view.getByLabelText("Température maximale (°C)"), "25");
   await act(async () => fireEvent.click(view.getByRole("button", { name: "Continuer", exact: true })));
-  expect(view.getByText(/Cuve ouverte à pression atmosphérique/)).toBeTruthy();
+  expect(view.getByText(/seul un orifice de 25 mm/)).toBeTruthy();
   expect(view.queryByText(/Vous comparerez les montages/)).toBeNull();
   await act(async () => fireEvent.click(view.getByRole("button", { name: "Ouvrir le configurateur" })));
   await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "4" } }));
@@ -48,4 +48,46 @@ test("level questions start with free application text; examples never fill it a
   expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("4");
   await act(async () => fireEvent.click(view.getByRole("button", { name: "1. Mon besoin" })));
   expect((view.getByRole("textbox", { name: "Votre application" }) as HTMLTextAreaElement).value).toContain("Cuve sous la machine");
+});
+
+test("operator monitor follows resizes and explicit repairs across point, horizontal and continuous modes", async () => {
+  setLocale("fr");
+  const view = render(<LevelJourney active={false} />);
+  const click = async (name: string) => { await act(async () => fireEvent.click(view.getByRole("button", { name, exact: true }))); };
+  await click("Configurer un capteur de niveau");
+  await click("Continuer"); await click("Continuer"); await click("Ouvrir le configurateur");
+  await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "4" } }));
+  const monitor = view.getByRole("complementary", { name: "Moniteur de niveau" });
+  expect(monitor.querySelectorAll("input, select, textarea, button")).toHaveLength(0);
+  expect([...monitor.querySelectorAll("li .t-body")].map(el => el.textContent)).toEqual(["Niveau 4", "Niveau 3", "Niveau 2", "Niveau 1", "Niveau 0"]);
+  for (const height of [600, 2000, 60]) {
+    await changeInput(view.getByRole("slider", { name: "Hauteur utile de la cuve" }), String(height));
+    expect(view.queryByText("Lecture en attente")).toBeNull();
+    const points = [1,2,3,4].map(n => Number((view.getByRole("slider", { name: `Point ${n}`, exact: true }) as HTMLInputElement).value));
+    expect(points.every((p, i) => p <= height && (i === 0 || p > points[i - 1]!))).toBe(true);
+  }
+  await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "60");
+  expect(monitor.querySelector('[aria-current="step"]')?.textContent).toContain("Niveau 4");
+  await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "0");
+  expect(monitor.querySelector('[aria-current="step"]')?.textContent).toContain("Niveau 0");
+  await click("Horizontale");
+  expect(within(monitor).getByText("Lecture en attente")).toBeTruthy();
+  expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("4");
+  await click("Utiliser un seul point");
+  expect(view.getByRole("heading", { name: "LS03", exact: true })).toBeTruthy();
+  expect(monitor.querySelector('[data-contact="closed"]')).toBeTruthy();
+  await click("En continu");
+  await click("Passer en vertical");
+  expect(Number((view.getByRole("slider", { name: "Longueur souhaitée sous fixation" }) as HTMLInputElement).value)).toBe(60);
+  await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "43");
+  const meter = within(monitor).getByRole("meter");
+  expect(meter.getAttribute("aria-valuenow")).toBe("40");
+  expect(within(monitor).getByText("67 %")).toBeTruthy();
+  await click("Prévoir une forme spécifique");
+  expect(within(monitor).queryByText("Lecture en attente")).toBeNull();
+  expect(within(monitor).getByText("Sur mesure")).toBeTruthy();
+  await changeInput(view.getByLabelText("Votre forme et vos contraintes"), "Corps coudé pour accès latéral.");
+  await click("Préparer la demande");
+  expect(view.getByRole("heading", { name: "Résultat", exact: true })).toBeTruthy();
+  expect(view.getByText("Corps coudé pour accès latéral.")).toBeTruthy();
 });

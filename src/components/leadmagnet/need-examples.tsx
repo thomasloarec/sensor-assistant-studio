@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 // i18n-canonical: complete examples, never copied into the user's answers.
 const EXAMPLES: Record<string, readonly string[]> = {
   level_application: [
-    "Dans une machine à café professionnelle, le réservoir d’eau alimente la pompe. Signaler le niveau bas pour éviter qu’elle fonctionne à sec.",
+    "Dans un véhicule, le réservoir de lave-glace se trouve sous le capot. Avertir le conducteur lorsque le niveau devient bas pour qu’il fasse l’appoint.",
     "Dans un climatiseur, le bac de condensats se trouve sous l’échangeur. Démarrer la pompe de relevage lorsque le niveau monte et déclencher une alarme avant débordement.",
     "Dans un groupe hydraulique, la cuve d’huile est sous la machine. Avertir l’opérateur lorsqu’un appoint est nécessaire.",
   ],
@@ -16,9 +16,9 @@ const EXAMPLES: Record<string, readonly string[]> = {
     "Condensats de climatisation sans additif, de 5 à 35 °C.",
   ],
   level_installation: [
-    "Cuve ouverte à pression atmosphérique ; corps du capteur immergé en permanence, sortie de câble et câble maintenus au sec.",
-    "Réservoir fermé sous pression ; pression à préciser. Le corps du capteur et la sortie de câble peuvent être immergés pendant le nettoyage.",
-    "Cuve à pression atmosphérique ; corps du capteur mouillé seulement lorsque le niveau monte. Préciser si les projections peuvent atteindre le câble.",
+    "Le réservoir est déjà monté dans la machine : seul un orifice de 25 mm est accessible par le dessus. Le capteur doit pouvoir être remplacé sans déposer la cuve.",
+    "La cuve est nettoyée chaque semaine avec un détergent à 60 °C. Des dépôts peuvent se former sur la tige ; le flotteur doit rester accessible pour le nettoyage.",
+    "Le réservoir est installé sur un véhicule soumis aux vibrations et aux freinages. Le liquide forme des vagues ; éviter les alertes brèves dues aux mouvements du véhicule.",
   ],
   detection_goal: [
     "Détecter que le réservoir d’eau amovible est complètement inséré dans une machine à café professionnelle.",

@@ -1,11 +1,13 @@
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
-import { Droplets, SlidersHorizontal, Play, Pause, Pencil, Download, Lightbulb, ChevronDown } from "lucide-react";
+import { Droplets, SlidersHorizontal, Play, Pause, Pencil, Download, ChevronDown } from "lucide-react";
 import { LevelProjectHeader } from "./level-project-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { NeedExamples } from "@/components/leadmagnet/need-examples";
 import { SceneLoading } from "./scene-loading";
+import { LevelMonitor } from "./level-monitor";
+import { applyRemedy, configurationGuidance, REMEDY_LABELS, type Remedy } from "@/lib/level/guidance";
 import { ConnectorChoices } from "@/components/leadmagnet/connector-choices";
 import { ProjectContextFields } from "@/components/leadmagnet/project-context-fields";
 import { IndustryField } from "@/components/leadmagnet/industry-field";
@@ -18,7 +20,7 @@ import { terminationFromHousing } from "@/lib/leadmagnet/connector-library";
 import { t, getLocale } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { assessConfiguration, architectureFamily, configurationIssues, contextErrors, createLevelBrief, FAMILY_LABELS,
-  illustrativeReading, INITIAL_CONFIGURATION, INITIAL_CONTEXT, requestedFloats, setPointCount,
+  illustrativeReading, INITIAL_CONFIGURATION, INITIAL_CONTEXT, setPointCount, resizeTank, pointBounds, MAX_REACH_MM,
   type LevelConfiguration, type LevelContext } from "@/lib/level/configuration";
 import "./level.css";
 
@@ -82,6 +84,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const [exported, setExported] = useState(false);
   const reduced = useReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const controlsRef = useRef<HTMLElement>(null);
   const assessment = assessConfiguration(context, config);
   const issues = configurationIssues(config);
   const errors = contextErrors(context);
@@ -91,6 +94,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const reading = illustrativeReading(config, level);
   const signalAvailable = reading.usable && selected !== null && errors.length === 0;
   const specific = assessment.specific || issues.length > 0;
+  const guidance = configurationGuidance(context, config);
   const currentIndex = stages.findIndex(s => s.id === stage);
   const changeConfig = (patch: Partial<LevelConfiguration>) => { setPlaying(false); setConfig(c => ({ ...c, ...patch })); setExported(false); };
   const changeContext = (patch: Partial<LevelContext>) => { setContext(c => ({ ...c, ...patch })); setExported(false); };
@@ -103,6 +107,9 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     headingRef.current?.closest("main")?.scrollIntoView({ block: "start", behavior: "instant" });
   }, [stage, question, active]);
   useEffect(() => { if (!active || reduced) setPlaying(false); }, [active, reduced]);
+  useEffect(() => {
+    if (stage === "configure" && guidance && controlsRef.current) controlsRef.current.scrollTop = 0;
+  }, [stage, guidance?.message]);
   useEffect(() => {
     const pauseHidden = () => { if (document.hidden) setPlaying(false); };
     document.addEventListener("visibilitychange", pauseHidden);
@@ -128,6 +135,13 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   }, [playing, reduced, active, stage, direction, config.tankHeightMm]);
   useEffect(() => { if ((direction === "up" && level >= config.tankHeightMm) || (direction === "down" && level <= 0)) setPlaying(false); }, [level, direction, config.tankHeightMm]);
   const editApplication = () => { setReturnToConfig(true); setQuestion(1); go("questions"); };
+  const remedy = (action: Remedy) => {
+    if (action === "liquid") { editApplication(); return; }
+    setPlaying(false); setExported(false);
+    const next = applyRemedy(config, action);
+    setLevel(l => Math.min(next.tankHeightMm, l * next.tankHeightMm / config.tankHeightMm));
+    setConfig(next);
+  };
   const returnFromLiquid = returnToConfig && question === 1;
   const advanceQuestion = () => {
     if (returnFromLiquid || question === 2) { setReturnToConfig(false); go("configure"); }
@@ -143,7 +157,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); setExported(true);
   };
   const scene = (productOnly = false) => <Suspense fallback={<SceneLoading />}>
-    {active ? <LevelScene configuration={config} family={family} material={selected?.material ?? "PP"} levelMm={level} oil={context.fluid === "oil"} productOnly={productOnly} /> : null}
+    {active ? <LevelScene configuration={config} family={family} material={selected?.material === "to_define" ? family === "LS03" ? "PA" : "PP" : selected?.material ?? "PP"} levelMm={level} oil={context.fluid === "oil"} productOnly={productOnly} /> : null}
   </Suspense>;
 
   return <div className={`lv-journey${embedded ? " lv-embedded" : ""}`} data-readable>
@@ -180,7 +194,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             {active ? <LevelScene configuration={INITIAL_CONFIGURATION} family="LS01" levelMm={75} material="PP" showMarkers={false} /> : null}
           </Suspense></div>
           <div className="lv-type-copy"><p className="t-label">{t("Capteur à flotteur")}</p><h2 className="t-title-l">{t("Niveau de liquide")}</h2>
-            <p className="t-body">{t("Détecter un niveau bas, plusieurs seuils ou suivre la hauteur du liquide.")}</p>
+            <p className="t-body">{t("Détecter un niveau haut ou bas, plusieurs seuils ou suivre la hauteur du liquide.")}</p>
             <Button onClick={() => { setQuestion(0); setReturnToConfig(false); go("questions"); }}>{t("Configurer un capteur de niveau")}</Button></div>
         </section>
       </div>
@@ -237,12 +251,15 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           <Pencil size={16} aria-hidden="true" /><span className="sr-only">{t("Modifier le liquide et les températures")}</span></button>
       </div>
       <div className="lv-config-grid">
-        <aside className="lv-controls panel-block">
+        <aside ref={controlsRef} className="lv-controls panel-block" tabIndex={0} aria-label={t("Votre configuration")}>
           <h2 className="t-title-s">{t("Votre configuration")}</h2>
-          <Choice label={t("Mode de détection")} value={config.mode} onChange={mode => changeConfig({ mode })} options={[["points", t("Par points")], ["continuous", t("En continu")]]} />
+          {guidance ? <div className="notice-warning lv-guidance" role="status"><p className="t-body">{t(guidance.message)}</p>
+            <div className="lv-remedies">{guidance.actions.map(action => <Button key={action} variant="secondary" onClick={() => remedy(action)}>{t(REMEDY_LABELS[action])}</Button>)}</div>
+          </div> : null}
+          <Choice label={t("Mode de détection")} value={config.mode} onChange={mode => changeConfig({ mode, ...(mode === "continuous" ? { reachMm: config.tankHeightMm } : {}) })} options={[["points", t("Par points")], ["continuous", t("En continu")]]} />
           {config.mode === "points" ? <SelectField label={t("Points de détection souhaités")} value={String(config.count)} onChange={v => { setPlaying(false); setConfig(c => setPointCount(c, Number(v))); }}
             options={Array.from({ length: 12 }, (_, i) => [String(i + 1), `${i + 1} ${t(i === 0 ? "point" : "points")}`] as const)} /> :
-            <p className="t-caption">{t("Un flotteur suit la hauteur. Le LS05 inox est la piste pour le continu.")}</p>}
+            <p className="t-caption">{t("La tige est étendue à la hauteur de la cuve pour illustrer le suivi du niveau. La plage réellement mesurable reste à confirmer.")}</p>}
           {config.mode === "points" ? <p className="t-caption text-muted-foreground">{t("Changer le nombre répartit les points et allonge la tige si nécessaire.")}</p> : null}
           <Field group label={t("Orientation")}><Choice label={t("Orientation")} value={config.orientation} onChange={orientation => changeConfig({ orientation })}
             options={[["vertical", t("Verticale")], ["horizontal", t("Horizontale")]]} /></Field>
@@ -250,66 +267,29 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             options={[["top", t("Par le haut")], ["bottom", t("Par le fond")]]} /></Field> :
             <SelectField label={t("Finition de montage")} value={config.connection} onChange={v => changeConfig({ connection: v as LevelConfiguration["connection"] })}
               options={[["standard", t("Standard")], ["DK", "DK"], ["DL", "DL"], ["GZ", "GZ"]]} />}
-          <RangeField label={t("Hauteur utile de la cuve")} value={config.tankHeightMm} min={60} max={600} step={10} onChange={height => {
-            setLevel(l => Math.min(l, height)); changeConfig({ tankHeightMm: height });
+          <RangeField label={t("Hauteur utile de la cuve")} value={config.tankHeightMm} min={60} max={MAX_REACH_MM} step={10} onChange={height => {
+            setPlaying(false); setExported(false);
+            setLevel(l => l * height / config.tankHeightMm); setConfig(c => resizeTank(c, height));
           }} />
-          {config.orientation === "vertical" ? <RangeField label={t("Longueur souhaitée sous fixation")} value={config.reachMm} min={25} max={600} step={0.5} onChange={reachMm => changeConfig({ reachMm })} /> : null}
+          <p className="t-caption text-muted-foreground">{t("Changer la hauteur ajuste la tige et les points proportionnellement.")}</p>
+          {config.orientation === "vertical" ? <><RangeField label={t("Longueur souhaitée sous fixation")} value={config.reachMm} min={25} max={MAX_REACH_MM} step={0.5} onChange={reachMm => changeConfig({ reachMm })} />
+            <p className="t-caption text-muted-foreground">{t("La longueur de tige oriente la famille : plastique jusqu’à 250 mm, inox jusqu’à 2 000 mm. Le liquide et la température peuvent imposer l’inox.")}</p></> : null}
           {config.mode === "points" ? <>
             <div className="lv-field"><h3 className="t-body font-semibold">{t("Position des points")}</h3><p className="t-caption text-muted-foreground">{t("Hauteurs souhaitées depuis le fond de la cuve.")}</p></div>
-            {config.pointsMm.map((point, i) => <RangeField key={i} label={`${t("Point")} ${i + 1}`} value={point} min={0} max={config.tankHeightMm}
+            {config.pointsMm.map((point, i) => <RangeField key={i} label={`${t("Point")} ${i + 1}`} value={point} {...pointBounds(config, i)}
               onChange={v => changeConfig({ pointsMm: config.pointsMm.map((p, index) => index === i ? v : p) })} />)}
             {config.count > 1 ? <SelectField label={t("Répartition sur les flotteurs")} value={String(config.pointsPerFloat)}
               onChange={v => changeConfig({ pointsPerFloat: Number(v) as 1 | 2 })} options={[["2", t("Jusqu’à 2 points par flotteur")], ["1", t("1 point par flotteur")]]} /> :
               <SelectField label={t("Signal demandé")} value={config.closedWhen} onChange={v => changeConfig({ closedWhen: v as "low" | "high" })}
                 options={[["low", t("Circuit fermé au niveau bas")], ["high", t("Circuit fermé au niveau haut")]]} />}
           </> : null}
-        </aside>
-        <section className="lv-visual-column" aria-label={t("Simulation du niveau de liquide")}>
-          <div className="lv-visual surface">
-            <div className="lv-visual-title"><div><p className="t-label">{t("Dans votre cuve")}</p><p className="t-caption text-muted-foreground">{t("Vue en coupe · enveloppes reconstruites d’après les fiches")}</p></div>
-              <span className="lv-preview t-caption">{t("Illustration du besoin")}</span></div>
-            <div className="lv-canvas" role="img" aria-label={t("Cuve, liquide et flotteurs mobiles")}>{!config.custom && selected && issues.length === 0 ? scene() :
-              <div className="lv-empty"><SlidersHorizontal size={40} /><h2 className="t-title-m">{t(config.custom ? "Une forme adaptée à votre application" : "Une configuration à étudier")}</h2>
-                <p className="t-body">{t(!config.custom && issues[0] ? issues[0] : "Votre besoin reste conservé. Décrivez les contraintes pour préparer l’étude avec Standex.")}</p></div>}</div>
-            <div className="lv-playback">
-              <div className="lv-between"><h2 className="t-title-s">{t("Faire varier le liquide")}</h2><output className="t-metric t-body">{Math.round(level)} / {config.tankHeightMm} mm</output></div>
-              <input type="range" className="lv-range" aria-label={t("Hauteur du liquide")} min={0} max={config.tankHeightMm} value={level} step={1} onChange={e => { setPlaying(false); setLevel(Number(e.target.value)); }} />
-              <div className="lv-play-actions"><Choice label={t("Sens de variation")} value={direction} onChange={d => { setPlaying(false); setDirection(d); }} options={[["up", t("Remplissage")], ["down", t("Vidange")]]} />
-                <Button disabled={reduced} onClick={() => {
-                  if (!playing && direction === "up" && level >= config.tankHeightMm) setLevel(0);
-                  if (!playing && direction === "down" && level <= 0) setLevel(config.tankHeightMm);
-                  setPlaying(v => !v);
-                }}>{playing ? <Pause size={18} /> : <Play size={18} />}{t(playing ? "Pause" : "Lancer")}</Button></div>
-              {reduced ? <p className="t-caption">{t("Mouvements réduits : utilisez le curseur pour changer le niveau.")}</p> : null}
-            </div>
-          </div>
-          <section className="lv-output panel-block" aria-label={t("Lecture de la détection souhaitée")}>
-            <div className="lv-between"><h2 className="t-title-s">{t("Ce que vous souhaitez lire")}</h2><span className="t-caption text-muted-foreground">{t("Seuils à confirmer par Standex")}</span></div>
-            {!signalAvailable ? <p className="notice-info t-body">{t("Le signal reste à définir pour cette configuration.")}</p> : config.mode === "continuous" ?
-              <div className="lv-reading"><span className="t-display-m t-metric">{reading.steppedMm} <span className="t-body">mm</span></span><p className="t-body">{t("Lecture illustrée par pas de 5 mm, sans garantie d’exactitude.")}</p></div> :
-              config.count === 1 ? <div className="lv-circuit" data-on={reading.active}>
-                <svg viewBox="0 0 200 72" role="img" aria-label={t(reading.active ? "Circuit fermé" : "Circuit ouvert")}>
-                  <path d="M 36 36 V 10 H 83 M 117 10 H 170 V 62 H 36 V 48" />
-                  <path d={reading.active ? "M 83 10 H 117" : "M 83 10 L 114 0"} />
-                  <path d="M 25 36 H 47 M 30 48 H 42" /><circle cx="170" cy="36" r="13" />
-                  <path d="M 162 28 L 178 44 M 178 28 L 162 44" />
-                </svg><Lightbulb className="lv-lamp" size={36} aria-hidden="true" /><div><p className="t-title-m">{t(reading.active ? "Signal actif" : "Signal inactif")}</p>
-                  <p className="t-body">{t(reading.active ? "Circuit demandé fermé" : "Circuit demandé ouvert")}</p></div></div> :
-                <div className="lv-zone-output"><p className="t-title-m">{t("Zone")} {reading.zone + 1} / {config.count + 1}</p>
-                  <div className="lv-zone-strip" aria-hidden="true">{Array.from({ length: config.count + 1 }, (_, i) => <span key={i} data-active={i === reading.zone} />)}</div>
-                  <div className="lv-thresholds">{config.pointsMm.map((point, i) => <span key={i} data-active={level >= point}>{t("Point")} {i + 1} · {point} mm · {t(level >= point ? "dépassé" : "non atteint")}</span>)}</div>
-                  <p className="t-caption">{requestedFloats(config)} {t("flotteur(s)")} · {config.count} {t("points de commutation souhaités")}. {t("Codage par résistances à définir avec Standex.")}</p>
-                </div>}
-          </section>
-        </section>
-        <aside className="lv-study-column">
-          <section className="panel-block lv-family-card" aria-live="polite">
+          <div className="lv-study-details">
+          <section className="lv-family-card" aria-live="polite">
             <p className="t-label">{t(specific ? "Demande spécifique" : "Piste à étudier")}</p>
             <h2 className="t-display-m">{config.custom ? t("Sur mesure") : selected ? selected.family : t("Avec Standex")}</h2>
             {selected ? <><p className="t-title-s">{t(FAMILY_LABELS[selected.family])}</p><p className="t-body">{t(selected.material === "SS" ? "Tige inox" : selected.material === "PP" ? "Matériau à envisager : PP" : selected.material === "PA" ? "Matériau à envisager : PA" : "Matériau à définir")}</p></> : null}
             <p className="t-caption">{t("La famille évolue avec vos réglages. La construction exacte reste à confirmer.")}</p>
           </section>
-          {issues.length ? <div className="notice-warning"><h3 className="t-title-s">{t("À ajuster")}</h3><ul className="lv-notes t-body">{issues.map(x => <li key={x}>{t(x)}</li>)}</ul></div> : null}
           {selected?.reasons.length ? <details className="lv-details panel-block"><summary>{t("Points à préciser")}</summary><ul className="lv-notes t-caption">{selected.reasons.map(x => <li key={x}>{t(x)}</li>)}</ul></details> : null}
           <details className="lv-details panel-block"><summary>{t("Pourquoi cette piste ?")}</summary>
             <p className="t-caption">{t("Le filtrage est documentaire. La chimie, la flottabilité, l’immersion et la charge ne sont pas validées par cette illustration.")}</p>
@@ -321,7 +301,30 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             {config.custom ? <Field label={t("Votre forme et vos contraintes")}><Textarea value={config.customDescription} onChange={e => changeConfig({ customDescription: e.target.value })} placeholder={t("Forme, accès, dimensions à respecter…")} /></Field> : null}
           </section>
           <Button size="lg" className="lv-continue" onClick={() => go("review")}>{t(specific ? "Préparer la demande" : "Revoir cette configuration")}</Button>
+          </div>
         </aside>
+        <section className="lv-visual-column" aria-label={t("Simulation du niveau de liquide")}>
+          <div className="lv-visual surface">
+            <div className="lv-visual-title"><div><p className="t-label">{t("Dans votre cuve")}</p><p className="t-caption text-muted-foreground">{t("Vue en coupe · enveloppes reconstruites d’après les fiches")}</p></div>
+              <span className="lv-preview t-caption">{t("Illustration du besoin")}</span></div>
+            <div className="lv-canvas" role="img" aria-label={t("Cuve, liquide et flotteurs mobiles")}>{!config.custom && selected && issues.length === 0 ? scene() :
+              <div className="lv-empty"><SlidersHorizontal size={40} /><h2 className="t-title-m">{t(config.custom ? "Une forme adaptée à votre application" : "Une configuration à étudier")}</h2>
+                <p className="t-body">{t(!config.custom && guidance ? guidance.message : "Votre besoin reste conservé. Décrivez les contraintes pour préparer l’étude avec Standex.")}</p></div>}</div>
+            <div className="lv-playback">
+              <div className="lv-between"><h2 className="t-title-s">{t("Faire varier le liquide")}</h2><output className="t-metric t-body">{Math.round(level)} / {config.tankHeightMm} mm</output></div>
+              <input type="range" className="lv-range" aria-label={t("Hauteur du liquide")} min={0} max={config.tankHeightMm} value={level} step={1} onChange={e => { setPlaying(false); setLevel(Number(e.target.value)); }} />
+              <div className="lv-play-actions"><Choice label={t("Sens de variation")} value={direction} onChange={d => { setPlaying(false); setDirection(d); }} options={[["up", t("Remplissage")], ["down", t("Vidange")]]} />
+                <Button disabled={reduced || !signalAvailable} onClick={() => {
+                  if (!playing && direction === "up" && level >= config.tankHeightMm) setLevel(0);
+                  if (!playing && direction === "down" && level <= 0) setLevel(config.tankHeightMm);
+                  setPlaying(v => !v);
+                }}>{playing ? <Pause size={18} /> : <Play size={18} />}{t(playing ? "Pause" : "Lancer")}</Button></div>
+              {reduced ? <p className="t-caption">{t("Mouvements réduits : utilisez le curseur pour changer le niveau.")}</p> : null}
+            </div>
+          </div>
+
+        </section>
+        <LevelMonitor configuration={config} level={level} available={signalAvailable} />
       </div>
     </main> : null}
 
