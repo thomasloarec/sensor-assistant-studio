@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as InternalRouteImport } from './routes/internal'
+import { Route as NiveauRouteImport } from './routes/niveau'
 import { Route as StandexRouteImport } from './routes/standex'
 import { Route as StandexIndexRouteImport } from './routes/standex.index'
 import { Route as StandexAdminRouteImport } from './routes/standex.admin'
@@ -39,6 +40,11 @@ const DesignRoute = DesignRouteImport.update({
 const InternalRoute = InternalRouteImport.update({
   id: '/internal',
   path: '/internal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NiveauRoute = NiveauRouteImport.update({
+  id: '/niveau',
+  path: '/niveau',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StandexRoute = StandexRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
+  '/niveau': typeof NiveauRoute
   '/standex': typeof StandexRouteWithChildren
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
+  '/niveau': typeof NiveauRoute
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
   '/standex/detection-data': typeof StandexDetectionDataRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/design': typeof DesignRoute
   '/internal': typeof InternalRoute
+  '/niveau': typeof NiveauRoute
   '/standex': typeof StandexRouteWithChildren
   '/standex/admin': typeof StandexAdminRoute
   '/standex/console': typeof StandexConsoleRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/design'
     | '/internal'
+    | '/niveau'
     | '/standex'
     | '/standex/admin'
     | '/standex/console'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/design'
     | '/internal'
+    | '/niveau'
     | '/standex/admin'
     | '/standex/console'
     | '/standex/detection-data'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/design'
     | '/internal'
+    | '/niveau'
     | '/standex'
     | '/standex/admin'
     | '/standex/console'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   DesignRoute: typeof DesignRoute
   InternalRoute: typeof InternalRoute
+  NiveauRoute: typeof NiveauRoute
   StandexRoute: typeof StandexRouteWithChildren
 }
 
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/internal'
       fullPath: '/internal'
       preLoaderRoute: typeof InternalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/niveau': {
+      id: '/niveau'
+      path: '/niveau'
+      fullPath: '/niveau'
+      preLoaderRoute: typeof NiveauRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/standex': {
@@ -274,6 +294,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   DesignRoute: DesignRoute,
   InternalRoute: InternalRoute,
+  NiveauRoute: NiveauRoute,
   StandexRoute: StandexRouteWithChildren,
 }
 export const routeTree = rootRouteImport

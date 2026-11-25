@@ -1,5 +1,51 @@
 # Langage de design Standex DETECT
 
+### Parcours niveau en aperçu — 25 novembre 2026
+
+Le menu principal ouvre « Capteurs de niveau · aperçu » dans le panneau plein
+écran existant ; le dossier de proximité reste monté et inchangé. L’accueil et
+son bouton Commencer conservent leur parcours. La route /niveau sert aussi
+l’aperçu isolé. Les deux cartes Position et mouvement / Niveau de liquide sont
+une préfiguration de la future entrée, sans la raccorder au bouton d’accueil.
+
+L’en-tête reprend project-header, le titre renommable partagé, l’état Brouillon,
+la langue et le menu. La progression réutilise project-stepper, son pouce et
+ses quatre segments : Mon besoin / Configuration / Résultat / Avec Standex.
+
+Le cadrage reprend les classes questionnaire-card, questionnaire-meta,
+questionnaire-progress et questionnaire-grid, avec la même typographie, les
+mêmes champs remplis et les mêmes encarts latéraux. Trois écrans précèdent le
+configurateur. Le contexte liquide/température est éditable par retour à ces
+questions sans effacement des réglages.
+
+Résultat et Avec Standex reprennent review-grid : grande colonne à gauche,
+colonne de 420 px à droite, empilement sous 1024 px. Le projet et la solution
+occupent les cartes supérieures gauches, les données du projet la partie basse.
+La droite accueille les actions puis les coordonnées. panel-block-lg,
+review-facts, ProjectContextFields, IndustryField et ConnectorChoices sont
+réutilisés. Le câble reste modifiable dans Résultat, récapitulé dans Avec Standex.
+
+Le configurateur place les commandes à gauche, la cuve et sa lecture au centre,
+et la piste de famille à droite. Sous 1200 px, les pistes passent sous la scène ;
+sous 768 px, tous les blocs suivent le flux de lecture. Les styles propres au
+niveau sont limités à .lv-*. Aucun jeton global n’est changé. Les curseurs ont
+une cible de 44 px et les valeurs utilisent t-metric. Le signal est expliqué
+par le texte autant que par la couleur. Les mouvements sont arrêtés en onglet
+masqué, à la fermeture du panneau et sous prefers-reduced-motion.
+
+La cuve est une vue en coupe rendue en matériaux physiques, sans carte de champ
+ni contrôle magnétique. Les couleurs littérales du rendu sont confinées aux
+matériaux Three.js dans level-scene.tsx, comme dans l’atelier existant ; tous les
+éléments d’interface reprennent les jetons. Les enveloppes sont reconstruites
+pour discussion à partir des fiches, sans qualification dimensionnelle ni
+substitution aux futurs STEP. La lecture illustre les seuils souhaités ; aucun
+code résistif ni réglage de commutation fabricant n’est inventé.
+
+Les nouveaux textes passent par t()/useLocale et le dictionnaire des huit
+langues du site. La relecture linguistique métier reste à faire avant diffusion
+client. Le parcours réutilise les choix de connecteurs. Avec Standex exporte un brouillon local
+explicitement non soumis : le raccordement à la soumission n’est pas activé.
+
 ### Correction d’échelle à l’import — 24 novembre 2026
 
 Un GLB lisible mais hors échelle ouvre « Ajuster la taille du modèle » dans un

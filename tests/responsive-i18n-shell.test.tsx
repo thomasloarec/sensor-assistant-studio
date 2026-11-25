@@ -5,6 +5,7 @@ import { LANGUAGES, setLocale, subscribeLocale, t } from "../src/lib/i18n/core";
 const css = readFileSync("src/styles.css", "utf8");
 const shell = readFileSync("src/routes/standex.tsx", "utf8");
 const designSpace = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
+const projectTitle = readFileSync("src/components/leadmagnet/project-title.tsx", "utf8");
 const panel = readFileSync("src/components/leadmagnet/workspace-panel.tsx", "utf8");
 const widths = [620, 768, 1024] as const;
 const mobileWidths = [320, 390] as const;
@@ -18,7 +19,8 @@ describe("en-têtes adaptatifs dans les huit langues", () => {
     expect(css).not.toContain(".project-header .project-title-display {\n      max-width: 5.5rem;");
     expect(css).not.toContain("color: transparent;");
     expect(css).not.toContain(".workspace-panel-brand + .workspace-panel-title");
-    expect(designSpace).toContain('className="t-title-l min-w-0"');
+    expect(designSpace).toContain('import { ProjectTitle } from "./project-title";');
+    expect(projectTitle).toContain('className="t-title-l min-w-0"');
     expect(panel).toContain('className="workspace-panel-title t-title-s"');
   });
 

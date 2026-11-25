@@ -1,3 +1,4 @@
+import { ProjectTitle } from "./project-title";
 import { trackUsage, setUsageFlow, bindUsageSubmission, usageChoice, subscribeUsage } from "@/lib/usage/client";
 import { useSyncExternalStore } from "react";
 import { IndustryField } from "./industry-field";
@@ -257,6 +258,7 @@ import {
 } from "@/lib/lovable-error-reporting";
 
 const MagneticWorkshop = lazy(() => import("@/components/standex/workshop/workshop"));
+const LevelJourney = lazy(() => import("@/components/level/level-journey"));
 
 export function PrivateDesignError({ reset }: { reset: () => void }) {
   useLocale();
@@ -321,101 +323,6 @@ function pointFields(label: string, value: Point | null, onChange: (p: Point | n
           />
         ))}
       </div>
-    </div>
-  );
-}
-
-/** Titre du projet : UN SEUL nom affiché, renommé par une action explicite.
- * Lecture par défaut, crayon pour renommer, Entrée valide, Échap annule, un
- * nom vide est refusé. Le dossier n'est modifié qu'à la validation. */
-function ProjectTitle({ title, onRename }: { title: string; onRename: (next: string) => void }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(title);
-  const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const start = () => {
-    setDraft(title);
-    setError(null);
-    setEditing(true);
-  };
-  const cancel = () => {
-    setError(null);
-    setEditing(false);
-  };
-  const commit = () => {
-    const next = draft.trim();
-    if (!next) {
-      setError(t("Le nom du projet ne peut pas être vide."));
-      inputRef.current?.focus();
-      return;
-    }
-    onRename(next);
-    setEditing(false);
-    setError(null);
-  };
-
-  useEffect(() => {
-    if (editing) inputRef.current?.focus();
-  }, [editing]);
-
-  if (!editing)
-    return (
-      <div className="project-title-display flex min-w-0 flex-1 items-center gap-2">
-        <h1 className="t-title-l min-w-0" title={title}>
-          {title}
-        </h1>
-        <Button
-          variant="ghost"
-          className="min-h-11 min-w-11 shrink-0 px-3 text-base"
-          onClick={start}
-          aria-label={msg("Renommer le projet « {0} »", [title])}
-        >
-          <Pencil className="h-4 w-4" />
-          <span className="hidden sm:inline">{t("Renommer")}</span>
-        </Button>
-      </div>
-    );
-
-  return (
-    <div className="min-w-[min(100%,18rem)] flex-1">
-      <Label htmlFor="project-title" className="t-label">
-        {t("Nom du projet")}
-      </Label>
-      <div className="mt-1 flex flex-wrap items-center gap-2">
-        <Input
-          id="project-title"
-          ref={inputRef}
-          value={draft}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? "project-title-error" : undefined}
-          onChange={(e) => {
-            setDraft(e.target.value);
-            if (error) setError(null);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              commit();
-            } else if (e.key === "Escape") {
-              e.preventDefault();
-              cancel();
-            }
-          }}
-          className="project-title-input h-auto min-h-11 max-w-lg"
-        />
-        <Button className="min-h-11 text-base" onClick={commit}>
-          <Check className="h-4 w-4" /> {t("Valider")}
-        </Button>
-        <Button variant="ghost" className="min-h-11 text-base" onClick={cancel}>
-          <X className="h-4 w-4" /> {t("Annuler")}
-        </Button>
-      </div>
-      {error ? (
-        <p id="project-title-error" className="notice notice-danger mt-2">
-          {error}
-        </p>
-      ) : null}
     </div>
   );
 }
@@ -606,6 +513,7 @@ export function DesignSpace({
   }, []);
 
   const [showWorkshop, setShowWorkshop] = useState(false);
+  const [levelPreviewOpen, setLevelPreviewOpen] = useState(false);
   /** État d'enregistrement du montage, affiché par la barre de l'atelier. */
   const [workshopSaveState, setWorkshopSaveState] = useState<"saved" | "saving" | "draft">("saved");
   /** Catalogue filtrable ouvert DIRECTEMENT depuis le sous-menu : il ne dépend
@@ -5118,6 +5026,10 @@ export function DesignSpace({
             {importMessage ? <span>{importMessage}</span> : null}
           </p>
           <hr className="studio-navigation-rule" />
+          <button type="button" onClick={(e) => {
+            e.currentTarget.closest("details")?.removeAttribute("open");
+            setLevelPreviewOpen(true);
+          }}>{t("Capteurs de niveau · aperçu")}</button>
           {(
             [
               [
@@ -5306,6 +5218,12 @@ export function DesignSpace({
       </main>
 
       {/* Panneaux contextuels : le projet reste derrière, la saisie est conservée. */}
+      <WorkspacePanel open={levelPreviewOpen} onOpenChange={setLevelPreviewOpen} keepMounted fullscreen bare
+        title={t("Capteurs de niveau · aperçu")} languagePicker>
+        <Suspense fallback={<p className="t-body p-8">{t("Chargement du parcours niveau…")}</p>}>
+          <LevelJourney embedded active={levelPreviewOpen} onClassic={() => setLevelPreviewOpen(false)} />
+        </Suspense>
+      </WorkspacePanel>
       {/* L'atelier occupe tout l'écran et reste monté en permanence : le retour
           au projet ne perd ni réglages, ni caméra, ni fichier importé. */}
       <WorkspacePanel
