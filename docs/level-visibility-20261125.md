@@ -72,3 +72,30 @@ visuelles ci-dessus concernent l’aperçu local du parcours niveau. Le lien du 
 local vers le parcours principal ne sert pas de validation de l’application authentifiée.
 
 La simulation reste une illustration du besoin, sans qualification physique du produit.
+
+## Réception dans Lovable et publication
+
+Les contrôles locaux ci-dessus ne prouvent pas la mise à jour de l’aperçu Lovable
+ni celle du site publié. Au diagnostic du 25 novembre 2026, GitHub `main` contient
+les corrections dans `cbdacb703cc505fb6608dfb6156f90b8a745cbf6`, tandis que Lovable
+signale encore `a8ac8d4bdb6dd1bbe7835f665f2107c37f1c67c5` et un commit de retard.
+Lovable confirme également l’absence de modifications locales hors commit.
+
+Cette mise à jour documentaire est livrée dans une pull request distincte pour
+permettre au propriétaire de déclencher un nouvel envoi par sa fusion. Elle ne
+constitue pas une confirmation de rétablissement de la synchronisation.
+
+Après fusion, vérifier successivement :
+
+1. Le dépôt connecté reste `thomasloarec/sensor-assistant-studio`, branche `main`,
+   et le statut Git n’indique plus de commits GitHub en attente de récupération.
+2. Le code reçu par Lovable inclut le commit de corrections ci-dessus et ce fichier.
+   Un statut actualisé seul ne remplace pas la vérification du code reçu.
+3. L’aperçu est reconstruit avec ce code ; compilation, tests pertinents et
+   scénarios visuels de la section précédente sont vérifiés dans cet environnement.
+4. Le propriétaire teste l’aperçu, puis décide de publier. Contrôler ensuite
+   séparément `https://sensor-pal-tester.lovable.app`.
+
+Si la réception reste bloquée, conserver les identifiants de commits et le statut
+Git pour le support Lovable. Ne pas recréer les corrections, réécrire l’historique
+ou déconnecter le dépôt pour contourner ce retard.
