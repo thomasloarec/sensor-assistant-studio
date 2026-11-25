@@ -22,7 +22,7 @@ import { t, getLocale } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { assessConfiguration, architectureFamily, configurationIssues, contextErrors, createLevelBrief, FAMILY_LABELS,
   illustrativeReading, INITIAL_CONFIGURATION, INITIAL_CONTEXT, setPointCount, resizeTank, pointBounds, MAX_REACH_MM, MAX_TANK_HEIGHT_MM,
-  fitStemToPoints, setDetectionGoal, setMounting, setTravelPreference, isCompact, mountingDatum, proposedContactForm,
+  constrainPointLayout, reachBounds, fitStemToPoints, setDetectionGoal, setMounting, setTravelPreference, isCompact, mountingDatum, proposedContactForm,
   type LevelConfiguration, type LevelContext } from "@/lib/level/configuration";
 import "./level.css";
 
@@ -42,10 +42,19 @@ function SelectField({ label, value, onChange, options, disabled = false }: {
     {options.map(([key, text]) => <option key={key} value={key}>{text}</option>)}
   </select><ChevronDown size={18} aria-hidden="true" /></span></Field>;
 }
-function RangeField({ label, value, min, max, step = 1, onChange }: { label: string; value: number; min: number; max: number; step?: number; onChange: (value: number) => void }) {
-  return <label className="lv-field"><span className="lv-between"><span className="t-body font-semibold">{label}</span>
-    <span className="t-metric t-body">{value} mm</span></span>
-    <input className="lv-range" type="range" aria-label={label} min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} /></label>;
+export function RangeField({ label, value, min, max, step = 1, onChange }: { label: string; value: number; min: number; max: number; step?: number; onChange: (value: number) => void }) {
+  const [draft, setDraft] = useState(String(value));
+  useEffect(() => setDraft(String(value)), [value]);
+  const commit = () => {
+    const parsed = Number(draft.replace(",", "."));
+    const next = draft.trim() && Number.isFinite(parsed) ? Math.max(min, Math.min(max, parsed)) : value;
+    setDraft(String(next)); onChange(next);
+  };
+  return <div className="lv-field"><div className="lv-between"><span className="t-body font-semibold">{label}</span>
+    <span className="lv-dimension"><Input className="t-metric" aria-label={label + " (mm)"} inputMode="decimal" value={draft}
+      onFocus={e => e.target.select()} onChange={e => setDraft(e.target.value)} onBlur={commit}
+      onKeyDown={e => { if (e.key === "Enter") e.currentTarget.blur(); if (e.key === "Escape") setDraft(String(value)); }} /><span className="t-body">mm</span></span></div>
+    <input className="lv-range" type="range" aria-label={label} min={min} max={max} step={step} value={value} onChange={e => { setDraft(e.target.value); onChange(Number(e.target.value)); }} /></div>;
 }
 function Choice<T extends string>({ value, onChange, options, label }: { value: T; onChange: (v: T) => void; options: readonly (readonly [T, string])[]; label: string }) {
   return <div className="lv-segment" role="group" aria-label={label}>{options.map(([id, text]) =>
@@ -102,7 +111,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const guidance = configurationGuidance(context, config, family);
   const horizontalOption = config.tankHeightMm >= 1000 && horizontalAlternative(context, config);
   const currentIndex = stages.findIndex(s => s.id === stage);
-  const changeConfig = (patch: Partial<LevelConfiguration>) => { setPlaying(false); setConfig(c => ({ ...c, ...patch })); setExported(false); };
+  const changeConfig = (patch: Partial<LevelConfiguration>) => { setPlaying(false); setConfig(c => constrainPointLayout({ ...c, ...patch })); setExported(false); };
   const changeContext = (patch: Partial<LevelContext>) => { setContext(c => ({ ...c, ...patch })); setExported(false); };
   const go = (s: Stage) => { setPlaying(false); setExported(false); setStage(s); };
   const openConfigurator = () => {
@@ -287,14 +296,6 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             <div className="lv-remedies">{guidance.actions.map(action => <Button key={action} variant="secondary" onClick={() => remedy(action)}>{t(REMEDY_LABELS[action])}</Button>)}</div>
           </div> : null}
           <Choice label={t("Mode de détection")} value={config.mode} onChange={mode => changeConfig(fitStemToPoints({ ...config, mode }))} options={[["points", t("Par points")], ["continuous", t("En continu")]]} />
-          {config.mode === "points" ? <SelectField label={t("Points de détection souhaités")} value={String(config.count)} onChange={v => { setPlaying(false); setConfig(c => setPointCount(c, Number(v))); }}
-            options={Array.from({ length: 12 }, (_, i) => [String(i + 1), `${i + 1} ${t(i === 0 ? "point" : "points")}`] as const)} /> :
-            <p className="t-caption">{t("La tige est étendue à la hauteur de la cuve pour illustrer le suivi du niveau. La plage réellement mesurable reste à confirmer.")}</p>}
-          {config.mode === "points" ? <p className="t-caption text-muted-foreground">{t("Changer le nombre répartit les points et allonge la tige si nécessaire.")}</p> : null}
-          {config.mode === "points" && config.count === 1 ? <Field group label={t("Niveau à détecter")}><Choice label={t("Niveau à détecter")} value={config.closedWhen} onChange={goal => changeConfig(setDetectionGoal(config, goal))}
-            options={[["high", t("Niveau haut")], ["low", t("Niveau bas")]]} /></Field> : null}
-          {config.orientation === "vertical" && config.mode === "points" && config.count === 1 ? <SelectField label={t("Le liquide peut-il faire des vaguelettes ?")} value={config.travelPreference} onChange={v => changeConfig(setTravelPreference(config, v as "short" | "long"))}
-            options={[["short", t("Non, le niveau reste plutôt stable")], ["long", t("Oui, de petits mouvements sont à ignorer")]]} /> : null}
           <Field group label={t("Orientation")}><Choice label={t("Orientation")} value={config.orientation} onChange={orientation => changeConfig({ orientation })}
             options={[["vertical", t("Verticale")], ["horizontal", t("Horizontale")]]} /></Field>
           {config.orientation === "horizontal" && config.mode === "points" && config.count > 1 ? <p className="notice-info t-body">{config.count} {t("capteurs horizontaux : un à chaque point. Prévoir un accès latéral à chaque hauteur.")}</p> : null}
@@ -308,12 +309,21 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
               options={[["standard", t("Standard")], ["DK", "DK"], ["DL", "DL"], ["GZ", "GZ"]]} />}
           <RangeField label={t("Hauteur utile de la cuve")} value={config.tankHeightMm} min={60} max={MAX_TANK_HEIGHT_MM} step={10} onChange={height => {
             setPlaying(false); setExported(false);
-            setLevel(l => l * height / config.tankHeightMm); setConfig(c => resizeTank(c, height));
+            setLevel(l => l * height / config.tankHeightMm); setConfig(c => constrainPointLayout(resizeTank(c, height)));
           }} />
           <p className="t-caption text-muted-foreground">{t("Changer la hauteur recale les points et le montage ; les dimensions des flotteurs restent fixes.")}</p>
-          {config.orientation === "vertical" ? <><RangeField label={t("Longueur souhaitée sous fixation")} value={config.reachMm} min={25} max={MAX_REACH_MM} step={0.5} onChange={reachMm => changeConfig({ reachMm })} />
+          {config.orientation === "vertical" ? <><RangeField label={t("Longueur souhaitée sous fixation")} value={config.reachMm} {...reachBounds(config)} step={0.5} onChange={reachMm => changeConfig({ reachMm })} />
             <p className="t-caption text-muted-foreground">{t("La longueur de tige oriente la famille : plastique jusqu’à 250 mm, inox jusqu’à 2 000 mm. Le liquide et la température peuvent imposer l’inox.")}</p></> : null}
+          {config.mode === "points" ? <SelectField label={t("Points de détection souhaités")} value={String(config.count)} onChange={v => { setPlaying(false); setConfig(c => constrainPointLayout(setPointCount(c, Number(v)))); }}
+            options={Array.from({ length: 12 }, (_, i) => [String(i + 1), `${i + 1} ${t(i === 0 ? "point" : "points")}`] as const)} /> :
+            <p className="t-caption">{t("La tige est étendue à la hauteur de la cuve pour illustrer le suivi du niveau. La plage réellement mesurable reste à confirmer.")}</p>}
+          {config.mode === "points" ? <p className="t-caption text-muted-foreground">{t("Changer le nombre répartit les points et allonge la tige si nécessaire.")}</p> : null}
+          {config.mode === "points" && config.count === 1 ? <Field group label={t("Niveau à détecter")}><Choice label={t("Niveau à détecter")} value={config.closedWhen} onChange={goal => changeConfig(setDetectionGoal(config, goal))}
+            options={[["high", t("Niveau haut")], ["low", t("Niveau bas")]]} /></Field> : null}
+          {config.orientation === "vertical" && config.mode === "points" && config.count === 1 ? <SelectField label={t("Le liquide peut-il faire des vaguelettes ?")} value={config.travelPreference} onChange={v => changeConfig(setTravelPreference(config, v as "short" | "long"))}
+            options={[["short", t("Non, le niveau reste plutôt stable")], ["long", t("Oui, de petits mouvements sont à ignorer")]]} /> : null}
           {config.mode === "points" ? <>
+            <p className="t-caption text-muted-foreground">{t("Les points restent dans la zone accessible à la tige. Raccourcir la tige recale leurs positions.")}</p>
             <div className="lv-field"><h3 className="t-body font-semibold">{t("Position des points")}</h3><p className="t-caption text-muted-foreground">{t("Hauteurs souhaitées depuis le fond de la cuve.")}</p></div>
             {config.pointsMm.map((point, i) => <RangeField key={i} label={`${t("Point")} ${i + 1}`} value={point} {...pointBounds(config, i)}
               onChange={v => { const next = { ...config, pointsMm: config.pointsMm.map((p, index) => index === i ? v : p) }; changeConfig(config.count === 1 ? fitStemToPoints(next) : next); }} />)}
@@ -328,7 +338,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           <div className="lv-study-details">
           <section className="lv-family-card" aria-live="polite">
             <p className="t-label">{t(specific ? "Demande spécifique" : "Piste à étudier")}</p>
-            <h2 className="t-display-m">{config.custom ? t("Sur mesure") : selected ? `${config.orientation === "horizontal" && config.count > 1 ? `${config.count} × ` : ""}${selected.family}` : t("Avec Standex")}</h2>
+            <p className="t-title-s">{config.custom ? t("Sur mesure") : selected ? `${config.orientation === "horizontal" && config.count > 1 ? `${config.count} × ` : ""}${selected.family}` : t("Avec Standex")}</p>
             {selected ? <><p className="t-title-s">{t(FAMILY_LABELS[selected.family])}</p><p className="t-body">{t(selected.material === "SS" ? "Tige inox" : selected.material === "PP" ? "Matériau à envisager : PP" : selected.material === "PA" ? "Matériau à envisager : PA" : "Matériau à définir")}</p></> : null}
             <p className="t-caption">{t("La famille évolue avec vos réglages. La construction exacte reste à confirmer.")}</p>
             {config.travelPreference === "long" ? <p className="t-caption">{t("Le montage proposé tient compte des petits mouvements du liquide. L’absence de déclenchement intempestif reste à vérifier dans l’application.")}</p> : null}
@@ -368,7 +378,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           </div>
 
         </section>
-        <LevelMonitor configuration={config} family={family} level={level} available={signalAvailable} />
+        <LevelMonitor configuration={config} family={family} level={level} available={signalAvailable} candidate={selected !== null} />
       </div>
     </main> : null}
 

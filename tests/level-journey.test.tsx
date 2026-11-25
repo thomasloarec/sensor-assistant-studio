@@ -3,7 +3,7 @@ if (typeof document === "undefined") GlobalRegistrator.register({ url: "https://
 import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
 import { setLocale } from "../src/lib/i18n/core";
-import LevelJourney from "../src/components/level/level-journey";
+import LevelJourney, { RangeField } from "../src/components/level/level-journey";
 
 afterEach(() => { cleanup(); setLocale("fr"); });
 
@@ -124,4 +124,19 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
   await click("Préparer la demande");
   expect(view.getByRole("heading", { name: "Résultat", exact: true })).toBeTruthy();
   expect(view.getByText("Corps coudé pour accès latéral.")).toBeTruthy();
+});
+
+
+test("dimension entry accepts exact decimals, clamps bounds and rejects empty or invalid text", async () => {
+  let committed = 220;
+  const view = render(<RangeField label="Dimension" value={220} min={60} max={540} step={10} onChange={v => { committed = v; }} />);
+  const field = view.getByRole("textbox", {name:"Dimension (mm)"});
+  for (const [text, expected] of [["221,5",221.5],["900",540],["12",60],["",220],["abc",220]] as const) {
+    await changeInput(field,text); await act(async()=>fireEvent.blur(field)); expect(committed).toBe(expected);
+  }
+  await changeInput(field,"333"); await act(async()=> {
+    const key=Object.keys(field).find(k=>k.startsWith("__reactProps$"))!;
+    (field as unknown as Record<string,{onKeyDown:(event:{key:string})=>void}>)[key]!.onKeyDown({key:"Escape"});
+  });
+  expect((field as HTMLInputElement).value).toBe("220");
 });

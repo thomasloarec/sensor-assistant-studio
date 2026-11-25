@@ -1296,3 +1296,15 @@ pas un troisième point. Chaque état est écrit et accompagné d’un témoin. 
 moniteur reste sans réglage. La quantité de capteurs latéraux figure dans les
 réglages et la revue. Surfaces, contrastes, focus et dimensions des commandes
 réutilisent les jetons ; aucun nouveau jeton.
+
+### Réglages contraints du niveau — 25 novembre 2026
+
+Les dimensions sont éditables dans un champ rempli à côté du curseur, avec unité
+mm et cible de 44 px. Entrée ou sortie du champ valide la saisie ; les décimales
+et la virgule sont acceptées. Les limites mécaniques sont partagées avec le curseur.
+Le montage et les dimensions précèdent le nombre de points et leurs positions.
+Raccourcir une tige recale les points dans sa zone accessible, avec une explication
+visible ; les limites restent celles de l’enveloppe illustrative, sans qualification.
+Le moniteur commence par la famille proposée puis décrit le comportement.
+Le zoom change seulement le grossissement ; les commandes de cadrage remettent
+explicitement la caméra et son centre de visée en cohérence. Aucun nouveau jeton.
