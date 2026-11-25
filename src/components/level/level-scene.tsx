@@ -1,5 +1,6 @@
 /** Reconstructed product envelopes for visual discussion, not manufacturing CAD. */
 import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Line, OrbitControls } from "@react-three/drei";
 import { Plus, Minus, Scan, Focus } from "lucide-react";
@@ -26,10 +27,13 @@ function StudioLight() {
   return <><ambientLight intensity={0.65} /><directionalLight position={[100, 240, 160]} intensity={3.2} />
     <directionalLight position={[-160, 140, -80]} intensity={1.8} /></>;
 }
-function Framing({ config, family, productOnly, focus, zoom, interactive }: {
-  config: LevelConfiguration; family: Family; productOnly: boolean; focus: number | null; zoom: number; interactive: boolean;
+function Framing({ config, family, productOnly, focus, zoom, viewRevision, interactive }: {
+  config: LevelConfiguration; family: Family; productOnly: boolean; focus: number | null; zoom: number; viewRevision: number; interactive: boolean;
 }) {
   const { camera, size, invalidate } = useThree();
+  const controls = useRef<OrbitControlsImpl>(null);
+  const previousZoom = useRef(zoom);
+  const zoomRef = useRef(zoom); zoomRef.current = zoom;
   const frame = sceneFrame(config, family, focus, productOnly);
   const fit = Math.min(size.height / (frame.height * 1.16), size.width / (frame.width * 1.18));
   const [x, y, z] = frame.target;
@@ -37,10 +41,19 @@ function Framing({ config, family, productOnly, focus, zoom, interactive }: {
     if (!("isOrthographicCamera" in camera)) return;
     camera.position.set(x + frame.height * .9, y + frame.height * .35, z + frame.height * 2.4);
     camera.lookAt(x, y, z);
-    camera.zoom = fit * zoom;
+    controls.current?.target.set(x, y, z);
+    controls.current?.update();
+    camera.zoom = fit * zoomRef.current;
+    previousZoom.current = zoomRef.current;
     camera.updateProjectionMatrix(); invalidate();
-  }, [camera, x, y, z, frame.height, fit, zoom, invalidate]);
-  return interactive ? <OrbitControls target={[x, y, z]} enableRotate={false} enablePan enableZoom enableDamping={false}
+  }, [camera, x, y, z, frame.height, fit, viewRevision, invalidate]);
+  useEffect(() => {
+    if (!("isOrthographicCamera" in camera)) return;
+    camera.zoom = Math.max(fit * .5, Math.min(fit * 40, camera.zoom * zoom / previousZoom.current));
+    previousZoom.current = zoom;
+    camera.updateProjectionMatrix(); invalidate();
+  }, [camera, zoom, fit, invalidate]);
+  return interactive ? <OrbitControls ref={controls} enableRotate={false} enablePan enableZoom enableDamping={false}
     mouseButtons={{LEFT:MOUSE.PAN, MIDDLE:MOUSE.DOLLY, RIGHT:MOUSE.PAN}} minZoom={fit * .5} maxZoom={fit * 40} /> : null;
 }
 function Cylinder({ radius, height, y = 0, color, metal = false, sides = 64 }: {
@@ -239,6 +252,7 @@ export default function LevelScene({ configuration, family, levelMm, material, o
   configuration: LevelConfiguration; family: Family; levelMm: number; material: string; oil?: boolean; productOnly?: boolean; showMarkers?: boolean; interactive?: boolean;
 }) {
   const [ready, setReady] = useState(false);
+  const [viewRevision, setViewRevision] = useState(0);
   const [focus, setFocus] = useState<number | null>(null), [zoom, setZoom] = useState(1);
   const [projection, setProjection] = useState<Projection>({width:0,height:0,markers:[]});
   const [railScroll, setRailScroll] = useState(0);
@@ -248,10 +262,10 @@ export default function LevelScene({ configuration, family, levelMm, material, o
     setFocus(interactive && configuration.tankHeightMm > 400 && (family === "LS01" || family === "LS02") ? configuration.pointsMm[0]! : null);
     setZoom(1);
   }, [family, configuration.tankHeightMm, configuration.orientation, interactive]);
-  const inspect = (height = configuration.pointsMm[0] ?? levelMm) => { setFocus(height); setZoom(1); };
+  const inspect = (height = configuration.pointsMm[0] ?? levelMm) => { setFocus(height); setZoom(1); setViewRevision(v => v + 1); };
   return <SceneBoundary><div className="lv-scene-stage" data-ready={ready} data-family={family}>
     {interactive ? <div className="lv-scene-toolbar" aria-label={t("Commandes de la vue")}>
-      <button type="button" aria-pressed={focus === null} onClick={() => { setFocus(null); setZoom(1); }} title={t("Vue d’ensemble")}><Scan size={18} /><span>{t("Vue d’ensemble")}</span></button>
+      <button type="button" aria-pressed={focus === null} onClick={() => { setFocus(null); setZoom(1); setViewRevision(v => v + 1); }} title={t("Vue d’ensemble")}><Scan size={18} /><span>{t("Vue d’ensemble")}</span></button>
       <button type="button" onClick={() => inspect(configuration.mode === "continuous" ? floatCentres(configuration, levelMm, family)[0] ?? levelMm : undefined)}><Focus size={18} /><span>{t("Voir le capteur")}</span></button>
       <button type="button" aria-label={t("Agrandir la vue")} onClick={() => setZoom(z => Math.min(40, z * 1.5))}><Plus size={18} /></button>
       <button type="button" aria-label={t("Réduire la vue")} onClick={() => setZoom(z => Math.max(.5, z / 1.5))}><Minus size={18} /></button>
@@ -259,7 +273,7 @@ export default function LevelScene({ configuration, family, levelMm, material, o
     <div className={`lv-scene-viewport${markers ? " lv-scene-with-rail" : ""}`}>
     <div className="lv-scene-canvas"><Canvas orthographic dpr={[1, 2]} frameloop="demand" gl={{ antialias: true, alpha: true }}
     camera={{ near: 0.1, far: 100000, zoom: 4 }} fallback={<SceneUnavailable />}>
-    <StudioLight /><Framing config={configuration} family={family} productOnly={productOnly} focus={focus} zoom={zoom} interactive={interactive} />
+    <StudioLight /><Framing config={configuration} family={family} productOnly={productOnly} focus={focus} zoom={zoom} viewRevision={viewRevision} interactive={interactive} />
     {!productOnly ? <Tank height={configuration.tankHeightMm} level={levelMm} oil={oil} /> : null}
     {markers ? <ProjectMarkers config={configuration} onChange={setProjection} /> : null}
     {family === "LS03" ? configuration.pointsMm.map((_, i) => <HorizontalSensor key={i} index={i} config={configuration} level={levelMm} material={material} />) :

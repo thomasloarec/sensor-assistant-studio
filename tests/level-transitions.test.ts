@@ -41,7 +41,8 @@ describe("level configurator transitions and recovery", () => {
   });
   test("point controls prevent crossing neighbours; mechanical repairs retain the project", () => {
     const c=setPointCount(INITIAL_CONFIGURATION,4);
-    expect(pointBounds(c,1)).toEqual({min:21,max:59});
+    // Leave room for the next rigid float, not just the next point.
+    expect(pointBounds(c,1)).toEqual({min:21,max:38});
     for(const broken of [{...c,reachMm:25},{...c,reachMm:150},{...c,pointsMm:[20,10,40,200]},
       setPointCount({...INITIAL_CONFIGURATION,tankHeightMm:60,pointsPerFloat:1},12)]) {
       const guidance=configurationGuidance(INITIAL_CONTEXT,broken)!;

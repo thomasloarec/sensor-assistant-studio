@@ -1,21 +1,24 @@
 import ContactCircuit from "@/components/standex/workshop/contact-circuit";
 import { t } from "@/lib/i18n/core";
-import { illustrativeReading, proposedContactForm, type Family, type LevelConfiguration } from "@/lib/level/configuration";
+import { FAMILY_LABELS, illustrativeReading, proposedContactForm, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 
 /** Operator display of the requested behaviour; no invented resistance codes. */
-export function LevelMonitor({ configuration: c, family, level, available }: {
-  configuration: LevelConfiguration; family: Family; level: number; available: boolean;
+export function LevelMonitor({ configuration: c, family, level, available, candidate = available }: {
+  configuration: LevelConfiguration; family: Family; level: number; available: boolean; candidate?: boolean;
 }) {
   const reading = illustrativeReading(c, level, family);
   const form = proposedContactForm(c, family);
   const percent = Math.round(reading.steppedMm / c.tankHeightMm * 100);
   const activeCount = reading.pointStates.filter(p => p.active).length;
   return <aside className="lv-monitor panel-block" aria-label={t("Moniteur de niveau")}>
-    <header><p className="t-label">{t("Moniteur de niveau")}</p>
+    <header><p className="t-label">{t(candidate ? "Piste à étudier" : "Demande spécifique")}</p>
+      <h2 className="t-display-m">{c.custom ? t("Sur mesure") : candidate ? (c.orientation === "horizontal" && c.count > 1 ? c.count + " × " : "") + family : t("Avec Standex")}</h2>
+      {candidate ? <p className="t-body">{t(FAMILY_LABELS[family])}</p> : null}
+      <p className="t-label">{t("Moniteur de niveau")}</p>
       <h2 className="t-title-m">{t(c.mode === "continuous" ? "Mesure continue" : c.count === 1 ? "Signal de détection" : "Niveaux détectés")}</h2>
     </header>
     {!available ? <div className="lv-monitor-pending"><span className="t-display-m">—</span>
-      <p className="t-title-s">{t(c.custom ? "Sur mesure" : "Lecture en attente")}</p>
+      {!c.custom ? <p className="t-title-s">{t("Lecture en attente")}</p> : null}
       <p className="t-body">{t(c.custom ? "Votre besoin reste conservé. Décrivez les contraintes pour préparer l’étude avec Standex." : "Ajustez les réglages indiqués à gauche pour activer la démonstration.")}</p></div>
       : c.mode === "continuous" ? <>
         <output className="lv-monitor-value t-display-m t-metric">{reading.steppedMm} <span className="t-body">mm</span></output>

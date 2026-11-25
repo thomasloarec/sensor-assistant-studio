@@ -265,7 +265,50 @@ export function setTravelPreference(c: LevelConfiguration, preference: "short" |
   return fitStemToPoints({ ...c, travelPreference: preference, floatTravelMm: preference === "long" ? 34 : 10.5,
     reachMm: compact ? preference === "long" ? 56 : 32.5 : c.reachMm });
 }
+// Interactive limits preserve the point count and rigid float clearances.
+function pointGap(c: LevelConfiguration, index: number) {
+  return index % c.pointsPerFloat === 0 ? FLOAT_HEIGHT_MM + FLOAT_CLEARANCE_MM + 1 : 1;
+}
+export function reachBounds(c: LevelConfiguration) {
+  const max = Math.min(MAX_REACH_MM, c.mounting === "bottom" ? c.tankHeightMm : mountingDatum(c));
+  const packed = c.pointsMm.slice(1).reduce((sum, _, i) => sum + pointGap(c, i + 1), 0);
+  return { min: Math.min(max, c.mode === "points" && c.count > 1 ? 30 + packed : c.mode === "points" ? (isCompact(architectureFamily(c)) ? compactReach(c) : 30 + c.floatTravelMm) : 25), max };
+}
+function pointZone(c: LevelConfiguration) {
+  // Include the plastic end-cap allowance even when the liquid requires inox.
+  return c.mounting === "bottom" ? { min: 11, max: c.reachMm - 19 }
+    : { min: mountingDatum(c) - c.reachMm + 19, max: mountingDatum(c) - 11 };
+}
+export function constrainPointLayout(c: LevelConfiguration): LevelConfiguration {
+  if (c.orientation !== "vertical" || c.mode !== "points") return c;
+  if (c.count === 1 && isCompact(architectureFamily(c))) return fitStemToPoints(c);
+  const limits = reachBounds(c);
+  const next = { ...c, reachMm: Math.max(limits.min, Math.min(limits.max, c.reachMm)) };
+  const zone = pointZone(next);
+  if (next.count === 1) {
+    const bounds = singlePointZone(next);
+    return bounds.min <= bounds.max ? { ...next, pointsMm: [Math.max(bounds.min, Math.min(bounds.max, next.pointsMm[0]!))] } : next;
+  }
+  const gaps = next.pointsMm.map((_, i) => i ? pointGap(next, i) : 0);
+  if (zone.max - zone.min < gaps.reduce((a, b) => a + b, 0)) return next;
+  const pointsMm = next.pointsMm.map(p => Math.max(zone.min, Math.min(zone.max, p)));
+  for (let i = pointsMm.length - 2; i >= 0; i--) pointsMm[i] = Math.min(pointsMm[i]!, pointsMm[i + 1]! - gaps[i + 1]!);
+  pointsMm[0] = Math.max(zone.min, pointsMm[0]!);
+  for (let i = 1; i < pointsMm.length; i++) pointsMm[i] = Math.max(pointsMm[i]!, pointsMm[i - 1]! + gaps[i]!);
+  return { ...next, pointsMm };
+}
+function singlePointZone(c: LevelConfiguration) {
+  const zone = pointZone(c);
+  return { min: zone.min + FLOAT_IMMERSION_OFFSET_MM + (c.closedWhen === "high" ? c.floatTravelMm : 0),
+    max: zone.max + FLOAT_IMMERSION_OFFSET_MM - (c.closedWhen === "low" ? c.floatTravelMm : 0) };
+}
 export function pointBounds(c: LevelConfiguration, index: number) {
+  if (c.orientation === "vertical" && c.count === 1 && !isCompact(architectureFamily(c))) return singlePointZone(c);
+  if (c.orientation === "vertical" && c.count > 1) {
+    const zone = pointZone(c);
+    return { min: index ? Math.max(zone.min, c.pointsMm[index - 1]! + pointGap(c, index)) : zone.min,
+      max: index < c.pointsMm.length - 1 ? Math.min(zone.max, c.pointsMm[index + 1]! - pointGap(c, index + 1)) : zone.max };
+  }
   return { min: index ? c.pointsMm[index - 1]! + 1 : 0,
     max: index < c.pointsMm.length - 1 ? c.pointsMm[index + 1]! - 1 : c.tankHeightMm };
 }

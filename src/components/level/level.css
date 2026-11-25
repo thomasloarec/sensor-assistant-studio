@@ -146,3 +146,6 @@
 @media (prefers-reduced-motion: reduce) {
   .lv-journey *, .lv-journey *::before, .lv-journey *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+.lv-dimension { display: inline-flex; align-items: center; gap: .35rem; flex-shrink: 0; }
+.lv-field .lv-dimension input { width: 6rem; min-height: 44px; text-align: right; font: var(--t-body); font-variant-numeric: tabular-nums; }

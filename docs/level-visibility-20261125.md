@@ -99,3 +99,26 @@ Après fusion, vérifier successivement :
 Si la réception reste bloquée, conserver les identifiants de commits et le statut
 Git pour le support Lovable. Ne pas recréer les corrections, réécrire l’historique
 ou déconnecter le dépôt pour contourner ce retard.
+## Réglages précis et maintien du montage — 25 novembre 2026
+
+- Les valeurs des curseurs de la colonne gauche sont aussi saisissables au clavier.
+  Entrée ou sortie du champ valide ; virgule décimale acceptée ; texte vide ou
+  invalide revient à la valeur courante et les bornes sont respectées.
+- Montage et dimensions précèdent le groupe nombre de points / positions.
+- Raccourcir une tige recale les points dans sa portée, avec conservation du nombre
+  et de la séparation des flotteurs. Les limites de chaque point tiennent compte
+  de ses voisins et des butées. Les configurations réellement impossibles restent
+  signalées ; aucune compatibilité documentaire n’est forcée.
+- La famille proposée figure en tête du moniteur, suivie du comportement.
+- Zoom et cadrage sont séparés : seuls les cadrages changent la position caméra
+  et le centre des contrôles ; + et − changent le grossissement.
+
+Régression reproduite : cuve 540 mm, tige 175 mm, six points, fixations haute,
+libre ou basse, enveloppes LS04 et LS05. Les limites de déplacement sont vérifiées
+ainsi que les changements de longueur, de 2 à 12 points, avec 1 ou 2 points par
+flotteur, et les cas à un point haut/bas sur tige longue.
+
+Contrôle visuel local : saisie de 540 et 175 mm, six points recalés, rejet d’un
+point à 10 mm hors portée, famille LS04 au-dessus du moniteur, vue rapprochée et
+boutons +/−. TypeScript et compilation de production réussis. La réception dans
+Lovable et la publication seront vérifiées après fusion par le propriétaire.
