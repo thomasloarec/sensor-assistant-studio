@@ -56,9 +56,15 @@ export const HORIZONTAL_CLEARANCE_MM = { below: 45, above: 12 };
 export function pointIntent(c: LevelConfiguration, index: number): "low" | "high" {
   return c.count === 1 ? c.closedWhen : index === 0 ? "low" : "high";
 }
-export function horizontalMountHeight(c: LevelConfiguration, index = 0) { return c.pointsMm[index]! + (pointIntent(c, index) === "low" ? 28.8 : 0); }
+// Illustrated vertical sweep, not a verified reed switching angle. The requested
+// threshold marks the start of the motion: rising from down / falling from level.
+const HORIZONTAL_SWEEP_MM = 28.8;
+function horizontalThresholdOffset(c: LevelConfiguration, index: number) {
+  return pointIntent(c, index) === "high" ? HORIZONTAL_SWEEP_MM : 0;
+}
+export function horizontalMountHeight(c: LevelConfiguration, index = 0) { return c.pointsMm[index]! + horizontalThresholdOffset(c, index); }
 export function horizontalPointBounds(c: LevelConfiguration, index = 0) {
-  const offset = pointIntent(c, index) === "low" ? 28.8 : 0;
+  const offset = horizontalThresholdOffset(c, index);
   return { min: Math.ceil(HORIZONTAL_CLEARANCE_MM.below - offset), max: Math.floor(c.tankHeightMm - HORIZONTAL_CLEARANCE_MM.above - offset) };
 }
 export const FAMILY_LABELS: Record<Family, string> = {
@@ -272,7 +278,21 @@ function pointGap(c: LevelConfiguration, index: number) {
 export function reachBounds(c: LevelConfiguration) {
   const max = Math.min(MAX_REACH_MM, c.mounting === "bottom" ? c.tankHeightMm : mountingDatum(c));
   const packed = c.pointsMm.slice(1).reduce((sum, _, i) => sum + pointGap(c, i + 1), 0);
-  return { min: Math.min(max, c.mode === "points" && c.count > 1 ? 30 + packed : c.mode === "points" ? (isCompact(architectureFamily(c)) ? compactReach(c) : 30 + c.floatTravelMm) : 25), max };
+  return { min: Math.min(max, c.mode === "points" && c.count > 1 ? 30 + packed : c.mode === "points" ? compactReach(c) : 25), max };
+}
+/** Explicit length edit may return to a fixed-size compact. Reposition its point
+ * with the selected mounting instead of retaining a long-stem threshold. */
+export function setReach(c: LevelConfiguration, requested: number): LevelConfiguration {
+  const bounds = reachBounds(c);
+  const reachMm = Math.max(bounds.min, Math.min(bounds.max, requested));
+  let next = { ...c, reachMm };
+  if (c.orientation === "vertical" && c.mode === "points" && c.count === 1 && reachMm <= compactReach(c)) {
+    const standard = compactReach(c);
+    const min = c.closedWhen === "high" ? standard - 7 : 15;
+    const max = c.closedWhen === "high" ? c.tankHeightMm - 7 : c.tankHeightMm - standard + 15;
+    next = { ...next, pointsMm: [c.mounting === "bottom" ? min : c.mounting === "top" ? max : Math.max(min, Math.min(max, c.pointsMm[0]!))] };
+  }
+  return constrainPointLayout(next);
 }
 function pointZone(c: LevelConfiguration) {
   // Include the plastic end-cap allowance even when the liquid requires inox.
@@ -283,7 +303,8 @@ export function constrainPointLayout(c: LevelConfiguration): LevelConfiguration 
   if (c.orientation !== "vertical" || c.mode !== "points") return c;
   if (c.count === 1 && isCompact(architectureFamily(c))) return fitStemToPoints(c);
   const limits = reachBounds(c);
-  const next = { ...c, reachMm: Math.max(limits.min, Math.min(limits.max, c.reachMm)) };
+  const min = c.count === 1 ? Math.min(limits.max, Math.max(limits.min, 30 + c.floatTravelMm)) : limits.min;
+  const next = { ...c, reachMm: Math.max(min, Math.min(limits.max, c.reachMm)) };
   const zone = pointZone(next);
   if (next.count === 1) {
     const bounds = singlePointZone(next);
@@ -397,11 +418,10 @@ export function illustrativeReading(c: LevelConfiguration, levelMm: number, fami
   const range = c.orientation === "vertical" ? verticalMechanics(c, family).floats[0] : null;
   const centre = range ? Math.max(range.lowerMm, Math.min(range.upperMm, level - FLOAT_IMMERSION_OFFSET_MM)) : null;
   const switchingHeightMm = range ? (c.closedWhen === "high" ? range.upperMm : range.lowerMm) + FLOAT_IMMERSION_OFFSET_MM : c.pointsMm[0]!;
-  const horizontalPosition = horizontalFloatPosition(c, level);
   const active = range && centre !== null
     ? c.closedWhen === "high" ? centre >= range.upperMm - .0001 && level >= switchingHeightMm
       : centre <= range.lowerMm + .0001 && level <= switchingHeightMm
-    : c.closedWhen === "high" ? horizontalPosition >= 1 : horizontalPosition <= 0;
+    : c.closedWhen === "high" ? level >= switchingHeightMm : level <= switchingHeightMm;
   const pointStates = c.pointsMm.map((p, i) => ({ index: i, heightMm: p, intent: pointIntent(c, i),
     active: c.count === 1 ? active : pointIntent(c, i) === "low" ? level <= p : level >= p }));
   return { level, zone, active, pointStates, switchingHeightMm, floatCentreMm: centre, steppedMm: Math.floor(level / 5) * 5,
@@ -416,9 +436,8 @@ export function floatCentres(c: LevelConfiguration, levelMm: number, family?: Fa
   return mechanics.floats.map(f => Math.max(f.lowerMm, Math.min(f.upperMm, levelMm - FLOAT_IMMERSION_OFFSET_MM)));
 }
 export function horizontalFloatPosition(c: LevelConfiguration, level: number, index = 0) {
-  const threshold = c.pointsMm[index] ?? c.tankHeightMm * .5;
-  return pointIntent(c, index) === "high" ? Math.max(0, Math.min(1, (level - (threshold - 28.8)) / 28.8))
-    : Math.max(0, Math.min(1, (level - threshold) / 28.8));
+  const pivotHeight = horizontalMountHeight(c, index);
+  return Math.max(0, Math.min(1, (level - (pivotHeight - HORIZONTAL_SWEEP_MM)) / HORIZONTAL_SWEEP_MM));
 }
 export function createLevelBrief(context: LevelContext, configuration: LevelConfiguration, cable: { lengthMm: string; connector: string }, contact: Record<string, string>) {
   const assessment = assessConfiguration(context, configuration);

@@ -38,7 +38,7 @@ describe("level viewport and requested thresholds", () => {
     expect(c.tankHeightMm).toBe(3000); expect(c.pointsMm).toEqual([1000,2000]);
     expect(assessConfiguration(context,c).selected?.family).toBe("LS03");
   });
-  test("separated points have one horizontal sensor each and independent endpoint signals", () => {
+  test("separated points have one horizontal sensor each and independent onset signals", () => {
     const c:LevelConfiguration={...INITIAL_CONFIGURATION,tankHeightMm:3000,mountingHeightMm:3000,reachMm:2000,count:2,pointsMm:[50,2950]};
     expect(configurationIssues(c).length).toBeGreaterThan(0);
     const guide=configurationGuidance(INITIAL_CONTEXT,c)!;
@@ -50,8 +50,10 @@ describe("level viewport and requested thresholds", () => {
     expect(assessConfiguration(INITIAL_CONTEXT,next).selected?.family).toBe("LS03");
     for(const [height,states] of [[0,[true,false]],[1000,[false,false]],[3000,[false,true]]] as const)
       expect(illustrativeReading(next,height).pointStates.map(p=>p.active)).toEqual([...states]);
-    expect(horizontalFloatPosition(next,50,0)).toBe(0);
-    expect(horizontalFloatPosition(next,2950,1)).toBe(1);
+    expect(horizontalFloatPosition(next,50,0)).toBeCloseTo(1);
+    expect(horizontalFloatPosition(next,2950,1)).toBeCloseTo(0);
+    expect(horizontalFloatPosition(next,49.99,0)).toBeLessThan(1);
+    expect(horizontalFloatPosition(next,2950.01,1)).toBeGreaterThan(0);
     const brief=createLevelBrief(INITIAL_CONTEXT,next,{lengthMm:"500",connector:""},{});
     expect(brief.sensor_count).toBe(2); expect(brief.requested_points.map(p=>p.intent)).toEqual(["low","high"]);
     expect(horizontalAlternative({...INITIAL_CONTEXT,mountingAccess:"top"},c)).toBeNull();

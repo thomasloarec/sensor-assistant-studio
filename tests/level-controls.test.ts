@@ -1,6 +1,23 @@
 import { describe, expect, test } from 'bun:test';
-import { INITIAL_CONFIGURATION, constrainPointLayout, pointBounds, configurationIssues, setPointCount, resizeTank, type LevelConfiguration } from '../src/lib/level/configuration';
+import { INITIAL_CONFIGURATION, INITIAL_CONTEXT, constrainPointLayout, pointBounds, configurationIssues, setPointCount, resizeTank, setReach, reachBounds, assessConfiguration, proposedContactForm, type LevelConfiguration } from '../src/lib/level/configuration';
 describe('interactive stem constraints', () => {
+  test('shortening a long single-point stem reaches compact families for either detection intent and mounting', () => {
+    for (const mounting of ['bottom','top','support'] as const) for (const closedWhen of ['high','low'] as const)
+      for (const travelPreference of ['short','long'] as const) {
+        const c = constrainPointLayout({...INITIAL_CONFIGURATION,mounting,closedWhen,travelPreference,
+          tankHeightMm:540,mountingHeightMm:540,reachMm:175,pointsMm:[50],floatTravelMm:travelPreference==='short'?10.5:34});
+        expect(assessConfiguration(INITIAL_CONTEXT,c).selected?.family).toBe('LS04');
+        const min=reachBounds(c).min, compact=setReach(c,min);
+        expect(min).toBe(travelPreference==='short'?32.5:56);
+        expect(compact.reachMm).toBe(min);
+        expect(assessConfiguration(INITIAL_CONTEXT,compact).selected?.family).toBe(travelPreference==='short'?'LS01':'LS02');
+        expect(configurationIssues(compact)).toEqual([]);
+        if(mounting==='bottom') expect(proposedContactForm(compact,'LS01')).toBeNull();
+        expect(configurationIssues(setReach(compact,175))).toEqual([]);
+        // Geometric preference never bypasses temperature screening.
+        expect(assessConfiguration({...INITIAL_CONTEXT,temperatureMax:'100'},compact).selected?.family).toBe('LS05');
+      }
+  });
   test('540 mm tank / 175 mm stem keeps six reachable points and both material envelopes valid', () => {
     for (const mounting of ['top','support','bottom'] as const) {
       let c:LevelConfiguration = {...INITIAL_CONFIGURATION,tankHeightMm:540,mountingHeightMm:540,mounting,count:6,pointsMm:[73,154,230,310,386,467],reachMm:175};

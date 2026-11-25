@@ -1,4 +1,4 @@
-import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, setPointCount,
+import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, horizontalPointBounds, setPointCount,
   type LevelConfiguration, type LevelContext } from "./configuration";
 
 /** Only explicit intake answers seed the design; prose is never silently classified. */
@@ -34,7 +34,10 @@ export function seedConfiguration(context: LevelContext): LevelConfiguration {
     const max = goal === "high" ? height - 7 : height - compactReach(c) + 15;
     point = Math.max(min, Math.min(max, point));
   }
-  if (requested === null && c.orientation === "horizontal") point = goal === "high" ? Math.max(45, Math.round(height * .7)) : Math.max(17, Math.min(height - 41, Math.round(height * .2)));
+  if (requested === null && c.orientation === "horizontal") {
+    const bounds = horizontalPointBounds(c);
+    point = Math.max(bounds.min, Math.min(bounds.max, Math.round(height * (goal === "high" ? .7 : .2))));
+  }
   c = { ...c, pointsMm: [point] };
   return fitStemToPoints(c);
 }

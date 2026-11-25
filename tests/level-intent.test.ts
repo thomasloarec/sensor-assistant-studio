@@ -64,13 +64,20 @@ describe("level intent, mounting and a shared float/signal model", () => {
     const brief = createLevelBrief(INITIAL_CONTEXT, c, { lengthMm: "", connector: "" }, {});
     expect(brief.proposed_contact_form).toBeNull(); expect(brief.requested_configuration.mounting).toBe("bottom");
   });
-  test("horizontal high and low readings share the pivot endpoint", () => {
+  test("horizontal high and low readings switch at the start of the requested pivot", () => {
     for (const goal of ["high", "low"] as const) {
       const c = seedConfiguration({ ...INITIAL_CONTEXT, mountingAccess: "side", detectionGoal: goal });
       expect(configurationIssues(c)).toEqual([]);
-      for (const delta of [-1, 0, 1]) {
+      for (const delta of [-30, -1, -.01, 0, .01, 1, 30]) {
         const level = c.pointsMm[0]! + delta, pos = horizontalFloatPosition(c, level);
-        expect(illustrativeReading(c, level).active).toBe(goal === "high" ? pos === 1 : pos === 0);
+        const reading = illustrativeReading(c, level);
+        expect(reading.active).toBe(goal === "high" ? delta >= 0 : delta <= 0);
+        expect(reading.pointStates[0]!.active).toBe(reading.active);
+        if (delta === 0) expect(pos).toBeCloseTo(goal === "high" ? 0 : 1);
+        if ((goal === "high" && delta === .01) || (goal === "low" && delta === -.01)) {
+          expect(reading.active).toBe(true);
+          expect(pos).toBeGreaterThan(0); expect(pos).toBeLessThan(1);
+        }
       }
     }
   });

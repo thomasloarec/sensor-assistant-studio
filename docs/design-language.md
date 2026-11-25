@@ -1308,3 +1308,14 @@ visible ; les limites restent celles de l’enveloppe illustrative, sans qualifi
 Le moniteur commence par la famille proposée puis décrit le comportement.
 Le zoom change seulement le grossissement ; les commandes de cadrage remettent
 explicitement la caméra et son centre de visée en cohérence. Aucun nouveau jeton.
+
+### Longueur compacte et pivot horizontal — 25 novembre 2026
+
+La longueur minimale à un point reste accessible depuis une tige configurable.
+Revenir à cette longueur recale le point selon la fixation et repropose la famille
+compacte adaptée à la course, sous réserve des contraintes du liquide. Une pose
+retournée conserve sa mention de validation nécessaire et aucune forme A/B déduite.
+Sur le capteur horizontal, le seuil demandé correspond au début du pivotement
+dans le sens de détection : montée depuis la position basse, descente depuis la
+position horizontale. Le moniteur et les repères partagent ce seuil illustratif ;
+aucun angle de commutation fabricant n’est présenté comme vérifié. Aucun nouveau jeton.
