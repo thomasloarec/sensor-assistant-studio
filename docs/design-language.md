@@ -1253,3 +1253,23 @@ Les volumes LS03 distinguent le corps fixe du flotteur articulé ; le LS04
 reprend les rainures de tige et l’embout incurvé. Ces matériaux Three.js
 restent dans l’exception existante ; les détails non cotés sont documentés
 comme estimations, en attente des modèles du bureau d’études.
+
+### Intention et montage du parcours niveau — 25 novembre 2026
+
+Le questionnaire comporte quatre cartes communes : application libre, liquide,
+installation, puis détection. L’installation recueille accès et hauteur ; les
+trois champs pression/immersion restent disponibles dans un détail dépliable.
+La dernière carte recueille haut/bas/multipoint/continu et la réaction souhaitée.
+Les exemples restent séparés des réponses et traduits dans les huit langues.
+
+Le configurateur propose le niveau haut/bas avec le segment existant, et les
+trois fixations avec un menu natif : capteur droit à hauteur libre, ouverture
+haute imposée, insertion par le fond. Les formulaires n’exposent pas le choix
+A/B ; le moniteur en lecture seule indique la forme produit proposée lorsque
+la construction compacte droite permet de la déduire. Un réglage de course
+localisée apparaît pour une tige configurable à un point. La scène LS04 utilise
+des collerettes ouvertes de la même matière que la tige, fixes pendant l’animation.
+
+La navigation possède un fond opaque sur toute la largeur du panneau et reste
+ancrée sous l’en-tête. Le contenu du menu utilise également toute la largeur.
+La progression du parcours proximité reste inchangée. Aucun nouveau jeton.

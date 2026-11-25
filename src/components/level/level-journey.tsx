@@ -8,6 +8,7 @@ import { NeedExamples } from "@/components/leadmagnet/need-examples";
 import { SceneLoading } from "./scene-loading";
 import { LevelMonitor } from "./level-monitor";
 import { applyRemedy, configurationGuidance, REMEDY_LABELS, type Remedy } from "@/lib/level/guidance";
+import { intakeErrors, intakeKey, seedConfiguration } from "@/lib/level/intake";
 import { ConnectorChoices } from "@/components/leadmagnet/connector-choices";
 import { ProjectContextFields } from "@/components/leadmagnet/project-context-fields";
 import { IndustryField } from "@/components/leadmagnet/industry-field";
@@ -21,6 +22,7 @@ import { t, getLocale } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
 import { assessConfiguration, architectureFamily, configurationIssues, contextErrors, createLevelBrief, FAMILY_LABELS,
   illustrativeReading, INITIAL_CONFIGURATION, INITIAL_CONTEXT, setPointCount, resizeTank, pointBounds, MAX_REACH_MM,
+  fitStemToPoints, setDetectionGoal, setMounting, setTravelPreference, isCompact, mountingDatum, proposedContactForm,
   type LevelConfiguration, type LevelContext } from "@/lib/level/configuration";
 import "./level.css";
 
@@ -85,20 +87,32 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const reduced = useReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const controlsRef = useRef<HTMLElement>(null);
+  const seededKey = useRef<string | null>(null);
   const assessment = assessConfiguration(context, config);
-  const issues = configurationIssues(config);
   const errors = contextErrors(context);
+  const intakeProblems = intakeErrors(context);
+  const questionProblems = question === 2 ? intakeErrors({ ...context, detectionHeight: "" }) : intakeProblems;
   const cableInvalid = cableLength.trim() !== "" && (!Number.isFinite(Number(cableLength)) || Number(cableLength) <= 0);
   const selected = assessment.selected;
   const family = selected?.family ?? architectureFamily(config);
-  const reading = illustrativeReading(config, level);
+  const issues = configurationIssues(config, family);
+  const reading = illustrativeReading(config, level, family);
   const signalAvailable = reading.usable && selected !== null && errors.length === 0;
   const specific = assessment.specific || issues.length > 0;
-  const guidance = configurationGuidance(context, config);
+  const guidance = configurationGuidance(context, config, family);
   const currentIndex = stages.findIndex(s => s.id === stage);
   const changeConfig = (patch: Partial<LevelConfiguration>) => { setPlaying(false); setConfig(c => ({ ...c, ...patch })); setExported(false); };
   const changeContext = (patch: Partial<LevelContext>) => { setContext(c => ({ ...c, ...patch })); setExported(false); };
   const go = (s: Stage) => { setPlaying(false); setExported(false); setStage(s); };
+  const openConfigurator = () => {
+    if (intakeProblems.length) { setQuestion(intakeErrors({ ...context, detectionHeight: "" }).length ? 2 : 3); go("questions"); return; }
+    const key = intakeKey(context);
+    if (seededKey.current !== key) {
+      const next = seedConfiguration(context);
+      setConfig(next); setLevel(next.tankHeightMm / 2); seededKey.current = key;
+    }
+    go("configure");
+  };
   const classic = () => onClassic ? onClassic() : window.location.assign("/");
 
   useEffect(() => {
@@ -144,7 +158,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   };
   const returnFromLiquid = returnToConfig && question === 1;
   const advanceQuestion = () => {
-    if (returnFromLiquid || question === 2) { setReturnToConfig(false); go("configure"); }
+    if (returnFromLiquid || question === 3) { setReturnToConfig(false); openConfigurator(); }
     else setQuestion(q => q + 1);
   };
   const download = () => {
@@ -162,17 +176,17 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
 
   return <div className={`lv-journey${embedded ? " lv-embedded" : ""}`} data-readable>
     {!embedded ? <LevelProjectHeader title={projectTitle ?? t("Nouveau projet")} onRename={setProjectTitle} onChoice={() => go("choice")} onClassic={classic} /> : null}
-    {stage !== "choice" ? <nav className={`project-stepper project-stepper-${currentIndex} project-stepper-sticky lv-project-stepper`} aria-label={t("Étapes du projet de niveau")}>
+    {stage !== "choice" ? <div className="lv-stepper-bar project-stepper-sticky"><nav className={`project-stepper project-stepper-${currentIndex} lv-project-stepper`} aria-label={t("Étapes du projet de niveau")}>
       <span className="project-stepper-thumb" aria-hidden="true" />
       {stages.map((s, i) => <button type="button" key={s.id} aria-current={stage === s.id ? "step" : undefined}
-        onClick={() => { if (s.id === "questions") { setQuestion(0); setReturnToConfig(false); } go(s.id); }}
+        onClick={() => { if (s.id === "questions") { setQuestion(0); setReturnToConfig(false); } if (s.id === "configure") openConfigurator(); else go(s.id); }}
         className={`relative z-10 min-h-11 bg-transparent px-4 py-3 text-left transition-colors duration-[var(--d-base)] ${stage === s.id ? "text-[var(--heading)]" : "text-[var(--muted-foreground)]"}`}>
         <span className="project-stepper-content flex min-w-0 items-center gap-2 text-base font-semibold">
           <span className={`standex-bar !h-3 !w-1 transition-opacity duration-[var(--d-base)] ${stage === s.id ? "opacity-100" : "opacity-25"}`} aria-hidden="true" />
           <span className="project-stepper-label">{i + 1}. {s.label}</span>
         </span>
       </button>)}
-    </nav> : null}
+    </nav></div> : null}
     <div className="lv-topbar">
       <button type="button" className="text-link t-caption" onClick={() => go("choice")}>{t("Types de capteurs")}</button>
       <span className="lv-preview t-caption">{t("Aperçu du parcours niveau")}</span>
@@ -202,11 +216,11 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
 
     {stage === "questions" ? <main className="lv-question-main">
       <section className="questionnaire-card" aria-labelledby="level-question-title">
-        <div className="questionnaire-meta"><p className="questionnaire-count t-caption">{t("Question")} {question + 1} {t("sur")} 3</p>
-          <p className="questionnaire-category t-label">{t(["L’application", "Le liquide", "La cuve"][question]!)}</p></div>
-        <div className="questionnaire-progress" aria-hidden="true"><div style={{ width: `${(question + 1) / 3 * 100}%` }} /></div>
+        <div className="questionnaire-meta"><p className="questionnaire-count t-caption">{t("Question")} {question + 1} {t("sur")} 4</p>
+          <p className="questionnaire-category t-label">{t(["L’application", "Le liquide", "La cuve", "La détection"][question]!)}</p></div>
+        <div className="questionnaire-progress" aria-hidden="true"><div style={{ width: `${(question + 1) / 4 * 100}%` }} /></div>
         <h1 id="level-question-title" className="t-title-l mt-5" ref={headingRef} tabIndex={-1}>
-          {t(["Dans quel équipement, et pour quoi faire ?", "Quel liquide, à quelles températures ?", "Dans quelles conditions le capteur sera-t-il installé ?"][question]!)}</h1>
+          {t(["Dans quel équipement, et pour quoi faire ?", "Quel liquide, à quelles températures ?", "Dans quelles conditions le capteur sera-t-il installé ?", "Quel niveau faut-il détecter ?"][question]!)}</h1>
         <div className="questionnaire-grid mt-6">
           <div className="questionnaire-answer lv-fields">
             {question === 0 ? <Field label={t("Votre application")}><Textarea rows={4} value={context.purpose}
@@ -219,26 +233,39 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
               <div className="lv-two-fields"><Field label={t("Température minimale (°C)")}><Input type="number" value={context.temperatureMin} placeholder={t("À définir")} onChange={e => changeContext({ temperatureMin: e.target.value })} /></Field>
                 <Field label={t("Température maximale (°C)")}><Input type="number" value={context.temperatureMax} placeholder={t("À définir")} onChange={e => changeContext({ temperatureMax: e.target.value })} /></Field></div>
               {errors.map(e => <p key={e} className="notice-danger t-body" role="alert">{t(e)}</p>)}
-            </> : <>
+            </> : question === 2 ? <>
+              <SelectField label={t("Accès pour installer le capteur")} value={context.mountingAccess} onChange={v => changeContext({ mountingAccess: v as LevelContext["mountingAccess"] })}
+                options={[["unknown", t("À définir")], ["free", t("Position de fixation libre")], ["top", t("Ouverture imposée en haut")], ["side", t("Accès par une paroi latérale")], ["bottom", t("Insertion par le fond")]]} />
+              <Field label={t("Hauteur utile de la cuve (mm)")} hint={t("Du fond au niveau maximal du liquide. À laisser vide si elle reste à définir.")}><Input type="number" min="60" max="2000" value={context.tankHeight} placeholder={t("À définir")} onChange={e => changeContext({ tankHeight: e.target.value })} /></Field>
+              <Field label={t("Contraintes à connaître")} hint={t("Facultatif")}><Textarea rows={3} value={context.constraints} onChange={e => changeContext({ constraints: e.target.value })}
+                placeholder={t("Accès uniquement par le haut, nettoyage, liquide agité, espace étroit…")} /></Field>
+              <details className="lv-details"><summary>{t("Pression et immersion")}</summary><div className="lv-fields mt-4">
               <SelectField label={t("Cuve")} value={context.tank} onChange={v => changeContext({ tank: v as LevelContext["tank"] })}
                 options={[["unknown", t("À définir")], ["vented", t("À pression atmosphérique")], ["pressurised", t("Sous pression ou sous vide")]]} />
               <SelectField label={t("Immersion du corps du capteur")} value={context.bodyExposure} onChange={v => changeContext({ bodyExposure: v as LevelContext["bodyExposure"] })}
                 options={[["unknown", t("À définir")], ["permanent", t("En permanence")], ["intermittent", t("Par intermittence")]]} />
               <SelectField label={t("Sortie de câble et câble")} value={context.cableExposure} onChange={v => changeContext({ cableExposure: v as LevelContext["cableExposure"] })}
                 options={[["unknown", t("À définir")], ["dry", t("Restent hors du liquide")], ["wet", t("Seront immergés, même occasionnellement")]]} />
-              <Field label={t("Contraintes à connaître")} hint={t("Facultatif")}><Textarea rows={3} value={context.constraints} onChange={e => changeContext({ constraints: e.target.value })}
-                placeholder={t("Accès uniquement par le haut, nettoyage, liquide agité, espace étroit…")} /></Field>
+              </div></details>
+            </> : <>
+              <SelectField label={t("Niveau à détecter")} value={context.detectionGoal} onChange={v => changeContext({ detectionGoal: v as LevelContext["detectionGoal"] })}
+                options={[["unknown", t("À définir")], ["high", t("Un niveau haut")], ["low", t("Un niveau bas")], ["multiple", t("Plusieurs niveaux")], ["continuous", t("Suivre le niveau en continu")]]} />
+              {["high", "low"].includes(context.detectionGoal) ? <Field label={t("Hauteur du niveau à détecter (mm)")} hint={t("Mesurée depuis le fond. Facultatif : une première position sera proposée.")}><Input type="number" min="0" value={context.detectionHeight} placeholder={t("À définir")} onChange={e => changeContext({ detectionHeight: e.target.value })} /></Field> : null}
+              <SelectField label={t("Réaction recherchée")} value={context.responsePriority} onChange={v => changeContext({ responsePriority: v as LevelContext["responsePriority"] })}
+                options={[["unknown", t("À définir")], ["limit", t("Course courte près d’un niveau limite")], ["movement", t("Course plus longue avant détection")]]} />
+              <p className="t-caption text-muted-foreground">{t("Une course plus longue peut convenir à un liquide en mouvement. La résistance aux déclenchements intempestifs reste à vérifier dans votre application.")}</p>
             </>}
+            {question >= 2 ? questionProblems.map(e => <p key={e} className="notice-danger t-body" role="alert">{t(e)}</p>) : null}
           </div>
           <aside className="questionnaire-examples">
-            <NeedExamples key={question} questionKey={["level_application", "level_liquid", "level_installation"][question]!} />
+            <NeedExamples key={question} questionKey={["level_application", "level_liquid", "level_installation", "level_detection"][question]!} />
           </aside>
         </div>
         <div className="questionnaire-navigation lv-question-nav">
           <Button variant="ghost" onClick={() => question > 0 ? setQuestion(q => q - 1) : go("choice")}>{t("Précédent")}</Button>
-          <Button variant="secondary" onClick={advanceQuestion} disabled={question === 1 && errors.length > 0}>{t("À préciser plus tard")}</Button>
-          <Button size="lg" disabled={question === 1 && errors.length > 0} onClick={advanceQuestion}>
-            {t(returnFromLiquid ? "Revenir au configurateur" : question === 2 ? "Ouvrir le configurateur" : "Continuer")}</Button>
+          <Button variant="secondary" onClick={advanceQuestion} disabled={(question === 1 && errors.length > 0) || (question >= 2 && questionProblems.length > 0)}>{t("À préciser plus tard")}</Button>
+          <Button size="lg" disabled={(question === 1 && errors.length > 0) || (question >= 2 && questionProblems.length > 0)} onClick={advanceQuestion}>
+            {t(returnFromLiquid ? "Revenir au configurateur" : question === 3 ? "Ouvrir le configurateur" : "Continuer")}</Button>
         </div>
       </section>
     </main> : null}
@@ -253,35 +280,46 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
       <div className="lv-config-grid">
         <aside ref={controlsRef} className="lv-controls panel-block" tabIndex={0} aria-label={t("Votre configuration")}>
           <h2 className="t-title-s">{t("Votre configuration")}</h2>
+          {context.tankHeight === "" || context.detectionGoal === "unknown" ? <p className="t-caption text-muted-foreground">{t("Les informations encore inconnues utilisent une première proposition modifiable ci-dessous.")}</p> : null}
           {guidance ? <div className="notice-warning lv-guidance" role="status"><p className="t-body">{t(guidance.message)}</p>
             <div className="lv-remedies">{guidance.actions.map(action => <Button key={action} variant="secondary" onClick={() => remedy(action)}>{t(REMEDY_LABELS[action])}</Button>)}</div>
           </div> : null}
-          <Choice label={t("Mode de détection")} value={config.mode} onChange={mode => changeConfig({ mode, ...(mode === "continuous" ? { reachMm: config.tankHeightMm } : {}) })} options={[["points", t("Par points")], ["continuous", t("En continu")]]} />
+          <Choice label={t("Mode de détection")} value={config.mode} onChange={mode => changeConfig(fitStemToPoints({ ...config, mode }))} options={[["points", t("Par points")], ["continuous", t("En continu")]]} />
           {config.mode === "points" ? <SelectField label={t("Points de détection souhaités")} value={String(config.count)} onChange={v => { setPlaying(false); setConfig(c => setPointCount(c, Number(v))); }}
             options={Array.from({ length: 12 }, (_, i) => [String(i + 1), `${i + 1} ${t(i === 0 ? "point" : "points")}`] as const)} /> :
             <p className="t-caption">{t("La tige est étendue à la hauteur de la cuve pour illustrer le suivi du niveau. La plage réellement mesurable reste à confirmer.")}</p>}
           {config.mode === "points" ? <p className="t-caption text-muted-foreground">{t("Changer le nombre répartit les points et allonge la tige si nécessaire.")}</p> : null}
+          {config.mode === "points" && config.count === 1 ? <Field group label={t("Niveau à détecter")}><Choice label={t("Niveau à détecter")} value={config.closedWhen} onChange={goal => changeConfig(setDetectionGoal(config, goal))}
+            options={[["high", t("Niveau haut")], ["low", t("Niveau bas")]]} /></Field> : null}
+          {config.orientation === "vertical" && config.mode === "points" && config.count === 1 ? <SelectField label={t("Réaction recherchée")} value={config.travelPreference} onChange={v => changeConfig(setTravelPreference(config, v as "short" | "long"))}
+            options={[["short", t("Course courte près d’un niveau limite")], ["long", t("Course plus longue avant détection")]]} /> : null}
           <Field group label={t("Orientation")}><Choice label={t("Orientation")} value={config.orientation} onChange={orientation => changeConfig({ orientation })}
             options={[["vertical", t("Verticale")], ["horizontal", t("Horizontale")]]} /></Field>
-          {config.orientation === "vertical" ? <Field group label={t("Fixation dans la cuve")}><Choice label={t("Fixation")} value={config.mounting} onChange={mounting => changeConfig({ mounting })}
-            options={[["top", t("Par le haut")], ["bottom", t("Par le fond")]]} /></Field> :
+          {config.orientation === "vertical" ? <>
+            <SelectField label={t("Fixation dans la cuve")} value={config.mounting} onChange={v => changeConfig(setMounting(config, v as LevelConfiguration["mounting"]))}
+              options={[["support", t("Capteur droit, hauteur de fixation libre")], ["top", t("Ouverture imposée en haut")], ["bottom", t("Insertion par le fond")]]} />
+            <p className="t-caption text-muted-foreground">{config.mounting === "support" ? <>{t("Fixation proposée à")} {Math.round(mountingDatum(config) * 10) / 10} mm. {t("Le capteur reste droit. Déplacez le point pour ajuster sa position.")}</> : t(config.mounting === "bottom" ? "Le capteur est retourné. Cette construction et sa logique de contact sont à confirmer avec Standex." : "La fixation reste en haut ; la tige rejoint la zone à détecter.")}</p>
+          </> :
             <SelectField label={t("Finition de montage")} value={config.connection} onChange={v => changeConfig({ connection: v as LevelConfiguration["connection"] })}
               options={[["standard", t("Standard")], ["DK", "DK"], ["DL", "DL"], ["GZ", "GZ"]]} />}
           <RangeField label={t("Hauteur utile de la cuve")} value={config.tankHeightMm} min={60} max={MAX_REACH_MM} step={10} onChange={height => {
             setPlaying(false); setExported(false);
             setLevel(l => l * height / config.tankHeightMm); setConfig(c => resizeTank(c, height));
           }} />
-          <p className="t-caption text-muted-foreground">{t("Changer la hauteur ajuste la tige et les points proportionnellement.")}</p>
+          <p className="t-caption text-muted-foreground">{t("Changer la hauteur recale les points et le montage ; les dimensions des flotteurs restent fixes.")}</p>
           {config.orientation === "vertical" ? <><RangeField label={t("Longueur souhaitée sous fixation")} value={config.reachMm} min={25} max={MAX_REACH_MM} step={0.5} onChange={reachMm => changeConfig({ reachMm })} />
             <p className="t-caption text-muted-foreground">{t("La longueur de tige oriente la famille : plastique jusqu’à 250 mm, inox jusqu’à 2 000 mm. Le liquide et la température peuvent imposer l’inox.")}</p></> : null}
           {config.mode === "points" ? <>
             <div className="lv-field"><h3 className="t-body font-semibold">{t("Position des points")}</h3><p className="t-caption text-muted-foreground">{t("Hauteurs souhaitées depuis le fond de la cuve.")}</p></div>
             {config.pointsMm.map((point, i) => <RangeField key={i} label={`${t("Point")} ${i + 1}`} value={point} {...pointBounds(config, i)}
-              onChange={v => changeConfig({ pointsMm: config.pointsMm.map((p, index) => index === i ? v : p) })} />)}
+              onChange={v => { const next = { ...config, pointsMm: config.pointsMm.map((p, index) => index === i ? v : p) }; changeConfig(config.count === 1 ? fitStemToPoints(next) : next); }} />)}
             {config.count > 1 ? <SelectField label={t("Répartition sur les flotteurs")} value={String(config.pointsPerFloat)}
-              onChange={v => changeConfig({ pointsPerFloat: Number(v) as 1 | 2 })} options={[["2", t("Jusqu’à 2 points par flotteur")], ["1", t("1 point par flotteur")]]} /> :
-              <SelectField label={t("Signal demandé")} value={config.closedWhen} onChange={v => changeConfig({ closedWhen: v as "low" | "high" })}
-                options={[["low", t("Circuit fermé au niveau bas")], ["high", t("Circuit fermé au niveau haut")]]} />}
+              onChange={v => changeConfig({ pointsPerFloat: Number(v) as 1 | 2 })} options={[["2", t("Jusqu’à 2 points par flotteur")], ["1", t("1 point par flotteur")]]} /> : null}
+            {config.count === 1 && config.orientation === "vertical" && !isCompact(family) ? <>
+              <RangeField label={t("Course du flotteur entre les butées")} value={config.floatTravelMm} min={2} max={Math.min(100, config.tankHeightMm - 32)} step={.5}
+                onChange={floatTravelMm => changeConfig(fitStemToPoints({ ...config, floatTravelMm }))} />
+              <p className="t-caption text-muted-foreground">{t("Les collerettes limitent le mouvement autour du niveau choisi, même avec une longue tige.")}</p>
+            </> : null}
           </> : null}
           <div className="lv-study-details">
           <section className="lv-family-card" aria-live="polite">
@@ -324,7 +362,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           </div>
 
         </section>
-        <LevelMonitor configuration={config} level={level} available={signalAvailable} />
+        <LevelMonitor configuration={config} family={family} level={level} available={signalAvailable} />
       </div>
     </main> : null}
 
@@ -356,7 +394,9 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             </div>
             <ReviewFacts rows={[
               [t("Détection"), config.mode === "continuous" ? t("En continu") : `${config.count} ${t("point(s)")} · ${config.pointsMm.join(", ")} mm`],
-              [t("Montage"), config.orientation === "vertical" ? `${t("Vertical")} · ${t(config.mounting === "top" ? "par le haut" : "par le fond")}` : `${t("Horizontal")} · ${config.connection}`],
+              [t("Montage"), config.orientation === "vertical" ? `${t("Vertical")} · ${t(config.mounting === "top" ? "Ouverture imposée en haut" : config.mounting === "support" ? "Capteur droit, hauteur de fixation libre" : "Insertion par le fond")}` : `${t("Horizontal")} · ${config.connection}`],
+              ...(config.mode === "points" && config.count === 1 ? [[t("Niveau à détecter"), t(config.closedWhen === "high" ? "Niveau haut" : "Niveau bas")],
+                [t("Forme de contact proposée"), proposedContactForm(config, family) ? `${t("Forme")} ${proposedContactForm(config, family)}` : t("À confirmer avec Standex")]] as const : []),
               ...(config.orientation === "vertical" ? [[t("Longueur souhaitée"), `${config.reachMm} mm`] as const] : []),
               [t("Câble"), cableLength ? `${cableLength} mm` : t("À définir")],
               [t("Terminaison"), t(terminationLabel(termination))],

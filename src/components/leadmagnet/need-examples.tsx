@@ -20,6 +20,11 @@ const EXAMPLES: Record<string, readonly string[]> = {
     "La cuve est nettoyée chaque semaine avec un détergent à 60 °C. Des dépôts peuvent se former sur la tige ; le flotteur doit rester accessible pour le nettoyage.",
     "Le réservoir est installé sur un véhicule soumis aux vibrations et aux freinages. Le liquide forme des vagues ; éviter les alertes brèves dues aux mouvements du véhicule.",
   ],
+  level_detection: [
+    "Signaler un manque de liquide à 30 mm du fond. L’ouverture est en haut de la cuve : une longue tige doit atteindre cette zone basse.",
+    "Arrêter le remplissage au niveau haut. Une course courte du flotteur est souhaitée près de cette limite.",
+    "Le liquide bouge dans un réservoir peu profond. Prévoir une course plus longue du flotteur et vérifier les déclenchements en conditions réelles.",
+  ],
   detection_goal: [
     "Détecter que le réservoir d’eau amovible est complètement inséré dans une machine à café professionnelle.",
     "Détecter la fermeture du tiroir de cartouche d’un appareil de diagnostic médical.",

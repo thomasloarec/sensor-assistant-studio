@@ -21,7 +21,7 @@ La progression est **Mon besoin → Configuration → Résultat → Avec Standex
 
 Cette progression remplace, pour le niveau, l’idée d’un atelier magnétique évoquée dans les dossiers techniques antérieurs. Cela ne change pas les principes techniques du cerveau ni les décisions déjà validées sur les sorties codées.
 
-## 2. Trois écrans de questions
+## 2. Quatre écrans de questions
 
 Les écrans reprennent les composants et la présentation des questionnaires existants. Une donnée inconnue reste explicitement « À définir » ; elle n’est jamais remplie par une hypothèse cachée. « À préciser plus tard » permet d’explorer, mais n’équivaut pas à une compatibilité positive.
 
@@ -45,6 +45,8 @@ Les exemples de cet écran portent uniquement sur le fluide, ses additifs évent
 
 ### Écran 3 — Dans quelles conditions le capteur sera-t-il installé ?
 
+- Accès : libre / ouverture haute imposée / paroi latérale / insertion par le fond / à définir.
+- Hauteur utile de la cuve, du fond au niveau maximal, facultative (60–2 000 mm dans cet aperçu).
 - Cuve : pression atmosphérique / pression ou vide / à définir.
 - Corps du capteur : immergé en permanence / par intermittence / à définir.
 - Sortie de câble et câble : restent hors du liquide / sont immergés même occasionnellement / à définir.
@@ -53,6 +55,14 @@ Les exemples de cet écran portent uniquement sur le fluide, ses additifs évent
 Le corps mouillé et le câble mouillé sont deux informations distinctes. Une détection de bas de cuve peut imposer une immersion permanente sans immerger le câble. La pression chiffrée, les cycles, la durée de vie et les détails de nettoyage seront complétés lorsque la configuration l’exige ou lors du dossier Standex, plutôt que de bloquer cette découverte.
 
 Les trois exemples aident à rédiger les contraintes libres : accès limité à un orifice de 25 mm et remplacement sans démontage ; nettoyage hebdomadaire à 60 °C et dépôts ; vibrations, freinages et vagues dans un véhicule. Ils ne recopient pas les réponses des menus et ne remplissent pas le champ.
+
+Les champs pression et immersion sont regroupés dans un détail dépliable afin de laisser l’accès, la hauteur et les contraintes libres au premier plan.
+
+### Écran 4 — Quel niveau faut-il détecter ?
+
+Niveau haut, bas, plusieurs niveaux, continu ou à définir. Une hauteur de détection facultative est mesurée depuis le fond. La réaction souhaitée distingue une course courte près d’une limite d’une course plus longue avant détection. Cette dernière est une piste pour un liquide en mouvement, sans garantie de filtrage des vagues ni d’hystérésis.
+
+La première entrée dans le configurateur utilise ces réponses explicites. Aucune interprétation automatique du texte libre n’est inventée. À défaut d’information, une cuve de 100 mm et un besoin haut constituent une proposition modifiable, signalée comme telle. Un accès libre et un niveau bas abaissent un capteur compact droit ; une ouverture imposée en haut conduit à une tige longue avec une course localisée. Un changement de ces réponses régénère la proposition. Un retour sans changement, ou une modification du liquide seul, conserve les réglages manuels.
 
 ## 3. Paramètres du configurateur
 
@@ -63,13 +73,15 @@ Trois zones sur grand écran : **réglages, piste et suite à gauche**, **cuve e
 | Mode | Par points / continu | Garder le besoin de continu si aucun montage proposé ne le couvre ; ne pas le transformer silencieusement en un point. |
 | Nombre de points | 1 à 12 dans l’aperçu | Nombre de commutations souhaitées, distinct des flotteurs, des contacts physiques et des fils. Changer le nombre redistribue les positions et allonge la tige verticale si nécessaire ; le texte l’annonce. Une longueur ajustée manuellement n’est pas réparée en arrière-plan. |
 | Orientation | Verticale / horizontale | Un capteur horizontal seul ne couvre pas une demande multipoint ou continue. Le message propose « Utiliser un seul point », « Passer en vertical » et une demande spécifique. Le besoin reste conservé jusqu’au clic explicite. |
-| Fixation | Par le haut / par le fond en vertical | Ne pas confondre entrée du capteur dans la cuve et seuil haut/bas à détecter. |
+| Fixation | Capteur droit à hauteur libre / ouverture haute imposée / insertion par le fond | Le niveau bas ne retourne jamais automatiquement le capteur. À hauteur libre, le point commande la position d’un support illustratif ; le câble reste au-dessus du flotteur. L’insertion par le fond est un choix explicite avec logique de contact à confirmer. |
 | Montage latéral | Standard / DK / DL / GZ | Le prototype conserve ce choix. Les géométries distinctes et le filtrage selon accès intérieur/extérieur restent à compléter après validation des plans. |
-| Hauteur utile de cuve | 60 à 2 000 mm dans l’aperçu | Repère depuis le fond, distinct de la longueur de tige. Le changement recale proportionnellement tige, points et liquide ; le texte l’annonce. Si le capuchon fixe manque de place après réduction, la tige utilise la profondeur restante. Le plafond d’interface suit le dessin LS05, sans constituer une limite des cuves possibles. |
+| Hauteur utile de cuve | 60 à 2 000 mm dans l’aperçu | Repère depuis le fond, distinct de la longueur de tige. Le changement recale points, montage et liquide. Les corps compacts restent fixes ; leur point est recalé sur le montage. Les tiges configurables et leur course locale suivent la hauteur, avec dégagements fixes conservés. Le plafond d’interface suit le dessin LS05, sans constituer une limite des cuves possibles. |
 | Longueur sous fixation | 25 à 2 000 mm dans l’aperçu | Oriente la famille, avec un passage du plastique vers l’inox au-delà de 250 mm ; le contexte thermique peut aussi imposer l’inox. LS01 et LS02 conservent leurs enveloppes fixes. Un raccourcissement manuel insuffisant déclenche une action « Adapter la tige aux points ». |
-| Positions des points | Hauteurs en mm depuis le fond | Chaque curseur s’arrête avant son voisin. Un ancien état incohérent propose « Répartir les points ». En horizontal, l’enveloppe pivotante garde un dégagement illustratif de 45 mm sous le point et 12 mm au-dessus ; « Recentrer le point » rétablit le mouvement sans collision avec la cuve. Ce ne sont pas des cotes de montage qualifiées. |
+| Positions des points | Hauteurs en mm depuis le fond | Chaque curseur s’arrête avant son voisin. Un ancien état incohérent propose « Répartir les points ». En horizontal, l’enveloppe pivotante garde un dégagement illustratif de 45 mm sous son pivot et 12 mm au-dessus. Pour le bas, le pivot se situe 28,8 mm au-dessus du point ; pour le haut, il est à hauteur du point. « Recentrer le point » rétablit le mouvement. Ces conventions ne sont pas des cotes constructeur qualifiées. |
 | Répartition des flotteurs | 1 ou jusqu’à 2 points par flotteur | Proposition d’architecture à confirmer. Deux flotteurs peuvent représenter quatre points. La disposition des butées, contacts et résistances relève du BE. |
-| Signal simple souhaité | Circuit fermé au niveau bas / haut | Parler du comportement attendu, pas demander au client de comprendre le reed interne ou le déplacement sur PCB. |
+| Niveau simple souhaité | Niveau haut / niveau bas | Déduit le comportement du signal et propose B / A pour un LS01/LS02 droit. Aucune forme interne de reed n’est demandée. Les autres constructions conservent la forme à confirmer. |
+| Réaction recherchée | Course courte / plus longue | Préférence LS01 / LS02 si le montage compact convient. Une cuve haute ou étroite n’est pas, à elle seule, une preuve permettant ce choix. |
+| Course locale du flotteur | Réglable entre les butées pour une tige à un point | La longueur de tige atteint la zone ; la course limite le déplacement près du point. Les collerettes fixes ne suivent pas le liquide. |
 | Forme spécifique | Choix explicite + description libre | Conserver les besoins de niveau et de montage, puis poursuivre vers la revue. Ne pas forcer une famille standard ni inventer une forme fabriquable. |
 
 La famille est une **piste à étudier**, jamais une référence recommandée S1 dans ce premier pilote. Aucun code article n’est fabriqué à partir de la nomenclature.
@@ -91,6 +103,10 @@ Le liquide oriente ici une matière candidate très grossièrement ; cette inter
 L’utilisateur fait monter ou descendre le liquide avec un curseur ou une lecture animée. Les flotteurs bougent dans leurs courses représentées. L’animation s’arrête à l’extrémité, à la fermeture du panneau ou lorsque l’onglet est masqué. Le mode système de réduction des mouvements conserve le curseur manuel.
 
 Chaque flotteur conserve la même géométrie pendant toute l’animation. Ses butées sont calculées depuis la configuration et restent fixes lorsque le liquide varie. Les courses voisines sont séparées pour empêcher toute superposition de corps. Dans la maquette, le flotteur illustratif mesure 19 mm de haut et le jeu entre corps est de 2 mm ; ces conventions de représentation ne valident pas une construction LS04/LS05. Une configuration impossible à représenter suspend la scène et le signal et indique le réglage à corriger, sans comprimer les flotteurs.
+
+Pour un point, mouvement et signal emploient le même calcul de position du flotteur : le haut s’active à sa butée haute, le bas à sa butée basse. Le décalage illustratif liquide/centre du flotteur est de 4 mm ; ce n’est pas un calcul de flottabilité. La hauteur demandée et la hauteur illustrative de commutation doivent coïncider pour activer la scène. Le montage horizontal partage aussi sa progression de rotation avec le signal. Aucun retard, filtrage ou hystérésis physique n’est simulé.
+
+Les courses compactes représentées sont 10,5 mm et 34 mm, dérivées des enveloppes actuelles et de leurs marges, à confirmer sur plans détaillés. Pour les LS04/LS05 à un point, la course est localisée autour du seuil demandé. Les formes produit A/B proposées ne décrivent pas le type du reed nu : l’astuce de placement sur PCB reste interne.
 
 | Demande | Lecture proposée |
 |---|---|
@@ -134,7 +150,7 @@ Le premier pilote permet de juger la compréhension du parcours, le nombre de qu
 
 Priorités après cette revue :
 
-1. Valider avec Thomas le découpage en trois écrans, les libellés des deux cartes et la place des réglages avancés.
+1. Tester avec Thomas les quatre écrans, la proposition initiale de montage et la localisation des courses.
 2. Relire avec Claude les frontières entre besoin, illustration, piste de famille et qualification, sans élargir les valeurs documentaires.
 3. Intégrer les réponses BE aux constructions LS, aux variantes de montage et aux sorties codées ; remplacer le filtrage de démonstration par les règles du cerveau validées.
 4. Porter les géométries et matières au rendu réaliste final, puis reprendre la recette avec les vrais STEP.

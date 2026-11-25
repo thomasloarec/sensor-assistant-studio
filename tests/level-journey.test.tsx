@@ -36,6 +36,7 @@ test("level questions start with free application text; examples never fill it a
   await act(async () => fireEvent.click(view.getByRole("button", { name: "Continuer", exact: true })));
   expect(view.getByText(/seul un orifice de 25 mm/)).toBeTruthy();
   expect(view.queryByText(/Vous comparerez les montages/)).toBeNull();
+  await act(async () => fireEvent.click(view.getByRole("button", { name: "Continuer", exact: true })));
   await act(async () => fireEvent.click(view.getByRole("button", { name: "Ouvrir le configurateur" })));
   await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "4" } }));
   expect(view.getByRole("heading", { name: "LS04", exact: true })).toBeTruthy();
@@ -50,12 +51,42 @@ test("level questions start with free application text; examples never fill it a
   expect((view.getByRole("textbox", { name: "Votre application" }) as HTMLTextAreaElement).value).toContain("Cuve sous la machine");
 });
 
+test("intake seeds a top-mounted low level with a local float range; subsequent edits retain manual settings", async () => {
+  setLocale("fr");
+  const view = render(<LevelJourney active={false} />);
+  const click = async (name: string) => { await act(async () => fireEvent.click(view.getByRole("button", { name, exact: true }))); };
+  const select = async (name: string, value: string) => { await act(async () => fireEvent.change(view.getByLabelText(name), { target: { value } })); };
+  await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer");
+  await select("Accès pour installer le capteur", "top");
+  await changeInput(view.getByRole("spinbutton", { name: /Hauteur utile de la cuve/ }), "180");
+  await click("Continuer"); await select("Niveau à détecter", "low");
+  await changeInput(view.getByRole("spinbutton", { name: /Hauteur du niveau à détecter/ }), "30");
+  await click("Ouvrir le configurateur");
+  expect(view.getByRole("heading", { name: "LS04", exact: true })).toBeTruthy();
+  expect((view.getByLabelText("Fixation dans la cuve") as HTMLSelectElement).value).toBe("top");
+  expect(Number((view.getByRole("slider", { name: "Point 1" }) as HTMLInputElement).value)).toBe(30);
+  expect(Number((view.getByRole("slider", { name: "Course du flotteur entre les butées" }) as HTMLInputElement).value)).toBe(10.5);
+  await changeInput(view.getByRole("slider", { name: "Course du flotteur entre les butées" }), "20");
+  await click("1. Mon besoin"); await click("2. Configuration");
+  expect(Number((view.getByRole("slider", { name: "Course du flotteur entre les butées" }) as HTMLInputElement).value)).toBe(20);
+  await click("1. Mon besoin"); await click("Continuer"); await click("Continuer");
+  await select("Accès pour installer le capteur", "free"); await click("Continuer"); await click("Ouvrir le configurateur");
+  expect(view.getByRole("heading", { name: "LS01", exact: true })).toBeTruthy();
+  const monitor = within(view.getByRole("complementary", { name: "Moniteur de niveau" }));
+  expect(monitor.getByText("Forme A")).toBeTruthy();
+  await click("Niveau haut"); expect(monitor.getByText("Forme B")).toBeTruthy();
+  await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "172");
+  expect(monitor.getByText("Signal inactif")).toBeTruthy();
+  await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "173");
+  expect(monitor.getByText("Signal actif")).toBeTruthy();
+});
+
 test("operator monitor follows resizes and explicit repairs across point, horizontal and continuous modes", async () => {
   setLocale("fr");
   const view = render(<LevelJourney active={false} />);
   const click = async (name: string) => { await act(async () => fireEvent.click(view.getByRole("button", { name, exact: true }))); };
   await click("Configurer un capteur de niveau");
-  await click("Continuer"); await click("Continuer"); await click("Ouvrir le configurateur");
+  await click("Continuer"); await click("Continuer"); await click("Continuer"); await click("Ouvrir le configurateur");
   await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "4" } }));
   const monitor = view.getByRole("complementary", { name: "Moniteur de niveau" });
   expect(monitor.querySelectorAll("input, select, textarea, button")).toHaveLength(0);
@@ -75,7 +106,7 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
   expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("4");
   await click("Utiliser un seul point");
   expect(view.getByRole("heading", { name: "LS03", exact: true })).toBeTruthy();
-  expect(monitor.querySelector('[data-contact="closed"]')).toBeTruthy();
+  expect(monitor.querySelector('[data-contact="open"]')).toBeTruthy();
   await click("En continu");
   await click("Passer en vertical");
   expect(Number((view.getByRole("slider", { name: "Longueur souhaitée sous fixation" }) as HTMLInputElement).value)).toBe(60);

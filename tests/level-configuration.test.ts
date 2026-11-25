@@ -35,7 +35,8 @@ describe("level journey prototype guards", () => {
     expect(requestedFloats({ ...four, pointsPerFloat: 1 })).toBe(4);
   });
   test("orientation and length select architectures without silently changing the requested mode", () => {
-    expect(architectureFamily({ ...INITIAL_CONFIGURATION, reachMm: 50 })).toBe("LS02");
+    expect(architectureFamily({ ...INITIAL_CONFIGURATION, travelPreference: "long", reachMm: 56 })).toBe("LS02");
+    expect(architectureFamily({ ...INITIAL_CONFIGURATION, reachMm: 50 })).toBe("LS04");
     expect(architectureFamily({ ...INITIAL_CONFIGURATION, reachMm: 130 })).toBe("LS04");
     expect(architectureFamily({ ...INITIAL_CONFIGURATION, reachMm: 300 })).toBe("LS05");
     const c = { ...INITIAL_CONFIGURATION, mode: "continuous" as const, orientation: "horizontal" as const };
@@ -71,7 +72,7 @@ describe("level journey prototype guards", () => {
     expect(brief.requested_configuration.reachMm).toBe(150);
   });
   test("a nearby standard length never silently becomes the requested dimension", () => {
-    const c = { ...INITIAL_CONFIGURATION, reachMm: 50 };
+    const c = { ...INITIAL_CONFIGURATION, travelPreference: "long" as const, reachMm: 50 };
     const result = assessConfiguration(water, c);
     expect(result.selected?.family).toBe("LS02");
     expect(result.selected?.reasons.join(" ")).toContain("56 mm");

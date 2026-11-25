@@ -1,13 +1,14 @@
 import type { CSSProperties } from "react";
 import ContactCircuit from "@/components/standex/workshop/contact-circuit";
 import { t } from "@/lib/i18n/core";
-import { illustrativeReading, type LevelConfiguration } from "@/lib/level/configuration";
+import { illustrativeReading, proposedContactForm, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 
 /** Operator display of the requested behaviour; no invented resistance codes. */
-export function LevelMonitor({ configuration: c, level, available }: {
-  configuration: LevelConfiguration; level: number; available: boolean;
+export function LevelMonitor({ configuration: c, family, level, available }: {
+  configuration: LevelConfiguration; family: Family; level: number; available: boolean;
 }) {
-  const reading = illustrativeReading(c, level);
+  const reading = illustrativeReading(c, level, family);
+  const form = proposedContactForm(c, family);
   const percent = Math.round(reading.steppedMm / c.tankHeightMm * 100);
   return <aside className="lv-monitor panel-block" aria-label={t("Moniteur de niveau")}>
     <header><p className="t-label">{t("Moniteur de niveau")}</p>
@@ -28,9 +29,11 @@ export function LevelMonitor({ configuration: c, level, available }: {
       </> : c.count === 1 ? <>
         <p className="t-title-l lv-monitor-value">{t(reading.active ? "Signal actif" : "Signal inactif")}</p>
         <ContactCircuit contact={reading.active ? "closed" : "open"} />
-        <div className="lv-single-level"><span className="t-caption">{t("Point de détection")}</span>
+        <div className="lv-single-level"><span className="t-caption">{t(c.closedWhen === "high" ? "Détection du niveau haut" : "Détection du niveau bas")}</span>
           <span className="t-title-l t-metric">{c.pointsMm[0]} mm</span>
-          <span className="t-body">{t(reading.level >= c.pointsMm[0]! ? "Niveau atteint" : "Niveau non atteint")}</span></div>
+          <span className="t-body">{t(reading.active ? "Niveau demandé détecté" : "Niveau demandé non détecté")}</span></div>
+        <div className="lv-field t-caption"><span className="font-semibold">{family} · {t("Forme de contact proposée")}</span>
+          <span>{form ? `${t("Forme")} ${form}` : t("À confirmer avec Standex")}</span></div>
       </> : <>
         <output className="lv-monitor-value t-display-m">{t("Niveau")} {reading.zone}</output>
         <ol className="lv-level-ladder" aria-label={t("Niveaux détectés")}>

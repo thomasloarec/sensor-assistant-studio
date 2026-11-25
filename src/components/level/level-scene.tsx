@@ -5,7 +5,7 @@ import { ContactShadows, Html, Line } from "@react-three/drei";
 import { CatmullRomCurve3, DoubleSide, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
-import { FLOAT_HEIGHT_MM, floatCentres, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
+import { FLOAT_HEIGHT_MM, floatCentres, horizontalFloatPosition, horizontalMountHeight, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 import { SceneLoading, SceneUnavailable } from "./scene-loading";
 import { SceneFrameReady } from "./scene-frame-ready";
 
@@ -79,6 +79,21 @@ function PlasticEndCap({ color }: { color: string }) {
     {[0,1,2,3].map(i => <mesh key={i} castShadow><latheGeometry args={[profile, 24, i * Math.PI / 2 + .07, Math.PI / 2 - .14]} />
       <meshStandardMaterial color={color} roughness={.38} side={DoubleSide} /></mesh>)}</group>;
 }
+function ClipCollar({ y, color }: { y: number; color: string }) {
+  // Open C-ring clipped into a stem groove; proportions estimated from the supplied photos.
+  const ring = useMemo(() => {
+    const shape = new Shape(), gap = .32, outer = 9.5, inner = 4.05;
+    shape.moveTo(outer * Math.cos(gap), outer * Math.sin(gap));
+    shape.absarc(0, 0, outer, gap, Math.PI * 2 - gap, false);
+    shape.lineTo(inner * Math.cos(gap), -inner * Math.sin(gap));
+    shape.absarc(0, 0, inner, Math.PI * 2 - gap, gap, true); shape.closePath();
+    return shape;
+  }, []);
+  return <mesh name="clipped-float-stop" position={[0, y + .65, 0]} rotation={[Math.PI / 2, 0, .35]} castShadow>
+    <extrudeGeometry args={[ring, { depth: 1.3, bevelEnabled: true, bevelSegments: 2, bevelSize: .15, bevelThickness: .1, steps: 1 }]} />
+    <meshStandardMaterial color={color} roughness={.4} />
+  </mesh>;
+}
 function Cable({ origin, length = 38 }: { origin: [number, number, number]; length?: number }) {
   const path = useMemo(() => new CatmullRomCurve3([new Vector3(...origin),
     new Vector3(origin[0], origin[1] + 12, origin[2]),
@@ -94,12 +109,20 @@ function VerticalSensor({ config, family, level, material }: {
   const color = steel ? MAT.steel : material === "PA" ? MAT.pa : MAT.pp;
   const mechanics = verticalMechanics(config, family);
   const reach = mechanics.reachMm;
-  const top = config.mounting === "top";
+  const top = config.mounting !== "bottom";
   const datum = mechanics.datumMm;
   const end = mechanics.endMm;
   const centre = (datum + end) / 2;
   const floats = floatCentres(config, level, family);
+  const stops = mechanics.floats.flatMap(range => [range.lowerMm - FLOAT_HEIGHT_MM / 2 - .75, range.upperMm + FLOAT_HEIGHT_MM / 2 + .75])
+    .sort((a, b) => a - b).filter((y, i, all) => i === 0 || y - all[i - 1]! > 2);
   return <group name={`level-sensor-${family}`}>
+    {config.mounting === "support" && datum < config.tankHeightMm - 1 ? <group name="adjustable-mount-support">
+      <mesh position={[-tankWidth(config.tankHeightMm) / 4 + 4, datum - .5, 0]} receiveShadow><boxGeometry args={[tankWidth(config.tankHeightMm) / 2 + 8, 1.5, 16]} />
+        <meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.3} /></mesh>
+      <mesh position={[-tankWidth(config.tankHeightMm) / 2 + 1, datum + 6, 0]}><boxGeometry args={[1.5, 14, 16]} />
+        <meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.3} /></mesh>
+    </group> : null}
     {family === "LS04" ? <group position={[0, centre + (top ? 4 : -4), 0]}><GroovedStem reach={reach - 8} color={color} /></group> :
       <Cylinder radius={steel ? 4 : 3.25} height={reach} y={centre} color={color} metal={steel} />}
     <Cylinder radius={steel ? 13 : 8.5} height={6} y={datum + (top ? 5 : -5)} color={color} metal={steel} sides={6} />
@@ -112,10 +135,8 @@ function VerticalSensor({ config, family, level, material }: {
     {family === "LS04" ? <group position={[0, end, 0]} rotation={[0, 0, top ? 0 : Math.PI]}><PlasticEndCap color={color} /></group> :
       <Cylinder radius={5.8} height={1.2} y={end} color={steel ? MAT.steel : MAT.pa} metal={steel} />}
     {floats.map((y, i) => <group name={`level-float-${i + 1}`} position={[0, y, 0]} key={i}><FloatBody steel={steel} color={color} grooved={family === "LS04"} /></group>)}
-    {mechanics.valid && (family === "LS04" || family === "LS05") ? mechanics.floats.flatMap((range, i) => [
-      <Cylinder key={`${i}-lower`} radius={5} height={1.5} y={range.lowerMm - FLOAT_HEIGHT_MM / 2 - 0.75} color={steel ? MAT.steel : MAT.pa} metal={steel} />,
-      <Cylinder key={`${i}-upper`} radius={5} height={1.5} y={range.upperMm + FLOAT_HEIGHT_MM / 2 + 0.75} color={steel ? MAT.steel : MAT.pa} metal={steel} />,
-    ]) : null}
+    {mechanics.valid && (family === "LS04" || family === "LS05") ? stops.map((y, i) => family === "LS04"
+      ? <ClipCollar key={i} y={y} color={color} /> : <Cylinder key={i} radius={6} height={1.5} y={y} color={MAT.steel} metal />) : null}
     {top ? <Cable origin={[0, datum + 17, 0]} length={config.tankHeightMm * 0.3} /> :
       <group rotation={[Math.PI, 0, 0]}><Cable origin={[0, 17, 0]} /></group>}
   </group>;
@@ -123,8 +144,8 @@ function VerticalSensor({ config, family, level, material }: {
 /** LS03 standard plan: total 83, wet side 55.8, float Ø16.5, collar Ø21, M16×2, SW24. */
 function HorizontalSensor({ config, level, material }: { config: LevelConfiguration; level: number; material: string }) {
   const color = material === "PA" ? MAT.pa : MAT.pp;
-  const pivotHeight = config.pointsMm[0] ?? config.tankHeightMm * .5;
-  const angle = Math.asin(Math.max(-.8, Math.min(0, (level - pivotHeight) / 36)));
+  const pivotHeight = horizontalMountHeight(config);
+  const angle = Math.asin(-.8 * (1 - horizontalFloatPosition(config, level)));
   const fork = useMemo(() => {
     const shape = new Shape();
     shape.moveTo(-2.7, 2.7); shape.quadraticCurveTo(0, 4, 3, 2.7);

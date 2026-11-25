@@ -137,7 +137,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 30 entries: workshop magnet form, dimensions, comparative strength and material discovery.
     // + 209 entries: isolated liquid-level journey, controls and documentary screening.
     // + 13 entries: level application examples, equivalent choices and float spacing.
-    expect(Object.keys(dictionary)).toHaveLength(4625);
+    // + 49 entries: detection intent, mounting access, float stops and recovery.
+    expect(Object.keys(dictionary)).toHaveLength(4674);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

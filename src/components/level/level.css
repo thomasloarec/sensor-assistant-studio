@@ -4,7 +4,8 @@
 .lv-journey main { scroll-margin-top: calc(var(--standex-header-h, 56px) + 6rem); }
 .lv-embedded main { scroll-margin-top: 6rem; }
 .lv-topbar { max-width: 76rem; padding: .75rem 1rem; margin: auto; display: flex; gap: 1rem; align-items: center; justify-content: space-between; }
-.lv-project-stepper { width: min(74rem, calc(100% - 2rem)); margin: 1.5rem auto .75rem; }
+.lv-stepper-bar { width: 100%; padding: .75rem 1rem; background: var(--background); }
+.lv-project-stepper { width: 100%; max-width: none; margin: 0; }
 .lv-embedded .project-stepper-sticky { top: 0; }
 .lv-preview { display: inline-flex; padding: .45rem .8rem; border-radius: var(--r-pill); background: var(--surface-tint); color: var(--primary); }
 .lv-intro { max-width: 72rem; margin: auto; padding: 2rem 2rem 5rem; }
