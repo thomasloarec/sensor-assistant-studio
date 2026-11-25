@@ -46,7 +46,7 @@ Les exemples de cet écran portent uniquement sur le fluide, ses additifs évent
 ### Écran 3 — Dans quelles conditions le capteur sera-t-il installé ?
 
 - Accès : libre / ouverture haute imposée / paroi latérale / insertion par le fond / à définir.
-- Hauteur utile de la cuve, du fond au niveau maximal, facultative (60–2 000 mm dans cet aperçu).
+- Hauteur utile de la cuve, facultative, saisie en cm (6–1 000 cm dans cet aperçu). Le modèle conserve les mm : 190 cm deviennent 1 900 mm. La limite de vue de 10 m est indépendante des longueurs de tige catalogue.
 - Cuve : pression atmosphérique / pression ou vide / à définir.
 - Corps du capteur : immergé en permanence / par intermittence / à définir.
 - Sortie de câble et câble : restent hors du liquide / sont immergés même occasionnellement / à définir.
@@ -60,7 +60,7 @@ Les champs pression et immersion sont regroupés dans un détail dépliable afin
 
 ### Écran 4 — Quel niveau faut-il détecter ?
 
-Niveau haut, bas, plusieurs niveaux, continu ou à définir. Une hauteur de détection facultative est mesurée depuis le fond. La réaction souhaitée distingue une course courte près d’une limite d’une course plus longue avant détection. Cette dernière est une piste pour un liquide en mouvement, sans garantie de filtrage des vagues ni d’hystérésis.
+Niveau haut, bas, plusieurs niveaux, continu ou à définir. La hauteur de détection facultative reste en mm depuis le fond. « Le liquide peut-il faire des vaguelettes ? » remplace la question de course : niveau plutôt stable ou petits mouvements à ignorer, comme lorsque le réservoir bouge ou qu’une pompe démarre. Le second besoin oriente vers une course plus longue si le montage convient, sans garantie de filtrage des vagues ni d’hystérésis.
 
 La première entrée dans le configurateur utilise ces réponses explicites. Aucune interprétation automatique du texte libre n’est inventée. À défaut d’information, une cuve de 100 mm et un besoin haut constituent une proposition modifiable, signalée comme telle. Un accès libre et un niveau bas abaissent un capteur compact droit ; une ouverture imposée en haut conduit à une tige longue avec une course localisée. Un changement de ces réponses régénère la proposition. Un retour sans changement, ou une modification du liquide seul, conserve les réglages manuels.
 
@@ -72,15 +72,15 @@ Trois zones sur grand écran : **réglages, piste et suite à gauche**, **cuve e
 |---|---|---|
 | Mode | Par points / continu | Garder le besoin de continu si aucun montage proposé ne le couvre ; ne pas le transformer silencieusement en un point. |
 | Nombre de points | 1 à 12 dans l’aperçu | Nombre de commutations souhaitées, distinct des flotteurs, des contacts physiques et des fils. Changer le nombre redistribue les positions et allonge la tige verticale si nécessaire ; le texte l’annonce. Une longueur ajustée manuellement n’est pas réparée en arrière-plan. |
-| Orientation | Verticale / horizontale | Un capteur horizontal seul ne couvre pas une demande multipoint ou continue. Le message propose « Utiliser un seul point », « Passer en vertical » et une demande spécifique. Le besoin reste conservé jusqu’au clic explicite. |
+| Orientation | Verticale / horizontale | En mode points, un capteur horizontal par point avec sorties distinctes ; nombre et hauteurs conservés. Pour des points éloignés sur une tige, cette alternative est proposée si les dégagements, températures et accès le permettent. Le continu appelle une tige verticale ou une étude spécifique. |
 | Fixation | Capteur droit à hauteur libre / ouverture haute imposée / insertion par le fond | Le niveau bas ne retourne jamais automatiquement le capteur. À hauteur libre, le point commande la position d’un support illustratif ; le câble reste au-dessus du flotteur. L’insertion par le fond est un choix explicite avec logique de contact à confirmer. |
 | Montage latéral | Standard / DK / DL / GZ | Le prototype conserve ce choix. Les géométries distinctes et le filtrage selon accès intérieur/extérieur restent à compléter après validation des plans. |
-| Hauteur utile de cuve | 60 à 2 000 mm dans l’aperçu | Repère depuis le fond, distinct de la longueur de tige. Le changement recale points, montage et liquide. Les corps compacts restent fixes ; leur point est recalé sur le montage. Les tiges configurables et leur course locale suivent la hauteur, avec dégagements fixes conservés. Le plafond d’interface suit le dessin LS05, sans constituer une limite des cuves possibles. |
+| Hauteur utile de cuve | 60 à 10 000 mm dans le configurateur | Distincte de la tige limitée à 2 000 mm dans ce périmètre. Recale points, montage et liquide. Les corps compacts restent fixes. Fixation et tige utilisent le même arrondi et respectent l’espace disponible. Le suivi intégral retrouve sa pleine longueur lors du retour à une petite cuve ; un suivi continu sur plus de 2 m appelle une étude spécifique. |
 | Longueur sous fixation | 25 à 2 000 mm dans l’aperçu | Oriente la famille, avec un passage du plastique vers l’inox au-delà de 250 mm ; le contexte thermique peut aussi imposer l’inox. LS01 et LS02 conservent leurs enveloppes fixes. Un raccourcissement manuel insuffisant déclenche une action « Adapter la tige aux points ». |
 | Positions des points | Hauteurs en mm depuis le fond | Chaque curseur s’arrête avant son voisin. Un ancien état incohérent propose « Répartir les points ». En horizontal, l’enveloppe pivotante garde un dégagement illustratif de 45 mm sous son pivot et 12 mm au-dessus. Pour le bas, le pivot se situe 28,8 mm au-dessus du point ; pour le haut, il est à hauteur du point. « Recentrer le point » rétablit le mouvement. Ces conventions ne sont pas des cotes constructeur qualifiées. |
 | Répartition des flotteurs | 1 ou jusqu’à 2 points par flotteur | Proposition d’architecture à confirmer. Deux flotteurs peuvent représenter quatre points. La disposition des butées, contacts et résistances relève du BE. |
 | Niveau simple souhaité | Niveau haut / niveau bas | Déduit le comportement du signal et propose B / A pour un LS01/LS02 droit. Aucune forme interne de reed n’est demandée. Les autres constructions conservent la forme à confirmer. |
-| Réaction recherchée | Course courte / plus longue | Préférence LS01 / LS02 si le montage compact convient. Une cuve haute ou étroite n’est pas, à elle seule, une preuve permettant ce choix. |
+| Mouvements du liquide | Niveau stable / petits mouvements à ignorer | Préférence LS01 / LS02 si le montage compact convient. La forme de cuve seule ne permet pas ce choix ; aucun filtrage garanti n’est affirmé. |
 | Course locale du flotteur | Réglable entre les butées pour une tige à un point | La longueur de tige atteint la zone ; la course limite le déplacement près du point. Les collerettes fixes ne suivent pas le liquide. |
 | Forme spécifique | Choix explicite + description libre | Conserver les besoins de niveau et de montage, puis poursuivre vers la revue. Ne pas forcer une famille standard ni inventer une forme fabriquable. |
 
@@ -111,16 +111,18 @@ Les courses compactes représentées sont 10,5 mm et 34 mm, dérivées des envel
 | Demande | Lecture proposée |
 |---|---|
 | Un point | Circuit ouvert/fermé et lampe, accompagnés du texte actif/inactif. Le comportement demandé au niveau bas ou haut est explicite. |
-| Plusieurs points | Moniteur vertical en escalier, du Niveau 0 en bas au Niveau N en haut. Chaque zone porte sa plage et une couleur, la zone active étant soulignée et indiquée en texte. Quatre seuils donnent cinq zones. Les repères P1… restent dans la cuve. |
+| Plusieurs points | Exactement N seuils, du haut vers le bas. Le premier exprime le besoin bas, les suivants des seuils supérieurs. Deux points affichent Niveau bas / Niveau haut et l’état neutre « Entre les deux niveaux », sans troisième point. Repères P1… dans une colonne latérale avec gestion des collisions à l’écran. |
 | Continu | Jauge verticale, hauteur et pourcentage cohérents par pas illustratif de 5 mm. Le choix du mode étend la tige à la hauteur de cuve. La plage réellement mesurable reste à confirmer ; ce pas ne signifie pas une exactitude de ±5 mm ni une mesure physique calculée. |
 
-Le multipoint à résistances ne s’affiche pas comme quatre contacts indépendants. Aucune valeur en ohms ou en volts n’est inventée. L’unicité des codes, les transitions, l’électronique de lecture et les défauts détectables restent à définir avec Standex.
+Les témoins du multipoint vertical sont des conditions opérateur, pas des contacts indépendants ; le codage par résistances reste à définir. Plusieurs capteurs horizontaux ont, eux, une sortie par capteur. Aucune valeur en ohms ou en volts n’est inventée. Codes, transitions, électronique de lecture et défauts restent à définir avec Standex.
 
 Le signal est **le comportement demandé**, pas une prédiction physique des seuils réels. La densité, le tirant d’eau, les hystérésis, la vitesse du liquide, les frottements, les contacts et la charge ne sont pas modélisés. Une incohérence géométrique identifiée suspend l’affichage du signal. La simulation n’établit ni une précision de 3–5 mm ni une fonction de sécurité.
 
 ## 6. Rendu des produits
 
-Le rendu est réalisé en volume avec matières, éclairage, ombres, écrou, joint, tige, butées, flotteurs et câble. Le client voit une mise en situation fixe en coupe, pas un atelier 3D à piloter. Les couleurs et composants de l’interface restent ceux de Sensor Studio.
+Le rendu est réalisé en volume avec matières, éclairage, ombres, écrou, joint, tige, butées, flotteurs et câble. L’angle de coupe reste fixe ; le client peut zoomer, déplacer la vue et cadrer le capteur ou un point. Les couleurs et composants de l’interface restent ceux de Sensor Studio.
+
+Le LS05 utilise un gabarit explicite Ø12 mm pour la tige et Ø32 × 19 mm pour le flotteur, dans les plages de la fiche de série p.1 (Ø7–16, Ø23,5–38,3 et hauteur 11,7–26,3). Ce n’est pas une référence qualifiée. L’ancien diamètre de tige Ø8 était dans la plage ; la largeur de cuve plafonnée et l’absence de zoom accentuaient la finesse perçue. Largeur et profondeur de cuve sont désormais proportionnelles à sa hauteur et restent signalées comme illustratives. Le câble illustré n’est plus allongé avec la cuve.
 
 Les dessins LS01 et LS02 ont servi aux proportions compactes : longueur sous fixation de 32,5 et 56 mm, flotteur de diamètre 23,5 mm et hauteur 19 mm. Le LS03 standard utilise désormais deux ensembles distincts : corps horizontal fixe et fourche avec flotteur pivotant. Le plan fourni donne 83 mm hors tout, 55,8 mm côté liquide, Ø16,5 pour le flotteur, Ø21 pour la collerette, M16×2 et écrou SW24. Seul l’ensemble mobile tourne. Les variantes DK/DL/GZ ne disposent pas encore de géométries différenciées.
 

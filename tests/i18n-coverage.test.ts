@@ -138,7 +138,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 209 entries: isolated liquid-level journey, controls and documentary screening.
     // + 13 entries: level application examples, equivalent choices and float spacing.
     // + 49 entries: detection intent, mounting access, float stops and recovery.
-    expect(Object.keys(dictionary)).toHaveLength(4674);
+    // + 28 entries: centimetre intake, multi-sensor alternatives, threshold monitor and viewport controls.
+    expect(Object.keys(dictionary)).toHaveLength(4702);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

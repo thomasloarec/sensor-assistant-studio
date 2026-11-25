@@ -5,7 +5,8 @@
 .lv-embedded main { scroll-margin-top: 6rem; }
 .lv-topbar { max-width: 76rem; padding: .75rem 1rem; margin: auto; display: flex; gap: 1rem; align-items: center; justify-content: space-between; }
 .lv-stepper-bar { width: 100%; padding: .75rem 1rem; background: var(--background); }
-.lv-project-stepper { width: 100%; max-width: none; margin: 0; }
+.lv-step-short { display: none; }
+.lv-project-stepper { width: 100%; max-width: 76rem; margin-inline: auto; }
 .lv-embedded .project-stepper-sticky { top: 0; }
 .lv-preview { display: inline-flex; padding: .45rem .8rem; border-radius: var(--r-pill); background: var(--surface-tint); color: var(--primary); }
 .lv-intro { max-width: 72rem; margin: auto; padding: 2rem 2rem 5rem; }
@@ -16,6 +17,17 @@
 .lv-type-copy { display: grid; grid-template-rows: auto auto 1fr auto; flex: 1; gap: 1rem; padding: 2rem; }
 .lv-type-copy button { justify-self: start; margin-top: .5rem; }
 .lv-scene-stage, .lv-scene-canvas { position: relative; width: 100%; height: 100%; }
+.lv-scene-stage { display: flex; flex-direction: column; }
+.lv-scene-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .25rem; padding: .4rem .75rem; }
+.lv-scene-toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-width: 44px; min-height: 44px; padding: .35rem .6rem; border-radius: var(--r-sm); color: var(--primary); font: var(--t-caption); }
+.lv-scene-toolbar button:hover, .lv-scene-toolbar button[aria-pressed="true"] { background: var(--surface); box-shadow: var(--e-1); }
+.lv-scene-viewport { position: relative; flex: 1; min-height: 0; width: 100%; }
+.lv-scene-with-rail { --lv-rail-width: 9rem; padding-right: var(--lv-rail-width); }
+.lv-marker-leaders { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.lv-marker-leaders path { fill: none; stroke: var(--standex-blue-50); stroke-width: 1; }
+.lv-marker-rail { position: absolute; inset: 0 0 0 auto; width: var(--lv-rail-width); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.lv-marker-track { position: relative; }
+.lv-marker-rail .lv-point-marker { position: absolute; left: .5rem; min-height: 44px; max-width: calc(100% - .75rem); text-align: left; cursor: pointer; }
 .lv-scene-stage > .lv-scene-loading { position: absolute; inset: 0; background: var(--surface-product, var(--surface-sunken)); }
 .lv-loading-icon { animation: lv-loading-spin var(--d-hero) var(--ease-in-out) infinite; color: var(--muted-foreground); }
 @keyframes lv-loading-spin { to { transform: rotate(360deg); } }
@@ -84,6 +96,10 @@
 .lv-level-ladder li { padding: .4rem .55rem; border-radius: var(--r-xs); }
 .lv-level-ladder li[data-active="true"] { background: var(--surface-tint); box-shadow: var(--e-1); }
 .lv-level-ladder li[data-active="true"] .lv-level-step-label { font-weight: 700; color: var(--primary); }
+.lv-threshold-state { display: flex; align-items: center; gap: .5rem; margin-top: .5rem; }
+.lv-threshold-state i { width: .65rem; height: .65rem; border-radius: var(--r-pill); background: var(--muted-foreground); }
+.lv-level-ladder li[data-active="true"] .lv-threshold-state i { background: var(--success); }
+.lv-level-ladder li[data-active="true"] .lv-threshold-state { color: var(--success); }
 .lv-level-step-label { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
 .lv-level-step-bar { display: block; width: var(--lv-step-width); height: .35rem; background: var(--lv-step-color); border-radius: var(--r-pill); margin-top: .25rem; opacity: .3; }
 .lv-level-ladder li[data-active="true"] .lv-level-step-bar { opacity: 1; height: .55rem; }
@@ -112,6 +128,8 @@
   .lv-visual-column { position: static; }
 }
 @media (max-width: 767px) {
+  .lv-step-full { display: none; }
+  .lv-step-short { display: inline; }
   .lv-topbar, .lv-config-main, .lv-intro, .lv-review-main { padding-left: 1rem; padding-right: 1rem; }
   .lv-choice-grid, .lv-config-grid, .lv-solution-summary { grid-template-columns: minmax(0, 1fr); }
   .lv-question-main { padding: 0 1rem; }

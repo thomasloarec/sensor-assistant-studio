@@ -1271,5 +1271,28 @@ localisée apparaît pour une tige configurable à un point. La scène LS04 util
 des collerettes ouvertes de la même matière que la tige, fixes pendant l’animation.
 
 La navigation possède un fond opaque sur toute la largeur du panneau et reste
-ancrée sous l’en-tête. Le contenu du menu utilise également toute la largeur.
-La progression du parcours proximité reste inchangée. Aucun nouveau jeton.
+ancrée sous l’en-tête. Ses boutons restent centrés dans une largeur maximale
+de 76rem, commune au niveau et à la proximité. Les actions restent inchangées.
+Sur téléphone, le libellé visible de l’étape niveau devient « Configurer » pour
+éviter une coupure au milieu du mot ; son nom accessible reste « Configuration ».
+
+### Lisibilité du configurateur niveau — seconde passe du 25 novembre 2026
+
+Le champ de hauteur du questionnaire affiche des centimètres, convertis en mm
+pour le modèle et le dossier. « Le liquide peut-il faire des vaguelettes ? »
+remplace la question de course, avec l’exemple du réservoir qui bouge ou de la
+pompe qui démarre. Le choix du comportement reste une intention à vérifier.
+
+Les repères occupent une colonne latérale, hors du produit. Leur disposition
+tient compte de leur taille à l’écran : cibles de 44px, centres espacés de 48px.
+La colonne défile si nécessaire. Cliquer un repère cadre sa zone. Vue d’ensemble,
+Voir le capteur, Agrandir et Réduire conservent l’angle de coupe. Zoom et déplacement
+ne modifient pas les dimensions du modèle. Un capteur compact dans une grande cuve
+s’ouvre en vue rapprochée, avec retour explicite à l’ensemble.
+
+Le moniteur affiche N points pour N points demandés, du haut vers le bas. Deux
+points donnent Niveau haut et Niveau bas ; « Entre les deux niveaux » ne crée
+pas un troisième point. Chaque état est écrit et accompagné d’un témoin. Le
+moniteur reste sans réglage. La quantité de capteurs latéraux figure dans les
+réglages et la revue. Surfaces, contrastes, focus et dimensions des commandes
+réutilisent les jetons ; aucun nouveau jeton.

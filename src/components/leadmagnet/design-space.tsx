@@ -5133,10 +5133,10 @@ export function DesignSpace({
         </div>
       </header>
 
-      <main className={`mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
+      <div className={`project-stepper-bar project-stepper-sticky${visible ? "" : " hidden"}`}>
         <nav
           aria-label="Progression"
-          className={`project-stepper project-stepper-${stepIndex} project-stepper-sticky mb-6`}
+          className={`project-stepper project-stepper-${stepIndex}`}
         >
           <span className="project-stepper-thumb" aria-hidden="true" />
           {steps.map((s, i) => (
@@ -5159,7 +5159,8 @@ export function DesignSpace({
             </button>
           ))}
         </nav>
-
+      </div>
+      <main className={`mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
         <Tabs value={tab} onValueChange={setTab}>
           {showAdvanced ? (
             <div className="mb-2">

@@ -48,12 +48,17 @@ export const INITIAL_CONFIGURATION: LevelConfiguration = {
 /** Series drawings, p.1: LS04 80–250 mm and LS05 80–2000 mm.
  * These are the preview's reach limits, not maximum tank dimensions in service. */
 export const MAX_REACH_MM = 2000;
+// Preview viewport limit, independent of the catalogue's maximum stem length.
+export const MAX_TANK_HEIGHT_MM = 10000;
 export const MAX_PLASTIC_REACH_MM = 250;
 // Clearances of the illustrated LS03 envelope and its downward pivot, not mounting specifications.
 export const HORIZONTAL_CLEARANCE_MM = { below: 45, above: 12 };
-export function horizontalMountHeight(c: LevelConfiguration) { return c.pointsMm[0]! + (c.closedWhen === "low" ? 28.8 : 0); }
-export function horizontalPointBounds(c: LevelConfiguration) {
-  const offset = c.closedWhen === "low" ? 28.8 : 0;
+export function pointIntent(c: LevelConfiguration, index: number): "low" | "high" {
+  return c.count === 1 ? c.closedWhen : index === 0 ? "low" : "high";
+}
+export function horizontalMountHeight(c: LevelConfiguration, index = 0) { return c.pointsMm[index]! + (pointIntent(c, index) === "low" ? 28.8 : 0); }
+export function horizontalPointBounds(c: LevelConfiguration, index = 0) {
+  const offset = pointIntent(c, index) === "low" ? 28.8 : 0;
   return { min: Math.ceil(HORIZONTAL_CLEARANCE_MM.below - offset), max: Math.floor(c.tankHeightMm - HORIZONTAL_CLEARANCE_MM.above - offset) };
 }
 export const FAMILY_LABELS: Record<Family, string> = {
@@ -108,7 +113,7 @@ export function assessFamily(family: Family, context: LevelContext, c: LevelConf
   if (c.mode === "continuous" && family !== "LS05") {
     excluded = true; reasons.push("Le continu est étudié sur le LS05 inox.");
   }
-  if (c.mode === "points" && c.count > 1 && ["LS01", "LS02", "LS03"].includes(family)) {
+  if (c.mode === "points" && c.count > 1 && ["LS01", "LS02"].includes(family)) {
     excluded = true; reasons.push("Cette famille standard ne couvre pas plusieurs points sur un seul capteur.");
   }
   if (family === "LS01" && c.travelPreference === "long") {
@@ -183,11 +188,21 @@ export function setPointCount(c: LevelConfiguration, count: number): LevelConfig
 }
 /** Explicit resize operation: preserve relative levels and reach, never stale mm. */
 export function resizeTank(c: LevelConfiguration, height: number): LevelConfiguration {
-  const tankHeightMm = Math.max(60, Math.min(MAX_REACH_MM, Math.round(height)));
+  const tankHeightMm = Math.max(60, Math.min(MAX_TANK_HEIGHT_MM, Math.round(height)));
   const ratio = tankHeightMm / c.tankHeightMm;
+  const mountingHeightMm = Math.min(tankHeightMm, Math.round(c.mountingHeightMm * ratio * 2) / 2);
+  const available = c.mounting === "support" ? mountingHeightMm : tankHeightMm;
+  // Continuous mode is top/full-depth by default. Keep a manually shortened
+  // stem's proportion, but round datum and length in the same unit and clamp.
+  // Never use a tank-sized fallback which exceeds a lowered support datum.
+  const oldAvailable = c.mounting === "support" ? c.mountingHeightMm : c.tankHeightMm;
+  const followsDepth = c.reachMm >= Math.min(MAX_REACH_MM, oldAvailable) - .001;
+  if (c.mode === "continuous") return { ...c, tankHeightMm, mountingHeightMm,
+    pointsMm: c.pointsMm.map(p => Math.round(p * ratio)),
+    reachMm: Math.min(MAX_REACH_MM, available, followsDepth ? available : Math.round(c.reachMm * ratio * 2) / 2) };
   let pointsMm = c.pointsMm.map(p => Math.round(p * ratio));
   const compact = isCompact(architectureFamily(c));
-  const reachMm = compact ? compactReach(c) : Math.min(tankHeightMm, Math.max(32.5, Math.round(c.reachMm * ratio * 2) / 2));
+  const reachMm = compact ? compactReach(c) : Math.min(MAX_REACH_MM, available, Math.max(32.5, Math.round(c.reachMm * ratio * 2) / 2));
   const floatTravelMm = compact ? c.floatTravelMm : Math.max(2, Math.min(tankHeightMm - 32, Math.round(c.floatTravelMm * ratio * 2) / 2));
   if (c.mode === "points" && c.count === 1 && c.orientation === "vertical") {
     if (compact) {
@@ -200,19 +215,19 @@ export function resizeTank(c: LevelConfiguration, height: number): LevelConfigur
       pointsMm = [Math.max(min, Math.min(max, pointsMm[0]!))];
     }
   }
-  const next = { ...c, tankHeightMm, pointsMm, reachMm, floatTravelMm, mountingHeightMm: c.mountingHeightMm * ratio };
+  const next = { ...c, tankHeightMm, pointsMm, reachMm, floatTravelMm, mountingHeightMm };
   if (c.mode === "points" && c.count === 1) return fitStemToPoints(next);
   // A fixed retaining cap cannot scale with the tank. Use the remaining depth
   // when a resize would otherwise leave a just-too-short illustrative stem.
-  return next.orientation === "vertical" && !verticalMechanics(next).valid && reachMm < tankHeightMm
-    ? { ...next, reachMm: tankHeightMm } : next;
+  return next.orientation === "vertical" && !verticalMechanics(next).valid && reachMm < available
+    ? { ...next, reachMm: Math.min(MAX_REACH_MM, available) } : next;
 }
 export function distributePoints(c: LevelConfiguration): LevelConfiguration {
   return setPointCount({ ...c, count: 0 }, c.count);
 }
 export function fitStemToPoints(c: LevelConfiguration): LevelConfiguration {
   if (c.orientation === "horizontal") return c;
-  if (c.mode === "continuous") return { ...c, reachMm: c.tankHeightMm, mountingHeightMm: c.tankHeightMm };
+  if (c.mode === "continuous") return { ...c, reachMm: Math.min(MAX_REACH_MM, c.tankHeightMm), mountingHeightMm: c.tankHeightMm };
   const single = c.count === 1, standard = compactReach(c), point = c.pointsMm[0]!;
   const compact = single && c.reachMm <= standard;
   if (compact) {
@@ -301,16 +316,19 @@ export function verticalMechanics(c: LevelConfiguration, family: Family = archit
 }
 export function configurationIssues(c: LevelConfiguration, family: Family = architectureFamily(c)): string[] {
   const problems: string[] = [];
-  if (c.orientation === "vertical" && c.reachMm > (c.mounting === "bottom" ? c.tankHeightMm : mountingDatum(c)))
+  if (c.orientation === "vertical" && c.reachMm > (c.mounting === "bottom" ? c.tankHeightMm : mountingDatum(c)) + .001)
     problems.push("La tige dépasse le fond de la cuve. Raccourcir la tige ou augmenter la hauteur de la cuve.");
   if (c.orientation === "vertical" && c.reachMm > MAX_REACH_MM)
     problems.push("La tige dépasse 2 000 mm. Réduire sa longueur ou demander une forme spécifique.");
+  if (c.orientation === "vertical" && c.mode === "continuous" && c.tankHeightMm > MAX_REACH_MM)
+    problems.push("Le suivi de toute cette hauteur dépasse les 2 m de tige présentés. Préparer une étude spécifique, ou choisir une détection par points.");
   if (c.orientation === "horizontal" && c.mode === "continuous")
     problems.push("La mesure continue demande ici un capteur vertical. Passer en vertical ou choisir un seul point en horizontal.");
-  else if (c.orientation === "horizontal" && c.count > 1)
-    problems.push("Un capteur horizontal détecte un seul point. Choisir 1 point ou revenir en vertical pour conserver plusieurs points.");
-  else if (c.orientation === "horizontal" && (c.pointsMm[0]! < horizontalPointBounds(c).min || c.pointsMm[0]! > horizontalPointBounds(c).max))
+  else if (c.orientation === "horizontal" && c.pointsMm.some((p, i) => p < horizontalPointBounds(c, i).min || p > horizontalPointBounds(c, i).max))
     problems.push("Le flotteur horizontal manque de place près du fond ou du haut de la cuve. Recentrer le point pour dégager son mouvement dans l’aperçu.");
+  if (c.orientation === "horizontal" && c.mode === "points" && c.pointsMm.some((_, i) => i > 0
+    && horizontalMountHeight(c, i) - horizontalMountHeight(c, i - 1) < HORIZONTAL_CLEARANCE_MM.below + HORIZONTAL_CLEARANCE_MM.above))
+    problems.push("Les capteurs horizontaux sont trop proches. Espacer les points pour laisser chaque flotteur pivoter, ou choisir une tige verticale.");
   if (c.mode === "points") {
     if (c.pointsMm.some((p, i) => p < 0 || p > c.tankHeightMm || (i > 0 && p <= c.pointsMm[i - 1]!)))
       problems.push("Les points doivent être ordonnés du fond vers le haut, à l’intérieur de la cuve.");
@@ -341,27 +359,32 @@ export function illustrativeReading(c: LevelConfiguration, levelMm: number, fami
     ? c.closedWhen === "high" ? centre >= range.upperMm - .0001 && level >= switchingHeightMm
       : centre <= range.lowerMm + .0001 && level <= switchingHeightMm
     : c.closedWhen === "high" ? horizontalPosition >= 1 : horizontalPosition <= 0;
-  return { level, zone, active, switchingHeightMm, floatCentreMm: centre, steppedMm: Math.floor(level / 5) * 5,
+  const pointStates = c.pointsMm.map((p, i) => ({ index: i, heightMm: p, intent: pointIntent(c, i),
+    active: c.count === 1 ? active : pointIntent(c, i) === "low" ? level <= p : level >= p }));
+  return { level, zone, active, pointStates, switchingHeightMm, floatCentreMm: centre, steppedMm: Math.floor(level / 5) * 5,
     usable: configurationIssues(c, family).length === 0 && !c.custom };
 }
 export function requestedFloats(c: LevelConfiguration): number {
-  return c.mode === "continuous" ? 1 : Math.ceil(c.count / c.pointsPerFloat);
+  return c.mode === "continuous" ? 1 : c.orientation === "horizontal" ? c.count : Math.ceil(c.count / c.pointsPerFloat);
 }
 export function floatCentres(c: LevelConfiguration, levelMm: number, family?: Family): number[] {
   const mechanics = verticalMechanics(c, family);
   if (!mechanics.valid) return [];
   return mechanics.floats.map(f => Math.max(f.lowerMm, Math.min(f.upperMm, levelMm - FLOAT_IMMERSION_OFFSET_MM)));
 }
-export function horizontalFloatPosition(c: LevelConfiguration, level: number) {
-  const threshold = c.pointsMm[0] ?? c.tankHeightMm * .5;
-  return c.closedWhen === "high" ? Math.max(0, Math.min(1, (level - (threshold - 28.8)) / 28.8))
+export function horizontalFloatPosition(c: LevelConfiguration, level: number, index = 0) {
+  const threshold = c.pointsMm[index] ?? c.tankHeightMm * .5;
+  return pointIntent(c, index) === "high" ? Math.max(0, Math.min(1, (level - (threshold - 28.8)) / 28.8))
     : Math.max(0, Math.min(1, (level - threshold) / 28.8));
 }
 export function createLevelBrief(context: LevelContext, configuration: LevelConfiguration, cable: { lengthMm: string; connector: string }, contact: Record<string, string>) {
   const assessment = assessConfiguration(context, configuration);
-  return { schema: "sensor-studio.level-preview.v2", status: "draft_not_submitted", qualification: "not_qualified",
+  return { schema: "sensor-studio.level-preview.v3", status: "draft_not_submitted", qualification: "not_qualified",
     context, requested_configuration: configuration, study_family: assessment.selected?.family ?? null,
     proposed_contact_form: assessment.selected ? proposedContactForm(configuration, assessment.selected.family) : null,
+    sensor_count: configuration.orientation === "horizontal" ? configuration.count : 1,
+    requested_points: configuration.mode === "points" ? configuration.pointsMm.map((heightMm, i) => ({ heightMm, intent: pointIntent(configuration, i) })) : [],
+    units: { tankHeight: "mm", detectionHeight: "mm" },
     specific_request: assessment.specific || configurationIssues(configuration, assessment.selected?.family).length > 0,
     remaining_questions: [...(assessment.selected?.reasons ?? []), ...configurationIssues(configuration, assessment.selected?.family)],
     cable, contact, simulation: { kind: "requested_behaviour_only", switching_heights_verified: false, resistance_values_known: false } };

@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import ContactCircuit from "@/components/standex/workshop/contact-circuit";
 import { t } from "@/lib/i18n/core";
 import { illustrativeReading, proposedContactForm, type Family, type LevelConfiguration } from "@/lib/level/configuration";
@@ -10,6 +9,7 @@ export function LevelMonitor({ configuration: c, family, level, available }: {
   const reading = illustrativeReading(c, level, family);
   const form = proposedContactForm(c, family);
   const percent = Math.round(reading.steppedMm / c.tankHeightMm * 100);
+  const activeCount = reading.pointStates.filter(p => p.active).length;
   return <aside className="lv-monitor panel-block" aria-label={t("Moniteur de niveau")}>
     <header><p className="t-label">{t("Moniteur de niveau")}</p>
       <h2 className="t-title-m">{t(c.mode === "continuous" ? "Mesure continue" : c.count === 1 ? "Signal de détection" : "Niveaux détectés")}</h2>
@@ -35,22 +35,19 @@ export function LevelMonitor({ configuration: c, family, level, available }: {
         <div className="lv-field t-caption"><span className="font-semibold">{family} · {t("Forme de contact proposée")}</span>
           <span>{form ? `${t("Forme")} ${form}` : t("À confirmer avec Standex")}</span></div>
       </> : <>
-        <output className="lv-monitor-value t-display-m">{t("Niveau")} {reading.zone}</output>
+        <output className="lv-monitor-value t-title-l">{c.count === 2
+          ? t(reading.pointStates[0]?.active ? "Niveau bas détecté" : reading.pointStates[1]?.active ? "Niveau haut détecté" : "Entre les deux niveaux")
+          : `${activeCount} / ${c.count} ${t("points actifs")}`}</output>
         <ol className="lv-level-ladder" aria-label={t("Niveaux détectés")}>
-          {Array.from({ length: c.count + 1 }, (_, index) => c.count - index).map(zone => {
-            const low = zone === 0 ? 0 : c.pointsMm[zone - 1]!;
-            const high = c.pointsMm[zone] ?? c.tankHeightMm;
-            const mix = Math.round(zone / c.count * 100);
-            return <li key={zone} data-active={reading.zone === zone} aria-current={reading.zone === zone ? "step" : undefined}
-              style={{ "--lv-step-color": `color-mix(in oklch, var(--chart-1) ${mix}%, var(--chart-2))`,
-                "--lv-step-width": `${36 + zone / c.count * 64}%` } as CSSProperties}>
-              <div className="lv-level-step-label"><span className="t-body">{t("Niveau")} {zone}</span>
-                <span className="t-caption t-metric">{low}–{high} mm</span></div>
-              <span className="lv-level-step-bar" aria-hidden="true" />
+          {[...reading.pointStates].reverse().map(point => {
+            return <li key={point.index} data-active={point.active} data-point={point.index + 1}>
+              <div className="lv-level-step-label"><span className="t-body">P{point.index + 1} · {t(point.index === 0 ? "Niveau bas" : point.index === c.count - 1 ? "Niveau haut" : "Niveau intermédiaire")}</span>
+                <span className="t-caption t-metric">{point.heightMm} mm</span></div>
+              <span className="lv-threshold-state t-caption"><i aria-hidden="true" />{t(point.active ? "Signal actif" : "Signal inactif")}</span>
             </li>;
           })}
         </ol>
-        <p className="t-caption">{t("Codage par résistances à définir avec Standex.")}</p>
+        <p className="t-caption">{t(c.orientation === "horizontal" ? "Un capteur horizontal par point, avec des sorties distinctes à raccorder." : "Codage par résistances à définir avec Standex.")}</p>
       </>}
     <footer className="t-caption">{t("Illustration du besoin")} · {t("Seuils à confirmer par Standex")}</footer>
   </aside>;

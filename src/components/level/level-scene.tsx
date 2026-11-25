@@ -1,13 +1,15 @@
 /** Reconstructed product envelopes for visual discussion, not manufacturing CAD. */
-import { Component, useEffect, useMemo, useState, type ReactNode } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { ContactShadows, Html, Line } from "@react-three/drei";
-import { CatmullRomCurve3, DoubleSide, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
+import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ContactShadows, Line, OrbitControls } from "@react-three/drei";
+import { Plus, Minus, Scan, Focus } from "lucide-react";
+import { CatmullRomCurve3, DoubleSide, MOUSE, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
 import { FLOAT_HEIGHT_MM, floatCentres, horizontalFloatPosition, horizontalMountHeight, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 import { SceneLoading, SceneUnavailable } from "./scene-loading";
 import { SceneFrameReady } from "./scene-frame-ready";
+import { LS05_ENVELOPE, markerLayout, sceneFrame, tankDimensions, type ProjectedMarker } from "@/lib/level/presentation";
 
 // Physical material colours are confined to the reconstructed scene, as in the existing workshop.
 const MAT = { pp: "#ebece3", pa: "#262b30", steel: "#adb6bd", seal: "#22282c", water: "#75bdd8", oil: "#b7954a" };
@@ -24,16 +26,22 @@ function StudioLight() {
   return <><ambientLight intensity={0.65} /><directionalLight position={[100, 240, 160]} intensity={3.2} />
     <directionalLight position={[-160, 140, -80]} intensity={1.8} /></>;
 }
-function Framing({ height, portrait }: { height: number; portrait: boolean }) {
+function Framing({ config, family, productOnly, focus, zoom, interactive }: {
+  config: LevelConfiguration; family: Family; productOnly: boolean; focus: number | null; zoom: number; interactive: boolean;
+}) {
   const { camera, size, invalidate } = useThree();
+  const frame = sceneFrame(config, family, focus, productOnly);
+  const fit = Math.min(size.height / (frame.height * 1.16), size.width / (frame.width * 1.18));
+  const [x, y, z] = frame.target;
   useEffect(() => {
     if (!("isOrthographicCamera" in camera)) return;
-    camera.position.set(height * 0.9, height * 0.85 + 20, height * 2.4);
-    camera.lookAt(0, height * 0.5 + 20, 0);
-    camera.zoom = Math.min(size.height / (height * (portrait ? 1.35 : 1.2) + 65), size.width / ((tankWidth(height) + 110) * 1.18));
+    camera.position.set(x + frame.height * .9, y + frame.height * .35, z + frame.height * 2.4);
+    camera.lookAt(x, y, z);
+    camera.zoom = fit * zoom;
     camera.updateProjectionMatrix(); invalidate();
-  }, [camera, height, size.width, size.height, portrait, invalidate]);
-  return null;
+  }, [camera, x, y, z, frame.height, fit, zoom, invalidate]);
+  return interactive ? <OrbitControls target={[x, y, z]} enableRotate={false} enablePan enableZoom enableDamping={false}
+    mouseButtons={{LEFT:MOUSE.PAN, MIDDLE:MOUSE.DOLLY, RIGHT:MOUSE.PAN}} minZoom={fit * .5} maxZoom={fit * 40} /> : null;
 }
 function Cylinder({ radius, height, y = 0, color, metal = false, sides = 64 }: {
   radius: number; height: number; y?: number; color: string; metal?: boolean; sides?: number;
@@ -45,17 +53,20 @@ function Cylinder({ radius, height, y = 0, color, metal = false, sides = 64 }: {
 }
 function FloatBody({ steel, color, grooved = false }: { steel: boolean; color: string; grooved?: boolean }) {
   const half = grooved ? 18.5 / 2 : FLOAT_HEIGHT_MM / 2;
-  const points = useMemo(() => grooved ? [new Vector2(4.4, -half), new Vector2(12.6, -half),
+  const points = useMemo(() => steel ? [new Vector2(LS05_ENVELOPE.stemDiameterMm / 2 + .5, -half),
+    new Vector2(LS05_ENVELOPE.floatDiameterMm / 2 - 1, -half), new Vector2(LS05_ENVELOPE.floatDiameterMm / 2, -half + 1),
+    new Vector2(LS05_ENVELOPE.floatDiameterMm / 2, half - 1), new Vector2(LS05_ENVELOPE.floatDiameterMm / 2 - 1, half),
+    new Vector2(LS05_ENVELOPE.stemDiameterMm / 2 + .5, half), new Vector2(LS05_ENVELOPE.stemDiameterMm / 2 + .5, -half)] : grooved ? [new Vector2(4.4, -half), new Vector2(12.6, -half),
     new Vector2(13.5, -half + .9), new Vector2(13.5, half - .9), new Vector2(12.6, half),
     new Vector2(4.4, half), new Vector2(4.4, -half)] : [new Vector2(3.6, -half), new Vector2(10.8, -half),
     new Vector2(11.75, -half + 1), new Vector2(11.75, 5), new Vector2(9, half),
-    new Vector2(3.6, half), new Vector2(3.6, -half)], [half, grooved]);
+    new Vector2(3.6, half), new Vector2(3.6, -half)], [half, grooved, steel]);
   return <group>
     <mesh castShadow><latheGeometry args={[points, 80]} />
       <meshStandardMaterial color={color} metalness={steel ? 0.92 : 0.02} roughness={steel ? 0.22 : 0.3} side={DoubleSide} />
     </mesh>
     {!grooved ? <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, steel ? 0 : -8.6, 0]}>
-      <torusGeometry args={[11.7, steel ? 0.5 : 0.18, 8, 80]} />
+      <torusGeometry args={[steel ? LS05_ENVELOPE.floatDiameterMm / 2 : 11.7, steel ? 0.4 : 0.18, 8, 80]} />
       <meshStandardMaterial color={color} metalness={steel ? 0.95 : 0.02} roughness={0.4} />
     </mesh> : null}
   </group>;
@@ -124,7 +135,7 @@ function VerticalSensor({ config, family, level, material }: {
         <meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.3} /></mesh>
     </group> : null}
     {family === "LS04" ? <group position={[0, centre + (top ? 4 : -4), 0]}><GroovedStem reach={reach - 8} color={color} /></group> :
-      <Cylinder radius={steel ? 4 : 3.25} height={reach} y={centre} color={color} metal={steel} />}
+      <Cylinder radius={steel ? LS05_ENVELOPE.stemDiameterMm / 2 : 3.25} height={reach} y={centre} color={color} metal={steel} />}
     <Cylinder radius={steel ? 13 : 8.5} height={6} y={datum + (top ? 5 : -5)} color={color} metal={steel} sides={6} />
     <Cylinder radius={steel ? 10.5 : 5} height={13} y={datum + (top ? 10 : -10)} color={color} metal={steel} />
     <Cylinder radius={steel ? 13 : 9} height={1.7} y={datum + (top ? 1 : -1)} color={MAT.seal} />
@@ -133,19 +144,19 @@ function VerticalSensor({ config, family, level, material }: {
       <meshStandardMaterial color={color} metalness={steel ? 0.9 : 0} roughness={0.3} />
     </mesh>)}
     {family === "LS04" ? <group position={[0, end, 0]} rotation={[0, 0, top ? 0 : Math.PI]}><PlasticEndCap color={color} /></group> :
-      <Cylinder radius={5.8} height={1.2} y={end} color={steel ? MAT.steel : MAT.pa} metal={steel} />}
+      <Cylinder radius={steel ? 7.5 : 5.8} height={1.2} y={end} color={steel ? MAT.steel : MAT.pa} metal={steel} />}
     {floats.map((y, i) => <group name={`level-float-${i + 1}`} position={[0, y, 0]} key={i}><FloatBody steel={steel} color={color} grooved={family === "LS04"} /></group>)}
     {mechanics.valid && (family === "LS04" || family === "LS05") ? stops.map((y, i) => family === "LS04"
-      ? <ClipCollar key={i} y={y} color={color} /> : <Cylinder key={i} radius={6} height={1.5} y={y} color={MAT.steel} metal />) : null}
-    {top ? <Cable origin={[0, datum + 17, 0]} length={config.tankHeightMm * 0.3} /> :
+      ? <ClipCollar key={i} y={y} color={color} /> : <Cylinder key={i} radius={8} height={1.5} y={y} color={MAT.steel} metal />) : null}
+    {top ? <Cable origin={[0, datum + 17, 0]} length={38} /> :
       <group rotation={[Math.PI, 0, 0]}><Cable origin={[0, 17, 0]} /></group>}
   </group>;
 }
 /** LS03 standard plan: total 83, wet side 55.8, float Ø16.5, collar Ø21, M16×2, SW24. */
-function HorizontalSensor({ config, level, material }: { config: LevelConfiguration; level: number; material: string }) {
+function HorizontalSensor({ config, level, material, index = 0 }: { config: LevelConfiguration; level: number; material: string; index?: number }) {
   const color = material === "PA" ? MAT.pa : MAT.pp;
-  const pivotHeight = horizontalMountHeight(config);
-  const angle = Math.asin(-.8 * (1 - horizontalFloatPosition(config, level)));
+  const pivotHeight = horizontalMountHeight(config, index);
+  const angle = Math.asin(-.8 * (1 - horizontalFloatPosition(config, level, index)));
   const fork = useMemo(() => {
     const shape = new Shape();
     shape.moveTo(-2.7, 2.7); shape.quadraticCurveTo(0, 4, 3, 2.7);
@@ -182,9 +193,9 @@ function HorizontalSensor({ config, level, material }: { config: LevelConfigurat
     </group>
   </group>;
 }
-const tankWidth = (height: number) => Math.max(90, Math.min(240, height * .8));
+const tankWidth = (height: number) => tankDimensions(height).width;
 function Tank({ height, level, oil }: { height: number; level: number; oil: boolean }) {
-  const width = tankWidth(height), depth = Math.max(42, Math.min(120, height * .42));
+  const { width, depth } = tankDimensions(height);
   return <group>
     <mesh position={[0, -2, 0]} receiveShadow><boxGeometry args={[width + 6, 4, depth]} /><meshStandardMaterial color={MAT.steel} metalness={0.7} roughness={0.36} /></mesh>
     <mesh position={[0, height / 2, -depth / 2]} receiveShadow><boxGeometry args={[width, height, 2]} /><meshStandardMaterial color={MAT.steel} metalness={0.62} roughness={0.35} /></mesh>
@@ -200,27 +211,69 @@ function Tank({ height, level, oil }: { height: number; level: number; oil: bool
     {Array.from({ length: 11 }, (_, i) => <Line key={i} points={[[width / 2 + 5, i * height / 10, depth / 2], [width / 2 + (i % 5 === 0 ? 12 : 8), i * height / 10, depth / 2]]} color="#4a5861" lineWidth={1} />)}
   </group>;
 }
+interface Projection { width: number; height: number; markers: ProjectedMarker[] }
+function ProjectMarkers({ config, onChange }: { config: LevelConfiguration; onChange: (value: Projection) => void }) {
+  const { camera, size } = useThree();
+  const last = useRef("");
+  useFrame(() => {
+    const { width } = tankDimensions(config.tankHeightMm);
+    const markers = config.pointsMm.map((point, index) => {
+      // Anchor to the sensor's plane, not the front tank wall: a deep tank must
+      // not push a label to the bottom when the camera inspects a small sensor.
+      const v = new Vector3(config.orientation === "horizontal" ? -width / 2 + 35 : 0, point, 0).project(camera);
+      const sensorX = (v.x + 1) * size.width / 2;
+      return { index, x: Math.round(Math.max(sensorX + 24, size.width * .78)), y: Math.round((1 - v.y) * size.height / 2),
+        visible: sensorX >= 0 && sensorX <= size.width && v.z >= -1 && v.z <= 1 };
+    });
+    const next = { width: size.width, height: size.height, markers }, key = JSON.stringify(next);
+    if (key !== last.current) { last.current = key; onChange(next); }
+  });
+  return null;
+}
 class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   override state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
   override render() { return this.state.failed ? <p className="notice-info m-6">{t("L’aperçu du produit est indisponible. Les réglages et le récapitulatif restent accessibles.")}</p> : this.props.children; }
 }
-export default function LevelScene({ configuration, family, levelMm, material, oil = false, productOnly = false, showMarkers = true }: {
-  configuration: LevelConfiguration; family: Family; levelMm: number; material: string; oil?: boolean; productOnly?: boolean; showMarkers?: boolean;
+export default function LevelScene({ configuration, family, levelMm, material, oil = false, productOnly = false, showMarkers = true, interactive = false }: {
+  configuration: LevelConfiguration; family: Family; levelMm: number; material: string; oil?: boolean; productOnly?: boolean; showMarkers?: boolean; interactive?: boolean;
 }) {
   const [ready, setReady] = useState(false);
+  const [focus, setFocus] = useState<number | null>(null), [zoom, setZoom] = useState(1);
+  const [projection, setProjection] = useState<Projection>({width:0,height:0,markers:[]});
+  const [railScroll, setRailScroll] = useState(0);
+  const markers = !productOnly && showMarkers && configuration.mode === "points";
+  const layout = markerLayout(projection.markers, projection.height);
+  useEffect(() => {
+    setFocus(interactive && configuration.tankHeightMm > 400 && (family === "LS01" || family === "LS02") ? configuration.pointsMm[0]! : null);
+    setZoom(1);
+  }, [family, configuration.tankHeightMm, configuration.orientation, interactive]);
+  const inspect = (height = configuration.pointsMm[0] ?? levelMm) => { setFocus(height); setZoom(1); };
   return <SceneBoundary><div className="lv-scene-stage" data-ready={ready} data-family={family}>
+    {interactive ? <div className="lv-scene-toolbar" aria-label={t("Commandes de la vue")}>
+      <button type="button" aria-pressed={focus === null} onClick={() => { setFocus(null); setZoom(1); }} title={t("Vue d’ensemble")}><Scan size={18} /><span>{t("Vue d’ensemble")}</span></button>
+      <button type="button" onClick={() => inspect(configuration.mode === "continuous" ? floatCentres(configuration, levelMm, family)[0] ?? levelMm : undefined)}><Focus size={18} /><span>{t("Voir le capteur")}</span></button>
+      <button type="button" aria-label={t("Agrandir la vue")} onClick={() => setZoom(z => Math.min(40, z * 1.5))}><Plus size={18} /></button>
+      <button type="button" aria-label={t("Réduire la vue")} onClick={() => setZoom(z => Math.max(.5, z / 1.5))}><Minus size={18} /></button>
+    </div> : null}
+    <div className={`lv-scene-viewport${markers ? " lv-scene-with-rail" : ""}`}>
     <div className="lv-scene-canvas"><Canvas orthographic dpr={[1, 2]} frameloop="demand" gl={{ antialias: true, alpha: true }}
-    camera={{ near: 0.1, far: 10000, zoom: 4 }} fallback={<SceneUnavailable />}>
-    <StudioLight /><Framing height={configuration.tankHeightMm} portrait={productOnly} />
+    camera={{ near: 0.1, far: 100000, zoom: 4 }} fallback={<SceneUnavailable />}>
+    <StudioLight /><Framing config={configuration} family={family} productOnly={productOnly} focus={focus} zoom={zoom} interactive={interactive} />
     {!productOnly ? <Tank height={configuration.tankHeightMm} level={levelMm} oil={oil} /> : null}
-    {!productOnly && showMarkers && configuration.mode === "points" ? configuration.pointsMm.map((point, index) =>
-      <Html key={index} position={[tankWidth(configuration.tankHeightMm) / 2 + 8, point, Math.max(42, Math.min(120, configuration.tankHeightMm * .42)) / 2]} center style={{ pointerEvents: "none" }}>
-        <span className="lv-point-marker t-caption t-metric">P{index + 1} · {point} mm</span>
-      </Html>) : null}
-    {family === "LS03" ? <HorizontalSensor config={configuration} level={levelMm} material={material} /> :
+    {markers ? <ProjectMarkers config={configuration} onChange={setProjection} /> : null}
+    {family === "LS03" ? configuration.pointsMm.map((_, i) => <HorizontalSensor key={i} index={i} config={configuration} level={levelMm} material={material} />) :
       <VerticalSensor config={configuration} family={family} level={levelMm} material={material} />}
     <ContactShadows position={[0, -5, 0]} scale={configuration.tankHeightMm * 3} opacity={0.3} blur={2.5} far={configuration.tankHeightMm * 1.4} resolution={256} color="#203343" />
     <SceneFrameReady onReady={() => setReady(true)} />
-  </Canvas></div>{!ready ? <SceneLoading /> : null}</div></SceneBoundary>;
+  </Canvas></div>
+  {markers ? <>
+    <svg className="lv-marker-leaders" width="100%" height="100%" aria-hidden="true">{layout.markers.filter(m => m.visible && m.y >= 0 && m.y <= projection.height && m.x >= 0 && m.x <= projection.width).map(m =>
+      <path key={m.index} d={`M ${m.x} ${m.y} H ${projection.width - 4} L ${projection.width + 7} ${m.labelY - railScroll}`} />)}</svg>
+    <div className="lv-marker-rail" aria-label={t("Position des points")} onScroll={e => setRailScroll(e.currentTarget.scrollTop)}>
+      <div className="lv-marker-track" style={{height:layout.contentHeight}}>{layout.markers.map(m => <button type="button" key={m.index}
+        className="lv-point-marker t-caption t-metric" style={{top:m.labelY-22}} onClick={() => inspect(configuration.pointsMm[m.index])}
+        aria-label={`${t("Voir le point")} ${m.index+1} · ${configuration.pointsMm[m.index]} mm`}>P{m.index+1} · {configuration.pointsMm[m.index]} mm</button>)}</div>
+    </div>
+  </> : null}</div>{!ready ? <SceneLoading /> : null}</div></SceneBoundary>;
 }

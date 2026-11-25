@@ -58,7 +58,7 @@ test("intake seeds a top-mounted low level with a local float range; subsequent 
   const select = async (name: string, value: string) => { await act(async () => fireEvent.change(view.getByLabelText(name), { target: { value } })); };
   await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer");
   await select("Accès pour installer le capteur", "top");
-  await changeInput(view.getByRole("spinbutton", { name: /Hauteur utile de la cuve/ }), "180");
+  await changeInput(view.getByRole("spinbutton", { name: /Hauteur utile de la cuve \(cm\)/ }), "18");
   await click("Continuer"); await select("Niveau à détecter", "low");
   await changeInput(view.getByRole("spinbutton", { name: /Hauteur du niveau à détecter/ }), "30");
   await click("Ouvrir le configurateur");
@@ -90,7 +90,7 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
   await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "4" } }));
   const monitor = view.getByRole("complementary", { name: "Moniteur de niveau" });
   expect(monitor.querySelectorAll("input, select, textarea, button")).toHaveLength(0);
-  expect([...monitor.querySelectorAll("li .t-body")].map(el => el.textContent)).toEqual(["Niveau 4", "Niveau 3", "Niveau 2", "Niveau 1", "Niveau 0"]);
+  expect([...monitor.querySelectorAll("li .t-body")].map(el => el.textContent)).toEqual(["P4 · Niveau haut", "P3 · Niveau intermédiaire", "P2 · Niveau intermédiaire", "P1 · Niveau bas"]);
   for (const height of [600, 2000, 60]) {
     await changeInput(view.getByRole("slider", { name: "Hauteur utile de la cuve" }), String(height));
     expect(view.queryByText("Lecture en attente")).toBeNull();
@@ -98,13 +98,16 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
     expect(points.every((p, i) => p <= height && (i === 0 || p > points[i - 1]!))).toBe(true);
   }
   await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "60");
-  expect(monitor.querySelector('[aria-current="step"]')?.textContent).toContain("Niveau 4");
+  expect(monitor.querySelector('[data-point="4"]')?.getAttribute("data-active")).toBe("true");
+  expect(monitor.querySelector('[data-point="1"]')?.getAttribute("data-active")).toBe("false");
   await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "0");
-  expect(monitor.querySelector('[aria-current="step"]')?.textContent).toContain("Niveau 0");
+  expect(monitor.querySelector('[data-point="1"]')?.getAttribute("data-active")).toBe("true");
+  expect(monitor.querySelector('[data-point="4"]')?.getAttribute("data-active")).toBe("false");
   await click("Horizontale");
   expect(within(monitor).getByText("Lecture en attente")).toBeTruthy();
   expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("4");
-  await click("Utiliser un seul point");
+  await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "1" } }));
+  await click("Recentrer le point");
   expect(view.getByRole("heading", { name: "LS03", exact: true })).toBeTruthy();
   expect(monitor.querySelector('[data-contact="open"]')).toBeTruthy();
   await click("En continu");

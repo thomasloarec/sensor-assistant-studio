@@ -24,8 +24,8 @@ describe("level configurator transitions and recovery", () => {
     expect(architectureFamily({...bigTank,reachMm:250.5})).toBe("LS05");
     expect(assessConfiguration(INITIAL_CONTEXT,{...bigTank,reachMm:2001}).selected).toBeNull();
   });
-  test("horizontal multi-point and continuous requests explain the actual change and preserve it until clicked", () => {
-    for(const mode of ["points","continuous"] as const) {
+  test("horizontal continuous requests explain the actual change and preserve it until clicked", () => {
+    for(const mode of ["continuous"] as const) {
       const c={...setPointCount(INITIAL_CONFIGURATION,2),orientation:"horizontal" as const,mode};
       const before=structuredClone(c), guide=configurationGuidance(INITIAL_CONTEXT,c)!;
       expect(guide.message).not.toContain("LS03");
