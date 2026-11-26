@@ -1242,10 +1242,9 @@ Un blocage apparaît en `notice-warning` avec des actions secondaires explicites
 et remonte la colonne de réglages, sans déplacer automatiquement le besoin.
 
 Le moniteur réutilise `ContactCircuit` pour un point. Le multipoint présente
-un escalier vertical, Niveau 0 en bas, avec libellés et plages chiffrées ;
-le niveau actif combine surface teintée, graisse et barre renforcée. Les
-couleurs proviennent de `--chart-1` et `--chart-2`, sans signification d’alarme.
-Le continu emploie une jauge verticale avec la même échelle de lecture que
+un empilement vertical de N barres pour N seuils, P1 en bas. Une barre remplie
+indique un repère atteint ; les états de contact restent distincts. Le continu
+emploie une jauge verticale avec la même échelle de lecture que
 la valeur et le pourcentage. Aucun réglage dans cette colonne, aucune annonce
 vocale à chaque image, réduction du mouvement respectée. Aucun nouveau jeton.
 
@@ -1344,7 +1343,7 @@ de la cuve. Le moniteur et la scène utilisent le même niveau borné.
 Les curseurs des points respectent l’encombrement et les voisins, notamment
 l’amplitude du flotteur horizontal. Réduire une cuve horizontale recale les points
 et conserve l’espace nécessaire à leur nombre. Une saisie manuelle de point hors
-limites est conservée, signalée et suspend la simulation jusqu’à correction.
+limites est refusée avec un message près du champ ; la simulation conserve la dernière configuration valide.
 Une saisie valide retrouve la même géométrie que le curseur.
 
 ### Niveaux préparés et lisibilité sur portable — 26 novembre 2026
@@ -1364,3 +1363,34 @@ et le sens de variation. Les explications longues sont accessibles dans un volet
 Les repères à deux lignes conservent
 un espacement sans recouvrement ; tous les contrôles gardent une cible de 44 px.
 Les surfaces, échelles typographiques, focus et couleurs existants sont réutilisés.
+
+### Ordre physique et lecture multipoint — 26 novembre 2026
+
+Questionnaire et réglages présentent Pn en premier, P1 en dernier : haut et bas
+portent un libellé explicite, les points intermédiaires gardent leur identifiant.
+Une cuve schématique réagit aux hauteurs saisies ; ses repères cliquables ciblent
+les champs. Les champs vides restent « À définir » sans fausse position mesurée.
+Les valeurs manuelles hors limites sont refusées près du champ, avec la plage
+permise ; les données, la scène et la lecture gardent leur dernier état valide.
+
+Le moniteur multipoint emploie N barres verticalement empilées pour N seuils,
+remplies au franchissement de chaque repère. La lecture indique niveau bas,
+intervalle entre deux repères ou niveau haut, jamais un compteur de contacts
+actifs assimilé au remplissage. Cm et % de hauteur restent visibles. Les signaux
+électriques, dont le contact bas inversé, sont consultables dans un détail séparé.
+Aucune hauteur exacte entre les seuils ni mesure continue n’est inventée.
+Les repères sont lisibles sans couleur ; couleurs, surfaces et typographie
+emploient les jetons existants. Boutons et segments peuvent croître et revenir
+à la ligne ; les repères de scène possèdent une largeur réservée.
+
+Référence de conception : Rockwell Automation, Process HMI Style Guide,
+sections 8.12.4 (indicateurs binaires) et 8.12.5 (barres et limites).
+https://literature.rockwellautomation.com/idc/groups/literature/documents/wp/proces-wp023_-en-p.pdf
+Le choix de barres discrètes séparées des contacts est une adaptation au parcours
+Reed, pas une revendication de certification HMI.
+
+La scène conserve les couleurs des matières produits. Un fond de cuve bleu-gris
+plus soutenu, un éclairage latéral moins uniforme et un plastique plus mat
+renforcent le volume des flotteurs. Le liquide reste teinté mais ne cumule plus
+l’opacité de ses deux faces devant le produit. Ces couleurs physiques restent
+confinées à l’exception Three.js ; dimensions, seuils et mouvement sont inchangés.

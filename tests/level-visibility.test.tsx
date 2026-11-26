@@ -71,16 +71,16 @@ describe("level viewport and requested thresholds", () => {
     setLocale("fr");
     const c={...INITIAL_CONFIGURATION, tankHeightMm:600, orientation:"horizontal" as const,count:2,pointsMm:[100,500]};
     const view=render(<LevelMonitor configuration={c} family="LS03" level={300} available />);
-    const list=within(view.getByRole("list",{name:"Niveaux détectés"}));
+    const list=within(view.getByRole("list",{name:"Repères atteints"}));
     expect(list.getAllByRole("listitem")).toHaveLength(2);
-    expect(view.getByText("Entre les deux niveaux")).toBeTruthy();
+    expect(view.getByText("Entre les repères")).toBeTruthy();
     expect(view.queryByText("Niveau 0")).toBeNull();
     view.rerender(<LevelMonitor configuration={c} family="LS03" level={50} available />);
     expect(view.getByText("Niveau bas détecté")).toBeTruthy();
-    expect(view.container.querySelector('[data-point="1"]')?.getAttribute("data-active")).toBe("true");
+    expect(view.container.querySelector('[data-point="1"]')?.getAttribute("data-reached")).toBe("false");
     view.rerender(<LevelMonitor configuration={c} family="LS03" level={550} available />);
     expect(view.getByText("Niveau haut détecté")).toBeTruthy();
-    expect(view.container.querySelector('[data-point="1"]')?.getAttribute("data-active")).toBe("false");
+    expect(view.container.querySelector('[data-point="1"]')?.getAttribute("data-reached")).toBe("true");
   });
   test("labels stay separate and ordered under close points, extremes, zoom and short viewports", () => {
     for(const height of [100,192,320,500]) for(const count of [1,2,4,12]) for(const offset of [-300,0,100,400,2000]) {
@@ -105,4 +105,19 @@ describe("level viewport and requested thresholds", () => {
     expect(LS05_ENVELOPE.stemDiameterMm).toBeGreaterThanOrEqual(7); expect(LS05_ENVELOPE.stemDiameterMm).toBeLessThanOrEqual(16);
     expect(LS05_ENVELOPE.floatDiameterMm).toBeGreaterThanOrEqual(23.5); expect(LS05_ENVELOPE.floatDiameterMm).toBeLessThanOrEqual(38.3);
   });
+});
+
+test("discrete bars cross in order on filling and draining without turning the low alarm into a filled bar",()=>{
+  setLocale("fr");
+  for(const count of [2,4,12]) {
+    const c=fitStemToPoints({...INITIAL_CONFIGURATION,tankHeightMm:2000,count,pointsMm:Array.from({length:count},(_,i)=>100+i*150)});
+    const view=render(<LevelMonitor configuration={c} family="LS05" level={0} available />);
+    for(const level of [0,...c.pointsMm,2000,...[...c.pointsMm].reverse().map(p=>p-.1),0]) {
+      view.rerender(<LevelMonitor configuration={c} family="LS05" level={level} available />);
+      expect(view.container.querySelectorAll('.lv-level-bars li')).toHaveLength(count);
+      expect(view.container.querySelectorAll('.lv-level-bars [data-reached="true"]')).toHaveLength(c.pointsMm.filter(p=>p<=level).length);
+      expect(view.queryByText(/points actifs/)).toBeNull();
+    }
+    expect(view.getByText("Niveau bas détecté")).toBeTruthy(); view.unmount();
+  }
 });

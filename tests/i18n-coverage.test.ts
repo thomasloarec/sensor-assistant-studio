@@ -140,7 +140,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 49 entries: detection intent, mounting access, float stops and recovery.
     // + 28 entries: centimetre intake, multi-sensor alternatives, threshold monitor and viewport controls.
     // + 1 entry: explain the reachable stem range and automatic point adjustment.
-    expect(Object.keys(dictionary)).toHaveLength(4728);
+    // + 14 entries: physical point order, local validation and discrete level bars.
+    expect(Object.keys(dictionary)).toHaveLength(4742);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
