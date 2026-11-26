@@ -44,9 +44,7 @@
 .lv-question-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
 .lv-config-main { --lv-dock-top: calc(var(--standex-header-h, 56px) + 88px); max-width: 100rem; padding: 1.5rem 2rem .75rem; margin: auto; }
 .lv-embedded .lv-config-main { --lv-dock-top: 88px; }
-.lv-config-heading { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; }
-.lv-config-heading h1 { margin-top: .5rem; }
-.lv-context-chip { display: flex; align-items: center; gap: .65rem; padding: .8rem 1rem; font: var(--t-caption); border-radius: var(--r-pill); background: var(--surface-tint); color: var(--primary); min-height: 44px; }
+.lv-context-chip { display: flex; align-items: center; gap: .65rem; padding: .8rem 1rem; font: var(--t-caption); border-radius: var(--r-sm); background: var(--surface-tint); color: var(--primary); min-height: 44px; text-align: left; }
 .lv-config-grid { display: grid; grid-template-columns: minmax(15rem, 19rem) minmax(22rem, 1fr) minmax(14rem, 18rem); gap: 1.25rem; align-items: start; }
 .lv-controls { display: flex; flex-direction: column; gap: 1.5rem; padding: 1.5rem; position: sticky; top: var(--lv-dock-top); max-height: calc(100dvh - var(--lv-dock-top) - 3rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
 .lv-controls:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
@@ -92,8 +90,8 @@
 .lv-custom { display: grid; gap: 1rem; }
 .lv-custom button, .lv-continue { white-space: normal; height: auto; }
 .lv-review-main { max-width: 76rem; padding: 1.5rem 1rem 4rem; margin: auto; }
-.lv-solution-summary { display: grid; grid-template-columns: minmax(0, 1fr) minmax(10rem, 13rem); gap: 1rem; align-items: center; margin-top: 1rem; }
-.lv-review-picture { height: 13rem; border-radius: var(--r-lg); overflow: hidden; background: var(--surface-product, var(--surface-sunken)); }
+
+.lv-review-picture { height: 16rem; border-radius: var(--r-lg); overflow: hidden; background: var(--surface-product, var(--surface-sunken)); }
 .lv-review-main .review-fact dd { overflow-wrap: anywhere; }
 .lv-journey button:focus-visible, .lv-journey summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 .lv-monitor { display: grid; gap: 1.25rem; max-height: calc(100dvh - var(--lv-dock-top) - 3rem); overflow-y: auto; }
@@ -140,7 +138,7 @@
   .lv-step-full { display: none; }
   .lv-step-short { display: inline; }
   .lv-topbar, .lv-config-main, .lv-intro, .lv-review-main { padding-left: 1rem; padding-right: 1rem; }
-  .lv-choice-grid, .lv-config-grid, .lv-solution-summary { grid-template-columns: minmax(0, 1fr); }
+  .lv-choice-grid, .lv-config-grid { grid-template-columns: minmax(0, 1fr); }
   .lv-question-main { padding: 0 1rem; }
   .lv-config-grid { display: flex; flex-direction: column; }
   .lv-controls, .lv-monitor, .lv-visual-column { width: 100%; position: static; max-height: none; }
@@ -183,3 +181,28 @@
 .lv-interval { display: block; margin-top: .35rem; }
 .lv-contact-states { display: grid; gap: .5rem; margin-top: .75rem; }
 @media (min-width: 768px) { .lv-question-main .questionnaire-examples:has(.lv-intake-tank) { position: sticky; top: 10rem; align-self: start; max-height: calc(100dvh - 11rem); overflow-y: auto; } }
+
+/* The configurator uses the available viewport; only the side panels scroll. */
+.lv-context-chip svg { flex: none; }
+.lv-result-column { display: flex; flex-direction: column; gap: .75rem; min-width: 0; }
+.lv-result-column > .lv-continue { flex: none; }
+.lv-review-main #section-configuration { scroll-margin-top: calc(var(--standex-header-h, 56px) + 6rem); }
+@media (min-width: 1200px) {
+  .lv-config-active { height: 100dvh; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .lv-config-active.lv-embedded { height: 100%; }
+  .lv-config-active > header, .lv-config-active > .lv-stepper-bar { flex: none; }
+  .lv-config-active .lv-stepper-bar { padding-block: .5rem; }
+  .lv-config-main { flex: 1; min-height: 0; width: 100%; padding: .25rem 1rem .75rem; }
+  .lv-config-grid { height: 100%; min-height: 0; align-items: stretch; gap: 1rem; }
+  .lv-controls, .lv-visual-column, .lv-result-column { position: static; height: 100%; min-height: 0; max-height: none; }
+  .lv-controls { position: relative; top: auto; padding: 1.25rem; }
+  .lv-visual { height: 100%; min-height: 0; max-height: none; }
+  .lv-canvas { min-height: 0; }
+  .lv-result-column .lv-monitor { flex: 1; min-height: 0; max-height: none; position: static; align-content: start; }
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .lv-result-column { grid-column: 2; }
+}
+@media (max-width: 767px) {
+  .lv-result-column { width: 100%; order: 3; }
+}

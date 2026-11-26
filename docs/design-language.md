@@ -152,12 +152,11 @@ Un unique encart « Points de vigilance » par produit conserve les réserves th
 les compromis mécaniques, le besoin d'adaptateur et les incompatibilités électriques.
 Désactiver ou remplacer un filtre n'efface pas les écarts aux réponses initiales.
 
-Dans Résultat, la vignette 3D du capteur sélectionné réutilise le rendu des suggestions.
-À partir de 1024 px, elle occupe une colonne compacte à gauche des réglages ; sur
-mobile, l'image de 128 px et sa référence composent une seule rangée. Les champs
-ne sont jamais repoussés sous une grande image. Un seul aperçu est monté, indexé
-sur le capteur réellement choisi. Les cas sans sélection et PCB restent inchangés.
-Surfaces, typographie, couleurs et rayons réutilisent les jetons existants.
+Dans Résultat, le produit est illustré dans la fiche supérieure à droite. Le bloc
+« Configurer votre capteur » ne répète pas cette image : il ne contient que les
+champs de câble et de connexion, en pleine largeur. Les cas sans sélection et
+PCB restent inchangés. Surfaces, typographie et actions sont communes aux deux
+parcours produit.
 
 
 ### Atelier : expliquer l’instant et alléger la lecture — 9 novembre 2026
@@ -1352,7 +1351,7 @@ La dernière question propose 2 à 12 niveaux avec saisie synchronisée en cm et
 pourcentage de hauteur utile (jamais de volume). Ces réponses préparent le nombre
 de points, les flotteurs et leurs positions. Les objectifs 0 % / 100 % restent
 conservés dans le contexte ; tout décalage initial nécessaire au mouvement des
-flotteurs est annoncé et les valeurs demandées figurent dans le récapitulatif.
+flotteurs reste visible dans les réglages ; les valeurs demandées figurent dans le récapitulatif.
 Les réglages, repères latéraux, moniteur et revue affichent cm et pourcentages.
 La hauteur canonique reste en mm pour les calculs et les exports existants.
 
@@ -1394,3 +1393,36 @@ plus soutenu, un éclairage latéral moins uniforme et un plastique plus mat
 renforcent le volume des flotteurs. Le liquide reste teinté mais ne cumule plus
 l’opacité de ses deux faces devant le produit. Ces couleurs physiques restent
 confinées à l’exception Three.js ; dimensions, seuils et mouvement sont inchangés.
+
+### Configuration plein écran et revue commune — 26 novembre 2026
+
+Sur bureau et portable (à partir de 1200 px), le configurateur niveau remplit la
+hauteur restante sous la navigation, dans la page autonome comme dans le panneau
+plein écran. Les colonnes latérales défilent indépendamment ; simulation,
+remplissage/vidange et validation restent visibles. Aucun bandeau d’introduction
+n’occupe le haut. Le liquide et les températures sont consultables en bas des
+réglages ; leur modification rejoint la question du liquide puis revient au
+montage conservé. La validation reste en haut à droite, au-dessus du moniteur.
+
+Résultat reprend la grille standard : titre, détection et trois indicateurs à
+gauche, produit et caractéristiques à droite ; ensuite le bloc de câble et de
+connexion, puis les actions de continuation. Avec Standex regroupe le projet,
+la configuration en lecture seule et les détails du projet à gauche, les
+coordonnées à droite. Les objectifs du questionnaire restent dans ce récapitulatif.
+Les composants CableConnectionPanel, ConnectorPreferenceFields et
+ProjectContactFields sont partagés avec le parcours standard, ainsi que
+ProjectContextFields, les grilles, les surfaces et les actions du socle.
+
+Les choix « Je ne sais pas / Standard / Sur mesure » et « Je ne sais pas /
+J’ai une préférence / Pas besoin de connecteur » ont la même présentation.
+Aucune longueur standard n’est inventée pour les familles niveau. Une valeur
+personnalisée masquée par un autre choix reste un brouillon et n’est pas exportée
+comme décision active. Les choix explicites accompagnent l’export niveau ; le
+parcours niveau reste un brouillon téléchargeable, sans envoi serveur ni NDA
+simulé. Les fonctionnalités d’envoi et de confidentialité du parcours standard
+restent inchangées. Aucun nouveau jeton, aucune modification du moteur physique.
+
+Le portrait produit de Résultat est toujours à sec : chaque flotteur repose
+sur sa propre butée basse, y compris les montages à plusieurs flotteurs et
+l’insertion par le fond. Il ne reprend pas le niveau du liquide de la simulation ;
+revenir au configurateur conserve ce niveau et les réglages.

@@ -59,9 +59,11 @@ describe("Refus métier : identifiants autorisés uniquement", () => {
 describe("Connecteurs : source et présentation partagées", () => {
   test("les deux chemins montent le même sélecteur et gardent les formulaires manuels repliés", () => {
     const src = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
-    expect(src.match(/<ConnectorChoices termination=/g)).toHaveLength(2);
+    const shared = readFileSync("src/components/leadmagnet/connector-preference-fields.tsx", "utf8");
+    expect(src).toContain("<ConnectorPreferenceFields");
+    expect((src + shared).match(/<ConnectorChoices termination=/g)).toHaveLength(2);
     expect(src).not.toContain("<ConnectorPreview");
-    expect(src.match(/t\("Saisir une référence précise"\)/g)).toHaveLength(2);
+    expect((src + shared).match(/t\("Saisir une référence précise"\)/g)).toHaveLength(2);
     expect(src).toContain("termination: terminationFromHousing(found)");
   });
   test("le caption d'aperçu ne répète pas le titre", () => {

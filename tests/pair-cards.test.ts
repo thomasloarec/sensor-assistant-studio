@@ -94,7 +94,7 @@ describe("couples proposés — écran d'après les six questions", () => {
     // Le câble vit dans la configuration de l'étape « Résultat » ; l'étape
     // « Avec Standex » n'en garde qu'un récapitulatif en lecture seule.
     const configure = source.slice(source.indexOf("const configureSection"), source.indexOf("const resultatSection"));
-    expect(configure).toContain("{optionalQuestions}");
+    expect(configure).toContain("optionalQuestions");
     const resultat = source.slice(source.indexOf("const resultatSection"), source.indexOf("const workshopSection"));
     expect(resultat).toContain("{pcbSelected ? null : configureSection}");
     const revue = source.slice(source.indexOf("const revueSection"), source.indexOf("const configureSection"));

@@ -1115,38 +1115,6 @@
     align-items: baseline;
     gap: 0.125rem 0.5rem;
   }
-  .sensor-configuration-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
-    align-items: start;
-  }
-  .sensor-configuration-preview {
-    display: grid;
-    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
-    align-items: center;
-    gap: 1rem;
-    margin: 0;
-    min-width: 0;
-  }
-  .sensor-configuration-preview .candidate-thumb {
-    block-size: 8rem;
-  }
-  .sensor-configuration-preview figcaption {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  @media (min-width: 1024px) {
-    .sensor-configuration-layout {
-      grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 2fr);
-    }
-    .sensor-configuration-preview {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .sensor-configuration-preview .candidate-thumb {
-      block-size: 13rem;
-    }
-  }
   @media (max-width: 420px) {
     .pair-card-identities,
     .pair-card-facts > div {

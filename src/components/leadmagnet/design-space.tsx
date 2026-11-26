@@ -1,11 +1,12 @@
+import { ConnectorPreferenceFields } from "./connector-preference-fields";
+import { CableConnectionPanel } from "./cable-connection-panel";
+import { ProjectContactFields } from "./project-contact-fields";
 import { ProjectTitle } from "./project-title";
 import { trackUsage, setUsageFlow, bindUsageSubmission, usageChoice, subscribeUsage } from "@/lib/usage/client";
 import { useSyncExternalStore } from "react";
-import { IndustryField } from "./industry-field";
 import { useProjectIdentity } from "./use-project-identity";
 import { currentClientTrace, recordClientTrace } from "@/lib/standex/client-pedagogical";
 import { NeedExamples } from "./need-examples";
-import { SiteLocation } from "./site-location";
 import { BookingDialog } from "./booking-dialog";
 import { SubmissionProblemsDialog } from "./submission-problems-dialog";
 import {
@@ -4030,26 +4031,9 @@ export function DesignSpace({
 
   /** Trois questions facultatives : chaque puce pilote un choix DÉJÀ existant. */
   const optionalQuestions = (
-    <div id="section-cablage" className="panel-block-lg space-y-5">
-      <h3 className="t-title-m">{t("Câble et connexion")}</h3>
-
-      <div>
-        <Label className="t-label">{t("Longueur de câble")}</Label>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {/* i18n-canonical : libellés traduits par t() au rendu. */}
-          {(
-            [
-              ["undecided", "Je ne sais pas"],
-              ["standard_to_confirm", "Standard"],
-              ["custom_to_confirm", "Sur mesure"],
-            ] as const
-          ).map(([value, label]) => (
-            <Button
-              key={value}
-              variant={cabling.lengthChoice === value ? "default" : "outline"}
-              className="min-h-11 text-base"
-              aria-pressed={cabling.lengthChoice === value}
-              onClick={() => {
+    <CableConnectionPanel
+      lengthChoice={cabling.lengthChoice}
+      onLengthChoice={value => {
                 setCabling((c) => ({ ...c, lengthChoice: value }));
                 const current = workshopDraftRef.current ?? workshop ?? dossier.workshop;
                 if (current && value !== cabling.lengthChoice) {
@@ -4066,12 +4050,8 @@ export function DesignSpace({
                         ]
                       : (d.delegatedDecisions ?? []).filter((k) => k !== DELEGATED_CABLE),
                 }));
-              }}
-            >
-              {t(label)}
-            </Button>
-          ))}
-        </div>
+      }}
+      lengthFields={<>
         {cabling.lengthChoice === "standard_to_confirm" ? <div className="mt-3">
           <Label htmlFor="standard-length">{t("Longueurs standard documentées")}</Label>
           <select id="standard-length" className="t-metric min-h-11 w-full"
@@ -4087,16 +4067,10 @@ export function DesignSpace({
           <Input id="custom-length" type="number" min="0.1" max="10000" step="0.1" value={dossier.workshop?.cableLengthMm != null ? dossier.workshop.cableLengthMm / 10 : ""}
             onChange={e => applyWorkshopConfig({...workshopDraftRef.current ?? workshop ?? dossier.workshop ?? DEFAULT_WORKSHOP, cableLengthMm:customLengthMm(e.target.value)})} />
         </div> : null}
-      </div>
-
-      <div>
-        <Label className="t-label">{t("Connecteur")}</Label>
-        <div className="mt-2 flex flex-wrap gap-2" data-testid="connector-choice">
-          <Button
-            variant={!connectorPreference && !noConnectorChosen ? "default" : "outline"}
-            className="min-h-11 text-base"
-            aria-pressed={!connectorPreference && !noConnectorChosen}
-            onClick={() => {
+      </>}
+      connectorChoice={connectorPreference ? "preference" : noConnectorChosen ? "bare" : "undecided"}
+      onConnectorChoice={choice => {
+        if (choice === "undecided") {
               setConnectorWanted(false);
               setDossier((d) => ({
                 ...d,
@@ -4107,15 +4081,7 @@ export function DesignSpace({
                   DELEGATED_CONNECTOR,
                 ],
               }));
-            }}
-          >
-            {t("Je ne sais pas")}
-          </Button>
-          <Button
-            variant={connectorPreference ? "default" : "outline"}
-            className="min-h-11 text-base"
-            aria-pressed={connectorPreference}
-            onClick={() => {
+        } else if (choice === "preference") {
               setConnectorWanted(true);
               setDossier((d) => ({
                 ...d,
@@ -4123,15 +4089,7 @@ export function DesignSpace({
                   (k) => k !== DELEGATED_CONNECTOR && k !== CHOSEN_BARE_LEADS,
                 ),
               }));
-            }}
-          >
-            {t("J'ai une préférence")}
-          </Button>
-          <Button
-            variant={noConnectorChosen ? "default" : "outline"}
-            className="min-h-11 text-base"
-            aria-pressed={noConnectorChosen}
-            onClick={() => {
+        } else {
               // Choix volontaire : fils nus, marqueur explicite conservé, et le
               // choix n'est PAS confié à Standex.
               setConnectorWanted(false);
@@ -4146,91 +4104,19 @@ export function DesignSpace({
                   CHOSEN_BARE_LEADS,
                 ],
               }));
-            }}
-          >
-            {t("Pas besoin de connecteur")}
-          </Button>
-        </div>
-        {noConnectorChosen ? (
-          <p className="t-caption mt-2">
-            {t(
-              "Vous avez choisi de rester sur des fils nus, sans connecteur. Ce choix est enregistré tel quel : il n'est pas confié à Standex et il apparaît dans le résumé de votre projet.",
-            )}
-          </p>
-        ) : null}
-        {connectorPreference ? (          <div className="mt-3">
-            <ConnectorChoices termination={termination} onSelect={(found) => {
-              setConnectorError(null);
-              setConnectorDraft((d) => draftFromHousing(found, d));
-              setDossier((d) => ({ ...d, termination: terminationFromHousing(found),
-                delegatedDecisions: (d.delegatedDecisions ?? []).filter(k => k !== DELEGATED_CONNECTOR),
-              }));
-              setSelectionAnnounce(msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [found.housingMpn]));
-            }} />
-            <details className="mt-3">
-              <summary className="t-caption min-h-11 cursor-pointer list-none py-2">
-                {t("Saisir une référence précise")}
-              </summary>
-            <div className="mt-3">
-              <Label htmlFor="connector-free-reference">{t("Autre référence de connecteur")}</Label>
-              <Input id="connector-free-reference" value={termination.kind === "free_reference" ? termination.text : ""}
-                onChange={e => setDossier(d => ({...d, termination: {kind:"free_reference", text:e.target.value, status:"to_verify_by_rnd"}}))} />
-            </div>
-              <div className="mt-2 grid gap-3 md:grid-cols-2">
-                {CONNECTOR_FIELD_LABELS.map(([key, label]) => (
-                  <div key={key}>
-                    <Label className="t-label">{t(label)}</Label>
-                    <Input
-                      value={connectorDraft[key]}
-                      onChange={(e) => setConnectorDraft((d) => ({ ...d, [key]: e.target.value }))}
-                    />
-                  </div>
-                ))}
-              </div>
-              {connectorError ? (
-                <p className="notice notice-danger mt-2"><LocalizedValidationMessage value={connectorError} /></p>
-              ) : null}
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="min-h-11"
-                  onClick={() => {
-                    setConnectorError(null);
-                    setDossier((d) => ({ ...d, termination: DEFAULT_TERMINATION }));
-                  }}
-                >
-                  {t("Fils nus")}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="min-h-11"
-                  onClick={() => {
-                    const result = terminationFromDraft(connectorDraft);
-                    if (!result.ok) {
-                      setConnectorError(
-                        JSON.stringify({ kind: "connector-missing", fields: result.missing }),
-                      );
-                      return;
-                    }
-                    setConnectorError(null);
-                    setDossier((d) => ({ ...d, termination: result.termination }));
-                  }}
-                >
-                  {t("Enregistrer en « à vérifier par les ingénieurs Standex »")}
-                </Button>
-              </div>
-              <p className="t-caption mt-1">
-                {t(
-                  "Aucune combinaison connecteur/capteur qualifiée n'est documentée dans ce projet : toute référence saisie, sa contrepartie et son brochage restent à vérifier par les ingénieurs Standex.",
-                )}
-              </p>
-            </details>
-          </div>) : null}
-      </div>
-
-    </div>
+        }
+      }}
+      connectorFields={<>
+        {connectorPreference ? <ConnectorPreferenceFields termination={termination} draft={connectorDraft} error={connectorError}
+          onDraft={setConnectorDraft} onError={setConnectorError}
+          onTermination={value => setDossier(d => ({...d, termination:value}))}
+          onSelect={found => {
+            setConnectorError(null); setConnectorDraft(d => draftFromHousing(found,d));
+            setDossier(d => ({...d, termination:terminationFromHousing(found), delegatedDecisions:(d.delegatedDecisions ?? []).filter(k => k !== DELEGATED_CONNECTOR)}));
+            setSelectionAnnounce(msg("Connecteur {0} retenu comme préférence, à vérifier par les ingénieurs Standex.", [found.housingMpn]));
+          }} /> : null}
+      </>}
+    />
   );
 
   /** Étape 4 : la configuration technique en LECTURE SEULE. Les états viennent
@@ -4377,52 +4263,7 @@ export function DesignSpace({
           {ndaCard}
           <div className="panel-block-lg space-y-3">
             <h3 className="t-title-m">{t("Vos coordonnées")}</h3>
-            <div>
-              <Label className="t-label">{t("Nom")}</Label>
-              <Input
-                className="mt-2 w-full"
-                value={dossier.business.contactName ?? ""}
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, contactName: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label className="t-label">{t("Entreprise")}</Label>
-              <Input
-                className="mt-2 w-full"
-                value={dossier.business.contactCompany ?? ""}
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, contactCompany: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
-            <IndustryField business={dossier.business} onChange={patch => setDossier(d => ({ ...d, business: { ...d.business, ...patch } }))} />
-            <div>
-              <Label className="t-label">{t("E-mail professionnel")}</Label>
-              <Input
-                className="mt-2 w-full"
-                type="email"
-                value={dossier.business.contactEmail ?? ""}
-                onChange={(e) =>
-                  setDossier((d) => ({
-                    ...d,
-                    business: { ...d.business, contactEmail: e.target.value || null },
-                  }))
-                }
-              />
-            </div>
-            <div>
-              <Label htmlFor="contact-phone" className="t-label">{t("Numéro de téléphone")}</Label>
-              <Input id="contact-phone" type="tel" autoComplete="tel" maxLength={80} value={dossier.business.contactPhone ?? ""} onChange={(e) => setDossier((d) => ({ ...d, business: { ...d.business, contactPhone: e.target.value || null } }))} />
-            </div>
-            <SiteLocation business={dossier.business} onChange={patch => setDossier(d => ({ ...d, business: { ...d.business, ...patch } }))} />
+            <ProjectContactFields business={dossier.business} onChange={patch => setDossier(d => ({ ...d, business: { ...d.business, ...patch } }))} />
             {/* La confidentialité est traitée AVANT : ici ne reste que la
                 dernière action logique, l'envoi. */}
             <hr className="standex-rule" />
@@ -4517,19 +4358,7 @@ export function DesignSpace({
         {t("Configurer votre capteur")}
       </h2>
       {dossier.selectedSensorId ? (
-        <div className="sensor-configuration-layout">
-          <figure className="sensor-configuration-preview" data-testid="configured-sensor-preview">
-            <CandidateThumbnail animated key={dossier.selectedSensorId} sensorId={dossier.selectedSensorId} cabled fitToView size="large" legend="sensor" quiet />
-            <figcaption>
-              <strong className="t-title-m">{sensorDisplayTitle(dossier.selectedSensorId)}</strong>
-              {sensorDisplayVariant(dossier.selectedSensorId) ? <span className="t-caption block">{t(sensorDisplayVariant(dossier.selectedSensorId)!)}</span> : null}
-              <p className="t-caption mt-1">{msg("Vous avez choisi le capteur {0}.", [dossier.selectedSensorId])}</p>
-            </figcaption>
-          </figure>
-          <div className="min-w-0">
-            {optionalQuestions}
-          </div>
-        </div>
+        optionalQuestions
       ) : (
         <div className="notice notice-info space-y-3" data-testid="configure-no-sensor">
           <p>

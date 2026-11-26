@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
 const SRC = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");
+const choices = readFileSync("src/components/leadmagnet/cable-connection-panel.tsx", "utf8");
 
 describe("préférence de connecteur : ouverture réelle, sans cercle fermé", () => {
   test("un état d'ouverture distinct de la référence technique existe", () => {
@@ -14,9 +15,9 @@ describe("préférence de connecteur : ouverture réelle, sans cercle fermé", (
   });
 
   test("les trois choix sont explicites et « pas besoin » n'est pas une délégation", () => {
-    expect(SRC).toContain('t("Je ne sais pas")');
-    expect(SRC).toContain('t("J\'ai une préférence")');
-    expect(SRC).toContain('t("Pas besoin de connecteur")');
+    expect(choices).toContain('t("Je ne sais pas")');
+    expect(choices).toContain('t("J\'ai une préférence")');
+    expect(choices).toContain('t("Pas besoin de connecteur")');
     expect(SRC).toMatch(/noConnectorChosen =\s*\n?\s*termination\.kind === "bare_leads" &&/);
     expect(SRC).toMatch(/isDelegated\(dossier, CHOSEN_BARE_LEADS\) &&\s*\n?\s*!isDelegated\(dossier, DELEGATED_CONNECTOR\)/);
   });
