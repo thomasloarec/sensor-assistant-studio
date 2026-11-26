@@ -22,12 +22,12 @@
 .lv-scene-toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-width: 44px; min-height: 44px; padding: .35rem .6rem; border-radius: var(--r-sm); color: var(--primary); font: var(--t-caption); }
 .lv-scene-toolbar button:hover, .lv-scene-toolbar button[aria-pressed="true"] { background: var(--surface); box-shadow: var(--e-1); }
 .lv-scene-viewport { position: relative; flex: 1; min-height: 0; width: 100%; }
-.lv-scene-with-rail { --lv-rail-width: 9rem; padding-right: var(--lv-rail-width); }
+.lv-scene-with-rail { --lv-rail-width: 10.5rem; padding-right: var(--lv-rail-width); }
 .lv-marker-leaders { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .lv-marker-leaders path { fill: none; stroke: var(--standex-blue-50); stroke-width: 1; }
 .lv-marker-rail { position: absolute; inset: 0 0 0 auto; width: var(--lv-rail-width); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; }
 .lv-marker-track { position: relative; }
-.lv-marker-rail .lv-point-marker { position: absolute; left: .5rem; min-height: 44px; max-width: calc(100% - .75rem); text-align: left; cursor: pointer; }
+.lv-marker-rail .lv-point-marker { position: absolute; left: .5rem; min-height: 80px; width: calc(100% - 1rem); max-width: calc(100% - 1rem); text-align: left; cursor: pointer; }
 .lv-scene-stage > .lv-scene-loading { position: absolute; inset: 0; background: var(--surface-product, var(--surface-sunken)); }
 .lv-loading-icon { animation: lv-loading-spin var(--d-hero) var(--ease-in-out) infinite; color: var(--muted-foreground); }
 @keyframes lv-loading-spin { to { transform: rotate(360deg); } }
@@ -59,7 +59,7 @@
 .lv-visual-title { flex: none; padding: .5rem 1rem 0; display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; justify-content: space-between; }
 .lv-visual-title p + p { margin-top: .3rem; }
 .lv-canvas { flex: 1; min-height: 12rem; }
-.lv-point-marker { display: block; white-space: nowrap; padding: .25rem .5rem; background: var(--surface); color: var(--primary); border-radius: var(--r-sm); box-shadow: var(--e-1); }
+.lv-point-marker { display: block; white-space: normal; overflow-wrap: anywhere; padding: .25rem .5rem; background: var(--surface); color: var(--primary); border-radius: var(--r-sm); box-shadow: var(--e-1); }
 .lv-scene-loading, .lv-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; text-align: center; }
 .lv-playback { flex: none; display: grid; gap: 0; padding: .75rem 1rem; background: var(--surface); }
 .lv-playback .lv-play-actions { align-items: center; }
@@ -79,7 +79,7 @@
 .lv-range::-moz-range-thumb { width: 24px; height: 24px; border: 0; border-radius: var(--r-pill); background: var(--primary); }
 .lv-range:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--r-sm); }
 .lv-segment { display: flex; padding: .25rem; border-radius: var(--r-sm); background: var(--surface-sunken); gap: .25rem; }
-.lv-segment button { flex: 1; min-height: 44px; padding: .55rem .65rem; font: var(--t-body); border-radius: var(--r-xs); }
+.lv-segment button { flex: 1 1 auto; min-width: 0; white-space: normal; overflow-wrap: anywhere; min-height: 44px; padding: .55rem .65rem; font: var(--t-body); border-radius: var(--r-xs); }
 .lv-segment button[aria-pressed="true"] { background: var(--surface); color: var(--primary); box-shadow: var(--e-1); font-weight: 600; }
 .lv-play-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
 .lv-family-card { display: grid; gap: .9rem; }
@@ -159,3 +159,27 @@
 
 .lv-dimension { display: inline-flex; align-items: center; gap: .35rem; flex-shrink: 0; }
 .lv-field .lv-dimension input { width: 6rem; min-height: 44px; text-align: right; font: var(--t-body); font-variant-numeric: tabular-nums; }
+
+/* Level order, field feedback and threshold bars share the physical top-down order. */
+.lv-journey button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; height: auto; min-height: 44px; }
+.lv-play-actions > .lv-segment { flex: 0 1 auto; width: max-content; max-width: 100%; }
+.lv-point-entry { display: grid; gap: .5rem; min-width: 0; padding-left: .75rem; box-shadow: inset 3px 0 var(--standex-blue-25); }
+.lv-point-entry:focus-within { box-shadow: inset 3px 0 var(--primary); }
+.lv-intake-tank { display: grid; gap: .75rem; margin-bottom: 1.5rem; }
+.lv-intake-diagram { display: grid; grid-template-columns: 5rem minmax(0,1fr); }
+.lv-intake-diagram svg { width: 100%; height: 100%; overflow: visible; }
+.lv-tank-outline { fill: var(--surface-tint); stroke: var(--primary); stroke-width: 2; }
+.lv-tank-leader { fill: none; stroke: var(--standex-blue-50); stroke-width: 1; }
+.lv-tank-dot { fill: var(--primary); }
+.lv-intake-labels { display: grid; }
+.lv-intake-labels button { display: grid; text-align: left; align-content: center; gap: .15rem; padding: .25rem .5rem; color: var(--primary); border-radius: var(--r-sm); }
+.lv-intake-labels button:hover, .lv-intake-labels button:focus-visible { background: var(--surface-tint); }
+.lv-level-bars { display: flex; flex-direction: column; gap: .5rem; list-style: none; padding: 0; }
+.lv-level-bars li { display: grid; grid-template-columns: 2rem minmax(0,1fr); gap: .75rem; align-items: stretch; }
+.lv-level-bar { background: var(--surface-sunken); box-shadow: inset 0 0 0 1px var(--standex-blue-25); border-radius: var(--r-xs); }
+.lv-level-bars [data-reached="true"] .lv-level-bar { background: var(--primary); }
+.lv-bar-copy { display: grid; gap: .15rem; padding-block: .25rem; overflow-wrap: anywhere; }
+.lv-bar-copy strong { color: var(--primary); }
+.lv-interval { display: block; margin-top: .35rem; }
+.lv-contact-states { display: grid; gap: .5rem; margin-top: .75rem; }
+@media (min-width: 768px) { .lv-question-main .questionnaire-examples:has(.lv-intake-tank) { position: sticky; top: 10rem; align-self: start; max-height: calc(100dvh - 11rem); overflow-y: auto; } }

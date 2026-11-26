@@ -10,7 +10,7 @@ export function LevelMonitor({ configuration: c, family, level, available, candi
   const reading = illustrativeReading(c, level, family);
   const form = proposedContactForm(c, family);
   const percent = Math.round(reading.steppedMm / c.tankHeightMm * 100);
-  const activeCount = reading.pointStates.filter(p => p.active).length;
+
   return <aside className="lv-monitor panel-block" aria-label={t("Moniteur de niveau")}>
     <header><p className="t-label">{t(candidate ? "Piste à étudier" : "Demande spécifique")}</p>
       <h2 className="t-display-m">{c.custom ? t("Sur mesure") : candidate ? (c.orientation === "horizontal" && c.count > 1 ? c.count + " × " : "") + family : t("Avec Standex")}</h2>
@@ -39,18 +39,24 @@ export function LevelMonitor({ configuration: c, family, level, available, candi
         <div className="lv-field t-caption"><span className="font-semibold">{family} · {t("Forme de contact proposée")}</span>
           <span>{form ? `${t("Forme")} ${form}` : t("À confirmer avec Standex")}</span></div>
       </> : <>
-        <output className="lv-monitor-value t-title-l">{c.count === 2
-          ? t(reading.pointStates[0]?.active ? "Niveau bas détecté" : reading.pointStates[1]?.active ? "Niveau haut détecté" : "Entre les deux niveaux")
-          : `${activeCount} / ${c.count} ${t("points actifs")}`}</output>
-        <ol className="lv-level-ladder" aria-label={t("Niveaux détectés")}>
+        <output className="lv-monitor-value t-title-l">{t(reading.pointStates[0]?.active ? "Niveau bas détecté" : reading.pointStates.at(-1)?.active ? "Niveau haut détecté" : "Entre les repères")}
+          {!reading.pointStates[0]?.active && !reading.pointStates.at(-1)?.active ? <span className="t-body lv-interval">P{reading.zone} – P{reading.zone+1}</span> : null}</output>
+        <ol className="lv-level-bars" aria-label={t("Repères atteints")}>
           {[...reading.pointStates].reverse().map(point => {
-            return <li key={point.index} data-active={point.active} data-point={point.index + 1}>
-              <div className="lv-level-step-label"><span className="t-body">P{point.index + 1} · {t(point.index === 0 ? "Niveau bas" : point.index === c.count - 1 ? "Niveau haut" : "Niveau intermédiaire")}</span>
-                <span className="lv-level-dimension t-caption t-metric"><span>{formatCm(point.heightMm)} cm</span><span>{formatPercent(point.heightMm,c.tankHeightMm)} %</span></span></div>
-              <span className="lv-threshold-state t-caption"><i aria-hidden="true" />{t(point.active ? "Signal actif" : "Signal inactif")}</span>
+            const reached=point.index < reading.zone;
+            return <li key={point.index} data-reached={reached} data-point={point.index + 1}>
+              <span className="lv-level-bar" aria-hidden="true" />
+              <div className="lv-bar-copy"><strong className="t-body">P{point.index + 1} · {t(point.index === 0 ? "Niveau bas" : point.index === c.count - 1 ? "Niveau haut" : "Niveau intermédiaire")}</strong>
+                <span className="t-caption t-metric">{formatLevel(point.heightMm,c.tankHeightMm)}</span>
+                <span className="t-caption">{t(reached ? "Repère atteint" : "Repère non atteint")}</span></div>
             </li>;
           })}
         </ol>
+        <p className="t-caption">{t("Les barres se remplissent du bas vers le haut, à chaque repère atteint. Entre deux repères, la hauteur exacte n’est pas mesurée.")}</p>
+        <details className="lv-details"><summary>{t("Signaux des contacts")}</summary>
+          <ul className="lv-contact-states">{[...reading.pointStates].reverse().map(point=><li key={point.index} className="t-caption">P{point.index+1} · {t(point.active ? "Signal actif" : "Signal inactif")}</li>)}</ul>
+          <p className="t-caption">{t("Le signal de niveau bas s’active sous P1 ; les autres s’activent à leur seuil.")}</p>
+        </details>
         <p className="t-caption">{t(c.orientation === "horizontal" ? "Un capteur horizontal par point, avec des sorties distinctes à raccorder." : "Codage par résistances à définir avec Standex.")}</p>
       </>}
     <footer className="t-caption">{t("Illustration du besoin")} · {t("Seuils à confirmer par Standex")}</footer>

@@ -13,7 +13,7 @@ export interface ProjectedMarker { index: number; x: number; y: number; visible:
 /** Pack screen-space labels without changing their real measured heights.
  * If all labels cannot fit, the dedicated side rail scrolls instead of overlapping. */
 export function markerLayout(markers: ProjectedMarker[], height: number) {
-  const gap = 56, edge = 28;
+  const gap = 84, edge = 42;
   const contentHeight = Math.max(height, markers.length * gap + 8);
   const ordered = [...markers].sort((a, b) => a.y - b.y || b.index - a.index);
   const positions = ordered.map((m, i) => Math.max(edge + i * gap, Math.min(contentHeight - edge, m.y)));

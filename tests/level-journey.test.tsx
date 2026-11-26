@@ -26,7 +26,7 @@ test("multiple level intake prepares five points in cm and percent and preserves
   expect(view.getByRole("heading",{name:"LS05",exact:true})).toBeTruthy();
   expect(view.getByText(/La première proposition ajuste/)).toBeTruthy();
   expect((view.getByRole("slider",{name:"Hauteur du liquide",exact:true}) as HTMLInputElement).max).toBe("100");
-  expect(within(view.getByRole("complementary",{name:"Moniteur de niveau"})).getByText("50 %")).toBeTruthy();
+  expect(within(view.getByRole("complementary",{name:"Moniteur de niveau"})).getByText("50 cm · 50 %")).toBeTruthy();
   const cm=view.getByRole("textbox",{name:"Point 3 (cm)"}), percent=view.getByRole("textbox",{name:"Point 3 (%)"});
   await changeInput(percent,"55"); await act(async()=>fireEvent.blur(percent));
   expect((cm as HTMLInputElement).value).toBe("55");
@@ -159,11 +159,11 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
     expect(points.every((p, i) => p <= height && (i === 0 || p > points[i - 1]!))).toBe(true);
   }
   await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "6");
-  expect(monitor.querySelector('[data-point="4"]')?.getAttribute("data-active")).toBe("true");
-  expect(monitor.querySelector('[data-point="1"]')?.getAttribute("data-active")).toBe("false");
+  expect(monitor.querySelector('[data-point="4"]')?.getAttribute("data-reached")).toBe("true");
+  expect(monitor.querySelector('[data-point="1"]')?.getAttribute("data-reached")).toBe("true");
   await changeInput(view.getByRole("slider", { name: "Hauteur du liquide", exact: true }), "0");
-  expect(monitor.querySelector('[data-point="1"]')?.getAttribute("data-active")).toBe("true");
-  expect(monitor.querySelector('[data-point="4"]')?.getAttribute("data-active")).toBe("false");
+  expect(monitor.querySelector('[data-point="1"]')?.getAttribute("data-reached")).toBe("false");
+  expect(monitor.querySelector('[data-point="4"]')?.getAttribute("data-reached")).toBe("false");
   await click("Horizontale");
   expect(within(monitor).getByText("Lecture en attente")).toBeTruthy();
   expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("4");
@@ -188,11 +188,11 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
 });
 
 
-test("dimension entry accepts exact decimals, clamps bounds and rejects empty or invalid text", async () => {
+test("dimension entry accepts exact decimals, refuses out-of-range values and rejects empty or invalid text", async () => {
   let committed = 220;
   const view = render(<RangeField label="Dimension" value={220} min={60} max={540} step={10} onChange={v => { committed = v; }} />);
   const field = view.getByRole("textbox", {name:"Dimension (cm)"});
-  for (const [text, expected] of [["22,15",221.5],["900",540],["1.2",60],["",220],["abc",220]] as const) {
+  for (const [text, expected] of [["22,15",221.5],["900",221.5],["1.2",221.5],["",221.5],["abc",221.5]] as const) {
     await changeInput(field,text); await act(async()=>fireEvent.blur(field)); expect(committed).toBe(expected);
   }
   await changeInput(field,"333"); await act(async()=> {
@@ -232,9 +232,33 @@ test("decimal centimetres survive intake, configuration, cable review and Stande
   expect(view.queryByText('Lecture en attente')===null).toBe(true);
   const input=view.getByRole('textbox',{name:'Point 1 (cm)',exact:true});
   await changeInput(input,'0'); await act(async()=>fireEvent.blur(input));
-  expect((input as HTMLInputElement).value).toBe('0');
-  expect(view.getByText('Lecture en attente')).toBeTruthy();
-  expect(input.getAttribute('aria-invalid')).toBe('true');
+  expect((input as HTMLInputElement).value).toBe('4,5');
+  expect(view.queryByText('Lecture en attente')).toBeNull();
+  expect(view.getByRole('alert').textContent).toContain('Valeur conservée');
   await changeInput(input,'4,5'); await act(async()=>fireEvent.blur(input));
   expect(view.queryByText('Lecture en attente')===null).toBe(true);
+});
+
+test("points keep physical order and rejected cm or percent edits leave the working monitor unchanged",async()=>{
+  setLocale("fr"); const view=render(<LevelJourney active={false}/>);
+  const click=async(name:string)=>{await act(async()=>fireEvent.click(view.getByRole("button",{name,exact:true})));};
+  await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer");
+  await changeInput(view.getByRole("textbox",{name:/Hauteur utile de la cuve/}),"30"); await click("Continuer");
+  await act(async()=>fireEvent.change(view.getByLabelText("Niveau à détecter"),{target:{value:"multiple"}}));
+  expect(view.getAllByRole("textbox").map(e=>e.closest("label")?.textContent).filter(Boolean).slice(0,2)).toEqual(["Point 2 (cm)","Point 2 (%)"]);
+  await changeInput(view.getByRole("textbox",{name:"Point 2 (cm)"}),"20");
+  await changeInput(view.getByRole("textbox",{name:"Point 1 (cm)"}),"10");
+  expect(view.getByRole("region",{name:"Vos repères dans la cuve"})).toBeTruthy();
+  await click("Ouvrir le configurateur");
+  const cm=view.getByRole("textbox",{name:"Point 1 (cm)"});
+  const monitor=view.getByRole("complementary",{name:"Moniteur de niveau"});
+  const before=monitor.textContent;
+  for(const [name,raw] of [["Point 1 (cm)","25"],["Point 1 (%)","90"],["Point 1 (cm)","abc"]]) {
+    const field=view.getByRole("textbox",{name}); await changeInput(field,raw); await act(async()=>fireEvent.blur(field));
+    expect((cm as HTMLInputElement).value).toBe("10"); expect(monitor.textContent).toBe(before);
+    expect(view.getByRole("alert").closest(".lv-point-entry")?.textContent).toContain("Point 1");
+    expect(view.queryByText("Lecture en attente")).toBeNull();
+  }
+  await changeInput(cm,"11"); await act(async()=>fireEvent.blur(cm));
+  expect((cm as HTMLInputElement).value).toBe("11"); expect(view.queryByRole("alert")).toBeNull();
 });

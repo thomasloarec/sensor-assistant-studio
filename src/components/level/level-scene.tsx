@@ -4,7 +4,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Line, OrbitControls } from "@react-three/drei";
 import { Plus, Minus, Scan, Focus } from "lucide-react";
-import { BoxGeometry, Float32BufferAttribute, CatmullRomCurve3, DoubleSide, MOUSE, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
+import { BoxGeometry, Float32BufferAttribute, CatmullRomCurve3, DoubleSide, FrontSide, MOUSE, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
 import { formatCm, formatPercent, formatLevel } from "@/lib/level/dimensions";
@@ -14,19 +14,20 @@ import { SceneFrameReady } from "./scene-frame-ready";
 import { LS05_ENVELOPE, markerLayout, sceneFrame, tankDimensions, verticalSensorX, type ProjectedMarker } from "@/lib/level/presentation";
 
 // Physical material colours are confined to the reconstructed scene, as in the existing workshop.
-const MAT = { pp: "#ebece3", pa: "#262b30", steel: "#adb6bd", seal: "#22282c", water: "#75bdd8", oil: "#b7954a" };
+const MAT = { pp: "#ebece3", pa: "#262b30", steel: "#adb6bd", tank: "#70838f", seal: "#22282c", water: "#75bdd8", oil: "#b7954a" };
 function StudioLight() {
   const { gl, scene } = useThree();
   useEffect(() => {
     const room = new RoomEnvironment();
     const pmrem = new PMREMGenerator(gl);
     const env = pmrem.fromScene(room, 0.04);
-    const previous = scene.environment;
+    const previous = scene.environment, previousIntensity = scene.environmentIntensity;
     scene.environment = env.texture;
-    return () => { scene.environment = previous; env.dispose(); room.dispose(); pmrem.dispose(); };
+    scene.environmentIntensity = .55;
+    return () => { scene.environment = previous; scene.environmentIntensity = previousIntensity; env.dispose(); room.dispose(); pmrem.dispose(); };
   }, [gl, scene]);
-  return <><ambientLight intensity={0.65} /><directionalLight position={[100, 240, 160]} intensity={3.2} />
-    <directionalLight position={[-160, 140, -80]} intensity={1.8} /></>;
+  return <><ambientLight intensity={0.25} /><directionalLight position={[-100, 180, 140]} intensity={2.4} />
+    <directionalLight position={[140, 80, -100]} intensity={0.8} /></>;
 }
 function Framing({ config, family, productOnly, focus, zoom, viewRevision, interactive }: {
   config: LevelConfiguration; family: Family; productOnly: boolean; focus: number | null; zoom: number; viewRevision: number; interactive: boolean;
@@ -62,7 +63,7 @@ function Cylinder({ radius, height, y = 0, color, metal = false, sides = 64 }: {
 }) {
   return <mesh position={[0, y, 0]} castShadow receiveShadow>
     <cylinderGeometry args={[radius, radius, height, sides]} />
-    <meshStandardMaterial color={color} roughness={metal ? 0.24 : 0.32} metalness={metal ? 0.88 : 0.02} />
+    <meshStandardMaterial color={color} roughness={metal ? 0.24 : 0.48} metalness={metal ? 0.88 : 0.02} />
   </mesh>;
 }
 function FloatBody({ steel, color, grooved = false }: { steel: boolean; color: string; grooved?: boolean }) {
@@ -77,7 +78,7 @@ function FloatBody({ steel, color, grooved = false }: { steel: boolean; color: s
     new Vector2(3.6, half), new Vector2(3.6, -half)], [half, grooved, steel]);
   return <group>
     <mesh castShadow><latheGeometry args={[points, 80]} />
-      <meshStandardMaterial color={color} metalness={steel ? 0.92 : 0.02} roughness={steel ? 0.22 : 0.3} side={DoubleSide} />
+      <meshStandardMaterial color={color} metalness={steel ? 0.92 : 0.02} roughness={steel ? 0.22 : 0.48} side={DoubleSide} />
     </mesh>
     {!grooved ? <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, steel ? 0 : -8.6, 0]}>
       <torusGeometry args={[steel ? LS05_ENVELOPE.floatDiameterMm / 2 : 11.7, steel ? 0.4 : 0.18, 8, 80]} />
@@ -217,7 +218,7 @@ function FadingTankPanel({ width, height, depth, y, z = 0, water = false, oil = 
   },[width,height,depth]);
   useEffect(()=>()=>geometry.dispose(),[geometry]);
   return <mesh geometry={geometry} position={[0,y,z]} renderOrder={water?3:0}>
-    <meshStandardMaterial color={water ? oil ? MAT.oil : MAT.water : MAT.steel} vertexColors transparent opacity={water ? .35 : 1} metalness={water?0:.62} roughness={water ? .15 : .35} depthWrite={false} side={DoubleSide} />
+    <meshStandardMaterial color={water ? oil ? MAT.oil : MAT.water : MAT.tank} vertexColors transparent opacity={water ? .20 : 1} metalness={water?0:.15} roughness={water ? .2 : .75} depthWrite={false} side={water ? FrontSide : DoubleSide} />
   </mesh>;
 }
 function Tank({ height, level, oil }: { height: number; level: number; oil: boolean }) {
@@ -225,7 +226,7 @@ function Tank({ height, level, oil }: { height: number; level: number; oil: bool
   return <group>
     <FadingTankPanel width={width} height={4} depth={depth} y={-2} />
     <FadingTankPanel width={width} height={height} depth={2} y={height/2} z={-depth/2} />
-    <mesh position={[-width/2,height/2,0]}><boxGeometry args={[2,height,depth]} /><meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.28} transparent opacity={.65} depthWrite={false} /></mesh>
+    <mesh position={[-width/2,height/2,0]}><boxGeometry args={[2,height,depth]} /><meshStandardMaterial color={MAT.tank} metalness={.15} roughness={.75} transparent opacity={.85} depthWrite={false} /></mesh>
     <FadingTankPanel width={width-2} height={Math.max(.1,level)} depth={depth-2} y={Math.max(.1,level)/2} water oil={oil} />
     {Array.from({ length: 11 }, (_, i) => <Line key={i} points={[[-width/2+5,i*height/10,-depth/2+2],[-width/2+(i%5===0?12:8),i*height/10,-depth/2+2]]} color="#4a5861" lineWidth={1} />)}
   </group>;
@@ -263,7 +264,7 @@ export default function LevelScene({ configuration, family, levelMm, material, o
   const [projection, setProjection] = useState<Projection>({width:0,height:0,markers:[]});
   const [railScroll, setRailScroll] = useState(0);
   const markers = !productOnly && showMarkers && configuration.mode === "points";
-  const layout = markerLayout(projection.markers, projection.height);
+  const layout = markerLayout(projection.markers.filter(m => m.index < configuration.pointsMm.length), projection.height);
   useEffect(() => {
     setFocus(interactive && configuration.tankHeightMm > 400 && (family === "LS01" || family === "LS02" || family === "LS03") ? configuration.pointsMm[0]! : null);
     setZoom(1);
@@ -295,7 +296,7 @@ export default function LevelScene({ configuration, family, levelMm, material, o
       <path key={m.index} d={`M ${m.x} ${m.y} H ${projection.width - 4} L ${projection.width + 7} ${m.labelY - railScroll}`} />)}</svg>
     <div className="lv-marker-rail" aria-label={t("Position des points")} onScroll={e => setRailScroll(e.currentTarget.scrollTop)}>
       <div className="lv-marker-track" style={{height:layout.contentHeight}}>{layout.markers.map(m => <button type="button" key={m.index}
-        className="lv-point-marker t-caption t-metric" style={{top:m.labelY-26}} onClick={() => inspect(configuration.pointsMm[m.index])}
+        className="lv-point-marker t-caption t-metric" style={{top:m.labelY-40}} onClick={() => inspect(configuration.pointsMm[m.index])}
         aria-label={`${t("Voir le point")} ${m.index+1} · ${formatLevel(configuration.pointsMm[m.index]!,configuration.tankHeightMm)}`}>
         <span>P{m.index+1} · {formatCm(configuration.pointsMm[m.index]!)} cm</span><span>{formatPercent(configuration.pointsMm[m.index]!,configuration.tankHeightMm)} %</span></button>)}</div>
     </div>
