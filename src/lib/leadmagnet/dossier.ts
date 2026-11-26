@@ -93,6 +93,8 @@ export interface Attachment {
 export type StorageMode = "memory" | "local-device";
 
 export interface DesignDossier {
+  /** Level study raw choices; no product qualification or submission authority. */
+  levelStudy?: import("../level/dossier").LevelStudy | null;
   /** Local technical study travels inside the existing revision DTO. No signature authority. */
   studioV2?: import("../standex/studio-dossier").StudioStudy | null;
   /** Montage guidé versionné (contrat explicite). Absent des dossiers antérieurs :

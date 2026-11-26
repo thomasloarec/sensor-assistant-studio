@@ -1,3 +1,4 @@
+import { LevelReviewFacts } from "../level/level-review-facts";
 import { ConnectorPreferenceFields } from "./connector-preference-fields";
 import { CableConnectionPanel } from "./cable-connection-panel";
 import { ProjectContactFields } from "./project-contact-fields";
@@ -392,6 +393,10 @@ export const guidedQuestionProgress = (focusIndex: number, total: number): numbe
   total > 0 ? Math.min(Math.max(focusIndex, 0), total) / total : 0;
 
 export interface DesignSpaceProps {
+  /** Reuse the entire review, NDA, consent, PDF and submission flow for level studies.
+   * The caller keeps this instance mounted across edits, preserving server identity. */
+  reviewOnly?: { dossier: DesignDossier; onEditProject: () => void; onEditConfiguration: () => void };
+
   /** "page" : route /design autonome. "embedded" : monté dans l'espace projet de l'accueil. */
   chrome?: "page" | "embedded";
   /** false : l'accueil est affiché devant. Les panneaux, eux, restent utilisables :
@@ -416,9 +421,17 @@ export function DesignSpace({
   onWorkspaceOpen,
   onGoHome,
   requestedDossierId = null,
+  reviewOnly,
 }: DesignSpaceProps) {
   useLocale();
-  const [dossier, setDossier] = useState<DesignDossier>(() => createDossier());
+  const [dossier, setDossier] = useState<DesignDossier>(() => reviewOnly?.dossier ?? createDossier());
+  useEffect(() => {
+    if (!reviewOnly) return;
+    // Technical edits invalidate the normal content-bound consent. Business answers,
+    // NDA and server revision belong to this review instance and are never reset.
+    setDossier(previous => ({ ...reviewOnly.dossier, business: previous.business,
+      revision: previous.revision, updatedAt: new Date().toISOString() }));
+  }, [reviewOnly?.dossier]);
   const usageConsent = useSyncExternalStore(subscribeUsage, usageChoice, () => null);
   useEffect(() => { if (visible) { setUsageFlow(dossier.id); trackUsage("project_started", {}, true); } }, [visible, dossier.id, usageConsent]);
   /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
@@ -600,7 +613,7 @@ export function DesignSpace({
   /** Pointage du câble dans la 3D : trajet visé et rôle du prochain point. */
   const [routingTarget, setRoutingTarget] = useState<RoutingTarget>({ kind: "base" });
   const [routingSlot, setRoutingSlot] = useState<RoutingSlot>("sensor");
-  const [tab, setTab] = useState("besoin");
+  const [tab, setTab] = useState(reviewOnly ? "revue" : "besoin");
   /** Divulgation progressive : les onglets détaillés restent accessibles à la demande. */
   const [showAdvanced, setShowAdvanced] = useState(false);
   /** Mode guidé : une seule question à la fois, sans rien retirer du dossier. */
@@ -1748,7 +1761,7 @@ export function DesignSpace({
   /* Focus automatique dans le champ à chaque question, sur desktop seulement
    * (pointeur fin, ≥ 768 px) : sur mobile, ouvrir le clavier serait intrusif. */
   useEffect(() => {
-    if (!visible || showAdvanced) return;
+    if (!visible || showAdvanced || reviewOnly) return;
     if (!window.matchMedia("(min-width: 768px) and (pointer: fine)").matches) return;
     const field = document.getElementById(`guide-${question.key}`);
     if (field instanceof HTMLTextAreaElement) field.focus({ preventScroll: true });
@@ -4166,7 +4179,7 @@ export function DesignSpace({
     : isDelegated(dossier, DELEGATED_SENSOR)
       ? t("À définir avec Standex : aucune gamme n'est présélectionnée.")
       : t("Aucun capteur choisi, et aucun choix confié à Standex.");
-  const reviewConfiguration = (
+  const reviewConfiguration = dossier.levelStudy ? <LevelReviewFacts dossier={dossier} technical onEdit={reviewOnly?.onEditConfiguration} /> : (
     <div className="panel-block-lg" data-testid="review-configuration">
       <h3 className="t-title-m">{t("Configuration technique")}</h3>
       <dl className="review-facts mt-3">
@@ -4214,7 +4227,7 @@ export function DesignSpace({
       </div>
       <div className="review-grid">
         <div className="space-y-4">
-          <div className="panel-block-lg">
+          {dossier.levelStudy ? <LevelReviewFacts dossier={dossier} onEdit={reviewOnly?.onEditProject} /> : <div className="panel-block-lg">
             <h3 className="t-title-m">{t("Votre projet")}</h3>
             <dl className="review-facts mt-3">
               {REQUIREMENT_ORDER.map((key) => {
@@ -4245,7 +4258,7 @@ export function DesignSpace({
                 </dd>
               </div>
             </dl>
-          </div>
+          </div>}
 
           {reviewConfiguration}
 
@@ -4915,7 +4928,7 @@ export function DesignSpace({
     >
       {/* La barre publie sa hauteur réelle : c'est elle qui cale le rail des
           étapes juste en dessous, sans chevauchement. */}
-      <header
+      {!reviewOnly ? <><header
         ref={projectHeaderRef}
         className={`project-header material sticky top-0 z-30${visible ? "" : " hidden"}`}
       >
@@ -4989,7 +5002,9 @@ export function DesignSpace({
           ))}
         </nav>
       </div>
-      <main className={`mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
+      </> : null}
+      <main className={reviewOnly ? "space-y-5" : `mx-auto max-w-[76rem] px-4 py-6${visible ? "" : " hidden"}`}>
+        {reviewOnly ? revueSection : <>
         <Tabs value={tab} onValueChange={setTab}>
           {showAdvanced ? (
             <div className="mb-2">
@@ -5045,15 +5060,16 @@ export function DesignSpace({
             {revueSection}
           </TabsContent>
         </Tabs>
+        </>}
       </main>
 
       {/* Panneaux contextuels : le projet reste derrière, la saisie est conservée. */}
-      <WorkspacePanel open={levelPreviewOpen} onOpenChange={setLevelPreviewOpen} keepMounted fullscreen bare
+      {!reviewOnly ? <WorkspacePanel open={levelPreviewOpen} onOpenChange={setLevelPreviewOpen} keepMounted fullscreen bare
         title={t("Capteurs de niveau · aperçu")} languagePicker>
         <Suspense fallback={<p className="t-body p-8">{t("Chargement du parcours niveau…")}</p>}>
           <LevelJourney embedded active={levelPreviewOpen} onClassic={() => setLevelPreviewOpen(false)} />
         </Suspense>
-      </WorkspacePanel>
+      </WorkspacePanel> : null}
       {/* L'atelier occupe tout l'écran et reste monté en permanence : le retour
           au projet ne perd ni réglages, ni caméra, ni fichier importé. */}
       <WorkspacePanel

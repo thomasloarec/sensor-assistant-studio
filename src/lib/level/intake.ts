@@ -1,9 +1,9 @@
-import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, horizontalPointBounds, setPointCount, constrainPointLayout,
+import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, horizontalPointBounds, setPointCount, constrainPointLayout, configurationIssues, setReach,
   type LevelConfiguration, type LevelContext } from "./configuration";
 
 /** Only explicit intake answers seed the design; prose is never silently classified. */
 export function intakeKey(context: LevelContext) {
-  return JSON.stringify([context.mountingAccess, context.tankHeight, context.detectionGoal, context.detectionHeight, context.responsePriority, context.detectionCount, context.detectionHeights]);
+  return JSON.stringify([context.mountingAccess, context.tankHeight, context.detectionGoal, context.responsePriority, context.detectionCount, context.detectionHeights]);
 }
 export function requestedIntakePoints(context: LevelContext) {
   const height=finiteInput(context.tankHeight) ?? 100;
@@ -24,12 +24,9 @@ export function requestedIntakePoints(context: LevelContext) {
 }
 export function intakeErrors(context: LevelContext) {
   const errors: string[] = [];
-  const height = finiteInput(context.tankHeight), point = finiteInput(context.detectionHeight);
+  const height = finiteInput(context.tankHeight);
   if (context.tankHeight.trim() && (height === null || height < 60 || height > MAX_TANK_HEIGHT_MM))
     errors.push("Indiquez une hauteur de cuve entre 6 et 1 000 cm pour cet aperçu, ou laissez-la à définir.");
-  if (["high", "low"].includes(context.detectionGoal) && context.detectionHeight.trim()
-    && (point === null || point < 0 || point > (height ?? 100)))
-    errors.push("Le niveau demandé doit être compris entre le fond et le haut de la cuve. Précisez aussi la hauteur de cuve si nécessaire.");
   if(context.detectionGoal === "multiple") {
     const count=context.detectionCount ?? 2, entries=context.detectionHeights ?? [];
     if(!Number.isInteger(count) || count<2 || count>12) errors.push("Choisissez entre 2 et 12 niveaux pour cet aperçu.");
@@ -54,20 +51,22 @@ export function seedConfiguration(context: LevelContext): LevelConfiguration {
     c=setPointCount(c,points.length);
     return constrainPointLayout(fitStemToPoints({...c,pointsMm:points}));
   }
-  const requested = finiteInput(context.detectionHeight);
-  let point = requested ?? (mounting === "bottom" ? goal === "low" ? 15 : compactReach(c) - 7
+  // Legacy single-target answers no longer constrain the initial proposal.
+  let point = (mounting === "bottom" ? goal === "low" ? 15 : compactReach(c) - 7
     : goal === "high" ? height - 7 : Math.max(25, Math.round(height * .2)));
-  if (requested === null && mounting === "support" && c.orientation === "vertical") {
+  if (mounting === "support" && c.orientation === "vertical") {
     const min = goal === "low" ? 15 : compactReach(c) - 7;
     const max = goal === "high" ? height - 7 : height - compactReach(c) + 15;
     point = Math.max(min, Math.min(max, point));
   }
-  if (requested === null && c.orientation === "horizontal") {
+  if (c.orientation === "horizontal") {
     const bounds = horizontalPointBounds(c);
     point = Math.max(bounds.min, Math.min(bounds.max, Math.round(height * (goal === "high" ? .7 : .2))));
   }
   c = { ...c, pointsMm: [point] };
-  return fitStemToPoints(c);
+  const fitted = constrainPointLayout(fitStemToPoints(c));
+  // A shallow tank may only accommodate the fixed long-travel compact.
+  return configurationIssues(fitted).length ? setReach(c, compactReach(c)) : fitted;
 }
 // Context/export keep millimetres; only the tank-height input is displayed in cm.
 export function tankHeightInCm(mm: string) {

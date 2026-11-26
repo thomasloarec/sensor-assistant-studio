@@ -1417,12 +1417,31 @@ Les choix « Je ne sais pas / Standard / Sur mesure » et « Je ne sais pas /
 J’ai une préférence / Pas besoin de connecteur » ont la même présentation.
 Aucune longueur standard n’est inventée pour les familles niveau. Une valeur
 personnalisée masquée par un autre choix reste un brouillon et n’est pas exportée
-comme décision active. Les choix explicites accompagnent l’export niveau ; le
-parcours niveau reste un brouillon téléchargeable, sans envoi serveur ni NDA
-simulé. Les fonctionnalités d’envoi et de confidentialité du parcours standard
-restent inchangées. Aucun nouveau jeton, aucune modification du moteur physique.
+comme décision active. Les choix explicites accompagnent le dossier niveau. La page Avec Standex
+réutilise désormais la revue du parcours standard : même envoi, confidentialité,
+coordonnées, consentements et téléchargement du rapport PDF complet.
+Aucun nouveau jeton, aucune modification du moteur physique.
 
 Le portrait produit de Résultat est toujours à sec : chaque flotteur repose
 sur sa propre butée basse, y compris les montages à plusieurs flotteurs et
 l’insertion par le fond. Il ne reprend pas le niveau du liquide de la simulation ;
 revenir au configurateur conserve ce niveau et les réglages.
+
+### Proposition initiale et envoi niveau — 26 novembre 2026
+
+Pour un seul niveau haut ou bas, le questionnaire demande l’intention et les
+mouvements du liquide ; il ne demande plus la hauteur précise. La proposition
+respecte les dégagements du montage. Le configurateur garde la saisie en cm et
+en pourcentage ; les objectifs multiples conservent leurs champs dès le besoin.
+
+Les longueurs standard LS01 à LS05 sont 50, 100 et 500 cm, selon les tables de
+commande des fiches série v02, page 1. Elles restent à confirmer pour la version
+exacte, comme dans le parcours standard. Aucun choix masqué ne devient actif.
+
+Avec Standex emploie DesignSpace en revue seule, conservée pendant les retours
+vers Résultat ou Configuration. Le bouton principal est « Envoyer mon projet » ;
+le PDF reste une action secondaire grise au bas de la colonne gauche. Les
+données niveau alimentent le récapitulatif, le résumé d’envoi, le PDF et son
+dossier joint. Une modification technique renouvelle le consentement lié au
+contenu sans perdre les coordonnées ni l’identité serveur. Les conditions de
+confidentialité et d’accès existantes restent applicables.

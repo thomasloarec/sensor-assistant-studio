@@ -1,3 +1,4 @@
+import { levelProjectFacts, levelTechnicalFacts } from "../level/dossier";
 import { isPcbSensor } from "./product-presentation";
 import { industryDisplayName } from "./industry-labels";
 import { currentClientTrace } from '../standex/client-pedagogical';
@@ -72,7 +73,8 @@ export function projectReportSections(
     entry("Échantillons utiles avant", d.business.samplesNeededBy),
     entry("Durée série", d.business.seriesDurationYears == null ? unknown : `${d.business.seriesDurationYears} ${tr("ans")}`),
   ], "grid", 3);
-  add("Application", d.requirements.map(r => {
+  if(d.levelStudy) add("Application", levelProjectFacts(d.levelStudy,tr).map(([label,value])=>({label,value})), "grid", 2);
+  else add("Application", d.requirements.map(r => {
     const rawAnswer = requirementAnswer(d, r.key, tr);
     const answer = r.key === "envelope" ? rawAnswer.replace(/\n/g," · ") : rawAnswer;
     return entry(REQUIREMENT_LABELS[r.key] ?? r.label,
@@ -142,6 +144,8 @@ export function projectReportSections(
       ),
     ]);
   }
+  if(d.levelStudy) add("Configuration technique", levelTechnicalFacts(d,tr).map(([label,value])=>({label,value})));
+  if(!d.levelStudy) {
   if(!w && d.selectedSensorId) add("Configuration du montage", [entry("Capteur", d.selectedSensorId)]);
   if(isPcbSensor(d.selectedSensorId)) add("Câblage", [entry("Montage", tr("Montage sur PCB : câble et connecteur non applicables."))]);
   else {
@@ -160,10 +164,11 @@ export function projectReportSections(
       return split < 0 ? entry("À retenir", line) : {label:line.slice(0,split),value:line.slice(split+3)};
     }), "grid");
   }
+  }
   group = "overview";
   // Compatibilité du besoin : la MÊME vérité que l'écran des couples et le
   // résultat. Une contradiction posée dans les réponses reste écrite ici.
-  if (fit.issues.length)
+  if (!d.levelStudy && fit.issues.length)
     add("Compatibilité de votre application", [
       ...fit.issues.flatMap((issue) => [
         entry(tr(issue.title), tr(issue.whatWorks)),

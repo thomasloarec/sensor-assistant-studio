@@ -1,4 +1,4 @@
-/** Isolated level UX prototype. No magnetic engine, qualified SKU or production dossier. */
+/** Level design illustration. No magnetic engine or qualified SKU; raw choices can enter a project dossier. */
 export type Family = "LS01" | "LS02" | "LS03" | "LS04" | "LS05";
 export type Fluid = "water" | "oil" | "other" | "unknown";
 export interface LevelContext {
@@ -15,8 +15,8 @@ export interface LevelContext {
   tankHeight: string;
   detectionGoal: "unknown" | "high" | "low" | "multiple" | "continuous";
   detectionHeight: string;
-  detectionCount?: number;
-  detectionHeights?: string[];
+  detectionCount?: number | undefined;
+  detectionHeights?: string[] | undefined;
   responsePriority: "unknown" | "limit" | "movement";
 }
 export interface LevelConfiguration {

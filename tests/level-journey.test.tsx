@@ -33,7 +33,7 @@ test("multiple level intake prepares five points in cm and percent and preserves
   await click("Revoir cette configuration");
   expect(view.queryByRole("heading",{name:"Détails du projet"})).toBeNull();
   await click("4. Avec Standex");
-  expect(view.getByText("0 cm · 0 % ; 25 cm · 25 % ; 50 cm · 50 % ; 75 cm · 75 % ; 100 cm · 100 %")).toBeTruthy();
+  expect(await view.findByText("0 cm · 0 % ; 25 cm · 25 % ; 50 cm · 50 % ; 75 cm · 75 % ; 100 cm · 100 %",{}, {timeout:5000})).toBeTruthy();
   expect(view.getByText(/55 cm · 55 %/)).toBeTruthy();
   await click("2. Configuration");
   expect((view.getByRole("textbox",{name:"Point 3 (cm)"}) as HTMLInputElement).value).toBe("55");
@@ -41,20 +41,23 @@ test("multiple level intake prepares five points in cm and percent and preserves
   expect((view.getByRole("textbox",{name:"Point 3 (%)"}) as HTMLInputElement).value).toBe("50");
 });
 
-test("single target percentages require a tank height and accept a decimal comma",async()=>{
+test("single targets receive a feasible proposal; exact cm and percent remain editable in the configurator",async()=>{
   setLocale("fr");
   const view=render(<LevelJourney active={false}/>);
   const click=async(name:string)=>{await act(async()=>fireEvent.click(view.getByRole("button",{name,exact:true})));};
-  await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer"); await click("Continuer");
-  await act(async()=>fireEvent.change(view.getByLabelText("Niveau à détecter"),{target:{value:"high"}}));
-  expect((view.getByRole("textbox",{name:"Hauteur du niveau à détecter (%)"}) as HTMLInputElement).disabled).toBe(true);
-  await click("Précédent");
+  await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer");
   await changeInput(view.getByRole("textbox",{name:/Hauteur utile de la cuve/}),"200");
   await click("Continuer");
-  await changeInput(view.getByRole("textbox",{name:"Hauteur du niveau à détecter (%)"}),"95,25");
-  expect((view.getByRole("textbox",{name:"Hauteur du niveau à détecter (cm)"}) as HTMLInputElement).value).toBe("190,5");
+  for(const value of ["high","low"]){
+    await act(async()=>fireEvent.change(view.getByLabelText("Niveau à détecter"),{target:{value}}));
+    expect(view.queryByRole("textbox",{name:/Hauteur du niveau à détecter/})).toBeNull();
+    expect(view.getByText(/Une position adaptée au montage/)).toBeTruthy();
+  }
   await click("Ouvrir le configurateur");
-  expect((view.getByRole("textbox",{name:"Point 1 (%)"}) as HTMLInputElement).value).toBe("95,25");
+  const percent=view.getByRole("textbox",{name:"Point 1 (%)"});
+  await changeInput(percent,"95,25"); await act(async()=>fireEvent.blur(percent));
+  expect((view.getByRole("textbox",{name:"Point 1 (cm)"}) as HTMLInputElement).value).toBe("190,5");
+  expect(view.queryByText("Lecture en attente")).toBeNull();
   expect(view.container.querySelector(".lv-visual-title button")?.textContent).toBe("Lancer");
   expect(view.container.querySelectorAll(".lv-playback button")).toHaveLength(2);
 });
@@ -123,11 +126,10 @@ test("intake seeds a top-mounted low level with a local float range; subsequent 
   await select("Accès pour installer le capteur", "top");
   await changeInput(view.getByRole("textbox", { name: /Hauteur utile de la cuve \(cm\)/ }), "18");
   await click("Continuer"); await select("Niveau à détecter", "low");
-  await changeInput(view.getByRole("textbox", { name: "Hauteur du niveau à détecter (cm)" }), "3");
   await click("Ouvrir le configurateur");
   expect(view.getByRole("heading", { name: "LS04", exact: true })).toBeTruthy();
   expect((view.getByLabelText("Fixation dans la cuve") as HTMLSelectElement).value).toBe("top");
-  expect(Number((view.getByRole("slider", { name: "Point 1" }) as HTMLInputElement).value)).toBe(3);
+  expect(Number((view.getByRole("slider", { name: "Point 1" }) as HTMLInputElement).value)).toBe(3.6);
   expect(Number((view.getByRole("slider", { name: "Course du flotteur entre les butées" }) as HTMLInputElement).value)).toBe(1.05);
   await changeInput(view.getByRole("slider", { name: "Course du flotteur entre les butées" }), "2");
   await click("1. Mon besoin"); await click("2. Configuration");
@@ -211,8 +213,9 @@ test("decimal centimetres survive intake, configuration, cable review and Stande
   await changeInput(view.getByRole('textbox',{name:/Hauteur utile de la cuve/}),'200');
   await click('Continuer');
   await act(async()=>fireEvent.change(view.getByLabelText('Niveau à détecter'),{target:{value:'high'}}));
-  await changeInput(view.getByRole('textbox',{name:'Hauteur du niveau à détecter (cm)'}),'190,5');
   await click('Ouvrir le configurateur');
+  const height=view.getByRole('textbox',{name:'Point 1 (cm)'});
+  await changeInput(height,'190,5'); await act(async()=>fireEvent.blur(height));
   expect((view.getByRole('textbox',{name:'Point 1 (cm)'}) as HTMLInputElement).value).toBe('190,5');
   const level=view.getByRole('slider',{name:'Hauteur du liquide',exact:true}) as HTMLInputElement;
   expect(Number(level.max)).toBe(191.2);
@@ -225,7 +228,7 @@ test("decimal centimetres survive intake, configuration, cable review and Stande
   expect((view.getByRole('textbox',{name:'Longueur sur mesure (cm)'}) as HTMLInputElement).value).toBe('20,5');
   expect(view.getByText(/1 point\(s\) · 190,5 cm/)).toBeTruthy();
   await click('4. Avec Standex');
-  expect(view.getByText('20,5 cm')).toBeTruthy();
+  expect(await view.findByText('20,5 cm',{}, {timeout:5000})).toBeTruthy();
   expect(view.getByText(/1 point\(s\) · 190,5 cm/)).toBeTruthy();
   await click('2. Configuration'); await click('Horizontale'); await click('Niveau bas');
   const point=view.getByRole('slider',{name:'Point 1',exact:true}) as HTMLInputElement;
@@ -276,12 +279,15 @@ test("Result owns cable choices; Standex owns business fields and keeps contact 
   expect(view.queryByRole("heading",{name:"Détails du projet"})).toBeNull();
   expect(view.queryByRole("heading",{name:"Vos coordonnées"})).toBeNull();
   await click("Standard");
-  expect(view.getByText("Aucune longueur standard documentée pour cette gamme. À définir avec Standex.")).toBeTruthy();
+  expect([...view.getByLabelText("Longueurs standard documentées").querySelectorAll("option")].map(el=>el.textContent)).toEqual(["À définir","50 cm","100 cm","500 cm"]);
   await click("Sur mesure");
   await changeInput(view.getByRole("textbox",{name:"Longueur sur mesure (cm)"}),"20,5");
   await click("Pas besoin de connecteur");
   await click("Continuer avec Standex →");
-  expect(view.getByRole("heading",{name:"Détails du projet"})).toBeTruthy();
+  expect(await view.findByRole("heading",{name:"Détails du projet"})).toBeTruthy();
+  expect(view.getByRole("button",{name:"Envoyer mon projet",exact:true})).toBeTruthy();
+  expect(view.getByRole("button",{name:"Télécharger le rapport complet du projet (PDF)",exact:true})).toBeTruthy();
+  expect(view.queryByRole("button",{name:"Télécharger le dossier de travail",exact:true})).toBeNull();
   expect(view.queryByRole("heading",{name:"Câble et connexion"})).toBeNull();
   expect(view.getByText("20,5 cm")).toBeTruthy(); expect(view.getByText("Fils nus")).toBeTruthy();
   await changeInput(view.getByRole("textbox",{name:"Nom",exact:true}),"Test local");
