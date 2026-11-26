@@ -1,3 +1,4 @@
+import { levelProjectFacts, levelTechnicalFacts } from "../level/dossier";
 import { isIndustry } from "./industries";
 import { validSiteCountry } from "./sales-contact";
 import { isPcbSensor } from "./product-presentation";
@@ -271,7 +272,7 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
       "",
     ] : []),
     `## ${tr("Exigences")}`,
-    ...dossier.requirements.map(line),
+    ...(dossier.levelStudy ? levelProjectFacts(dossier.levelStudy,tr).map(([label,value])=>`- ${label} : ${value}`) : dossier.requirements.map(line)),
     "",
     `## ${tr("Contraintes libres")}`,
     dossier.freeConstraints || "—",
@@ -287,6 +288,7 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
     `- ${tr("Échantillons utiles avant")} : ${dossier.business.samplesNeededBy ?? tr("inconnu")}`,
     `- ${tr("Durée série")} : ${dossier.business.seriesDurationYears ?? tr("inconnu")} ${tr("ans")}`,
     "",
+    ...(dossier.levelStudy ? [`## ${tr("Configuration technique")}`,...levelTechnicalFacts(dossier,tr).map(([label,value])=>`- ${label} : ${value}`)] : [
     `## ${tr("Câblage")}`,
     ...cablingSummary(dossier, tr),
     "",
@@ -304,5 +306,6 @@ export function technicalSummary(dossier: DesignDossier, tr: Tr = identity): str
             : []),
           ...connectorSummaryLines(dossier.termination, tr).map((l) => `- ${l}`),
         ]),
+    ]),
   ].join("\n");
 }

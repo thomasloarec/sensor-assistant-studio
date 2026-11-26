@@ -1,3 +1,4 @@
+import { levelStudySchema } from "../level/dossier";
 import { INDUSTRIES } from "./industries";
 /** Export et reprise d'un dossier de conception.
  *
@@ -191,6 +192,7 @@ const knownSensorId = z
   .catch(null)
   .transform((v) => (v !== null && isKnownSensorId(v) ? v : null));
 const dossierSchema = z.object({
+  levelStudy: levelStudySchema.nullable().optional().catch(null),
   studioV2: z.unknown().optional(),
   guidedMounting: z.unknown().optional(),
   title: z.string().catch("Projet repris"),
@@ -205,7 +207,7 @@ const dossierSchema = z.object({
   clientPedagogical: z.object({kind:z.literal('client-pedagogical-result'),version:z.literal(1),configKey:z.string(),dossierId:z.string().optional()}).passthrough().nullable().optional().catch(null),
   business: z.unknown(),
   workshopSource: z.enum(["none", "example", "user_asset"]).catch("none"),
-  selectedSensorId: knownSensorId,
+  selectedSensorId: z.string().nullable().catch(null).transform(v => v && (/^LS0[1-5]$/.test(v) || isKnownSensorId(v)) ? v : null),
   workshopSensorId: knownSensorId,
   /** Décisions confiées à Standex : reprises telles quelles, jamais devinées. */
   delegatedDecisions: z.array(z.string()).catch([]),
@@ -331,6 +333,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
 
   const dossier: DesignDossier = {
     ...base,
+    ...(data.levelStudy ? { levelStudy: data.levelStudy } : {}),
     ...(data.studioV2 ? { studioV2: parseStudioStudy(data.studioV2), designFreeze: null } : {}),
     // Le résultat calculé d'un fichier importé n'est jamais repris tel quel :
     // parseGuidedMounting le jette, l'atelier le recalcule.
@@ -357,7 +360,7 @@ export function parseDossierExport(raw: unknown, now = new Date().toISOString())
     workshopSource: workshop ? data.workshopSource : "none",
     // Le binaire n'est pas dans le JSON : pas d'ID sans fichier.
     workshopAsset: null,
-    selectedSensorId: data.selectedSensorId,
+    selectedSensorId: data.levelStudy || (data.selectedSensorId && isKnownSensorId(data.selectedSensorId)) ? data.selectedSensorId : null,
     workshopSensorId: data.workshopSensorId,
     delegatedDecisions: data.delegatedDecisions,
     testedPairs: data.testedPairs,

@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { INITIAL_CONTEXT, INITIAL_CONFIGURATION, architectureFamily, assessConfiguration, configurationIssues,
   floatCentres, horizontalFloatPosition, illustrativeReading, proposedContactForm, setDetectionGoal,
-  setMounting, setTravelPreference, verticalMechanics, createLevelBrief } from "../src/lib/level/configuration";
+  fitStemToPoints, setMounting, setTravelPreference, verticalMechanics, createLevelBrief } from "../src/lib/level/configuration";
 import { seedConfiguration, intakeErrors, intakeKey } from "../src/lib/level/intake";
-import { configurationGuidance, applyRemedy } from "../src/lib/level/guidance";
+
 
 describe("level intent, mounting and a shared float/signal model", () => {
   test("high and low intent derive B/A on an upright compact; low lowers the support, not the sensor orientation", () => {
@@ -11,7 +11,7 @@ describe("level intent, mounting and a shared float/signal model", () => {
     const low = seedConfiguration({ ...INITIAL_CONTEXT, mountingAccess: "free", tankHeight: "180", detectionGoal: "low", detectionHeight: "30" });
     expect(high.mounting).toBe("support"); expect(low.mounting).toBe("support");
     expect(architectureFamily(low)).toBe("LS01");
-    expect(low.mountingHeightMm).toBe(47.5); expect(high.mountingHeightMm).toBe(180);
+    expect(low.mountingHeightMm).toBe(53.5); expect(high.mountingHeightMm).toBe(180);
     expect(proposedContactForm(high, "LS01")).toBe("B"); expect(proposedContactForm(low, "LS01")).toBe("A");
     expect(illustrativeReading(high, 0).active).toBe(false); expect(illustrativeReading(low, 0).active).toBe(true);
   });
@@ -25,7 +25,8 @@ describe("level intent, mounting and a shared float/signal model", () => {
     expect(configurationIssues(setDetectionGoal(long, "low"))).toEqual([]);
   });
   test("top-only opening plus low detection uses a long LS04 stem and fixed local stops", () => {
-    const c = seedConfiguration({ ...INITIAL_CONTEXT, mountingAccess: "top", tankHeight: "180", detectionGoal: "low", detectionHeight: "30" });
+    const initial = seedConfiguration({ ...INITIAL_CONTEXT, mountingAccess: "top", tankHeight: "180", detectionGoal: "low" });
+    const c = fitStemToPoints({...initial,pointsMm:[30]});
     expect(architectureFamily(c)).toBe("LS04"); expect(c.mounting).toBe("top");
     expect(c.reachMm).toBe(173); expect(configurationIssues(c)).toEqual([]);
     const range = verticalMechanics(c).floats[0]!;
@@ -81,21 +82,19 @@ describe("level intent, mounting and a shared float/signal model", () => {
       }
     }
   });
-  test("impossible requested positions are retained and the offered repair actually changes the invalid geometry", () => {
-    for (const access of ["top", "free", "bottom"] as const) for (const goal of ["high", "low"] as const)
-      for (const detectionHeight of ["0", "60"]) {
-        const c = seedConfiguration({ ...INITIAL_CONTEXT, mountingAccess: access, tankHeight: "60", detectionGoal: goal, detectionHeight });
-        expect(c.pointsMm).toEqual([Number(detectionHeight)]);
-        const family = assessConfiguration(INITIAL_CONTEXT, c).selected?.family;
-        expect(configurationIssues(c, family).length).toBeGreaterThan(0);
-        const guide = configurationGuidance(INITIAL_CONTEXT, c, family)!;
-        const fixed = applyRemedy(c, guide.actions[0]!);
-        expect(configurationIssues(fixed)).toEqual([]);
+  test("single-target defaults fit every mounting, even with legacy impossible heights and ripple travel", () => {
+    for (const access of ["top", "free", "bottom", "side"] as const) for (const goal of ["high", "low"] as const)
+      for (const height of [60,100,250,2000,10000]) for(const priority of ["limit","movement"] as const) {
+        const context={ ...INITIAL_CONTEXT, mountingAccess:access,tankHeight:String(height),detectionGoal:goal,responsePriority:priority };
+        const c=seedConfiguration(context);
+        expect(configurationIssues(c)).toEqual([]);
+        for(const detectionHeight of ["0",String(height),"12.5"])
+          expect(seedConfiguration({...context,detectionHeight})).toEqual(c);
       }
   });
   test("intake rejects invalid dimensions and only geometry answers invalidate the seed", () => {
     expect(intakeErrors({ ...INITIAL_CONTEXT, tankHeight: "40" })).toHaveLength(1);
-    expect(intakeErrors({ ...INITIAL_CONTEXT, tankHeight: "180", detectionGoal: "low", detectionHeight: "190" })).toHaveLength(1);
+    expect(intakeErrors({ ...INITIAL_CONTEXT, tankHeight: "180", detectionGoal: "low", detectionHeight: "190" })).toHaveLength(0);
     expect(intakeErrors(INITIAL_CONTEXT)).toEqual([]);
     expect(intakeKey({ ...INITIAL_CONTEXT, temperatureMax: "120", purpose: "Free prose" })).toBe(intakeKey(INITIAL_CONTEXT));
     expect(intakeKey({ ...INITIAL_CONTEXT, mountingAccess: "top" })).not.toBe(intakeKey(INITIAL_CONTEXT));

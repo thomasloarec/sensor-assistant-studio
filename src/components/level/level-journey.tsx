@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { Droplets, SlidersHorizontal, Play, Pause, Pencil, Download, ChevronDown } from "lucide-react";
+import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { Droplets, SlidersHorizontal, Play, Pause, Pencil, ChevronDown } from "lucide-react";
 import { LevelProjectHeader } from "./level-project-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,23 +9,25 @@ import { SceneLoading } from "./scene-loading";
 import { IntakeTank } from "./intake-tank";
 import { LevelMonitor } from "./level-monitor";
 import { applyRemedy, configurationGuidance, horizontalAlternative, REMEDY_LABELS, type Remedy } from "@/lib/level/guidance";
-import { intakeErrors, intakeKey, seedConfiguration, requestedIntakePoints } from "@/lib/level/intake";
+import { intakeErrors, intakeKey, seedConfiguration } from "@/lib/level/intake";
 import { cmValue, formatCm, dimensionFromCm, dimensionInCm, formatPercent, formatLevel, dimensionFromPercent } from "@/lib/level/dimensions";
-import { ProjectContextFields } from "@/components/leadmagnet/project-context-fields";
-import type { BusinessMeta } from "@/lib/leadmagnet/dossier";
-import { DEFAULT_TERMINATION, EMPTY_CONNECTOR_DRAFT, terminationLabel, type Termination } from "@/lib/leadmagnet/connectors";
+import { standardLengthsMm } from "@/lib/leadmagnet/cable-options";
+import { levelDossier } from "@/lib/level/dossier";
+import { createDossier } from "@/lib/leadmagnet/dossier";
+import { DEFAULT_TERMINATION, EMPTY_CONNECTOR_DRAFT, type Termination } from "@/lib/leadmagnet/connectors";
 import { draftFromHousing, terminationFromHousing } from "@/lib/leadmagnet/connector-library";
-import { t } from "@/lib/i18n/core";
+import { getLocale, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
-import { assessConfiguration, architectureFamily, configurationIssues, contextErrors, createLevelBrief, FAMILY_LABELS,
+import { assessConfiguration, architectureFamily, configurationIssues, contextErrors, FAMILY_LABELS,
   illustrativeReading, demonstrationMax, INITIAL_CONFIGURATION, INITIAL_CONTEXT, setPointCount, resizeTank, pointBounds, MAX_REACH_MM, MAX_TANK_HEIGHT_MM,
   constrainPointLayout, minimumTankHeight, reachBounds, setReach, fitStemToPoints, setDetectionGoal, setMounting, setTravelPreference, isCompact, mountingDatum, proposedContactForm,
   type LevelConfiguration, type LevelContext } from "@/lib/level/configuration";
 import { CableConnectionPanel, type CableLengthChoice, type ConnectorChoice } from "@/components/leadmagnet/cable-connection-panel";
 import { ConnectorPreferenceFields } from "@/components/leadmagnet/connector-preference-fields";
-import { ProjectContactFields } from "@/components/leadmagnet/project-contact-fields";
+
 import "./level.css";
 
+const StandexReview = lazy(() => import("@/components/leadmagnet/design-space").then(module => ({default:module.DesignSpace})));
 const LevelScene = lazy(() => import("./level-scene"));
 const PositionChoiceScene = lazy(() => import("./position-choice-scene"));
 type Stage = "choice" | "questions" | "configure" | "review" | "standex";
@@ -122,17 +124,15 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const [playing, setPlaying] = useState(false);
   const [direction, setDirection] = useState<"up" | "down">("up");
   const [cableLength, setCableLength] = useState("");
+  const [standardLength, setStandardLength] = useState("");
   const [termination, setTermination] = useState<Termination>(DEFAULT_TERMINATION);
   const [lengthChoice, setLengthChoice] = useState<CableLengthChoice>("undecided");
   const [connectorChoice, setConnectorChoice] = useState<ConnectorChoice>("undecided");
   const [connectorDraft, setConnectorDraft] = useState({ ...EMPTY_CONNECTOR_DRAFT });
   const [connectorError, setConnectorError] = useState<string | null>(null);
   const [projectTitle, setProjectTitle] = useState<string | null>(null);
-  const [business, setBusiness] = useState<BusinessMeta>({ projectPhase: "unknown", seriesStartDate: null, samplesNeededBy: null,
-    annualVolume: { kind: "unknown" }, seriesDurationYears: null, contactName: null, contactEmail: null, contactCompany: null });
-  const [projectNotes, setProjectNotes] = useState("");
-  const [volumeError, setVolumeError] = useState<string | null>(null);
-  const [exported, setExported] = useState(false);
+  const [reviewBase] = useState(() => createDossier(undefined,getLocale()));
+  const [reviewStarted,setReviewStarted] = useState(false);
   const reduced = useReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const controlsRef = useRef<HTMLElement>(null);
@@ -153,16 +153,16 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const guidance = configurationGuidance(context, config, family);
   const horizontalOption = config.tankHeightMm >= 1000 && horizontalAlternative(context, config);
   const currentIndex = stages.findIndex(s => s.id === stage);
-  const changeConfig = (patch: Partial<LevelConfiguration>) => { setPlaying(false); setConfig(c => constrainPointLayout({ ...c, ...patch })); setExported(false); };
-  const changeContext = (patch: Partial<LevelContext>) => { setContext(c => ({ ...c, ...patch })); setExported(false); };
+  const changeConfig = (patch: Partial<LevelConfiguration>) => { setPlaying(false); setConfig(c => constrainPointLayout({ ...c, ...patch })); };
+  const changeContext = (patch: Partial<LevelContext>) => { setContext(c => ({ ...c, ...patch })); };
   const manualPoint = (index: number, value: number) => {
     const next = { ...config, pointsMm: config.pointsMm.map((p, i) => i === index ? value : p) };
     const fitted = config.count === 1 ? fitStemToPoints(next) : next;
     const problem = configurationIssues(fitted)[0];
     if (problem) return problem;
-    setPlaying(false); setExported(false); setConfig(fitted); return undefined;
+    setPlaying(false); setConfig(fitted); return undefined;
   };
-  const go = (s: Stage) => { setPlaying(false); setExported(false); setStage(s); };
+  const go = (s: Stage) => { setPlaying(false); setStage(s); if(s === "standex") setReviewStarted(true); };
   const openConfigurator = () => {
     if (intakeProblems.length) { setQuestion(intakeErrors({ ...context, detectionGoal: "unknown" }).length ? 2 : 3); go("questions"); return; }
     const key = intakeKey(context);
@@ -173,7 +173,6 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     go("configure");
   };
   const classic = () => onClassic ? onClassic() : window.location.assign("/");
-  const requestedPoints = context.detectionGoal === "multiple" ? requestedIntakePoints(context) as number[] : [];
   const togglePlayback = () => {
     if (!playing && direction === "up" && level >= levelMax) setLevel(0);
     if (!playing && direction === "down" && level <= 0) setLevel(levelMax);
@@ -217,7 +216,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const editApplication = () => { setReturnToConfig(true); setQuestion(1); go("questions"); };
   const remedy = (action: Remedy) => {
     if (action === "liquid") { editApplication(); return; }
-    setPlaying(false); setExported(false);
+    setPlaying(false);
     const next = applyRemedy(config, action);
     setLevel(l => Math.min(next.tankHeightMm, l * next.tankHeightMm / config.tankHeightMm));
     setConfig(next);
@@ -229,32 +228,25 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   };
   const productName = config.custom ? t("Forme spécifique") : selected?.family ?? t("Configuration à étudier");
   const productDescription = config.custom ? config.customDescription || t("À définir") : selected ? t(FAMILY_LABELS[selected.family]) : t("Votre besoin reste conservé. Décrivez les contraintes pour préparer l’étude avec Standex.");
-  const cableSummary = lengthChoice === "undecided" ? t("À définir") : lengthChoice === "standard_to_confirm" ? t("Longueur catalogue, à confirmer") : cableLength && !cableInvalid ? dimensionInCm(cableLength) + " cm" : t("Longueur sur mesure, valeur exacte à confirmer en revue.");
-  const connectorSummary = connectorChoice === "undecided" ? t("À définir") : connectorChoice === "bare" ? t("Fils nus") : termination.kind === "bare_leads" ? t("À confirmer avec Standex") : t(terminationLabel(termination));
+  const standardLengths = selected ? standardLengthsMm(selected.family) : [];
+  const chosenLength = lengthChoice === "custom_to_confirm" ? cableLength : lengthChoice === "standard_to_confirm" && standardLengths.includes(Number(standardLength)) ? standardLength : "";
   const cablePanel = <CableConnectionPanel lengthChoice={lengthChoice}
-    onLengthChoice={choice => { setLengthChoice(choice); setExported(false); }}
+    onLengthChoice={choice => { setLengthChoice(choice); }}
     lengthFields={<>
-      {lengthChoice === "standard_to_confirm" ? <p className="t-caption mt-3">{t("Aucune longueur standard documentée pour cette gamme. À définir avec Standex.")}</p> : null}
-      {lengthChoice === "custom_to_confirm" ? <div className="mt-3"><Field label={t("Longueur sur mesure (cm)")}><DimensionInput value={cableLength} onChange={value => {setCableLength(value);setExported(false);}} /></Field>
+      {lengthChoice === "standard_to_confirm" ? <div className="mt-3"><SelectField label={t("Longueurs standard documentées")} value={chosenLength} onChange={setStandardLength} options={[["",t("À définir")],...standardLengths.map(mm => [String(mm),formatCm(mm) + " cm"] as const)]} /><p className="t-caption mt-2">{t(standardLengths.length ? "Selon la version du capteur, à confirmer par Standex." : "Aucune longueur standard documentée pour cette gamme. À définir avec Standex.")}</p></div> : null}
+      {lengthChoice === "custom_to_confirm" ? <div className="mt-3"><Field label={t("Longueur sur mesure (cm)")}><DimensionInput value={cableLength} onChange={value => {setCableLength(value);}} /></Field>
         {cableInvalid ? <p className="notice-danger t-body" role="alert">{t("Saisissez une longueur positive ou laissez ce point à définir.")}</p> : null}</div> : null}
     </>}
-    connectorChoice={connectorChoice} onConnectorChoice={choice => { setConnectorChoice(choice); setConnectorError(null); setExported(false); if(choice === "bare") setTermination(DEFAULT_TERMINATION); }}
+    connectorChoice={connectorChoice} onConnectorChoice={choice => { setConnectorChoice(choice); setConnectorError(null); if(choice === "bare") setTermination(DEFAULT_TERMINATION); }}
     connectorFields={connectorChoice === "preference" ? <ConnectorPreferenceFields termination={termination} draft={connectorDraft} error={connectorError}
-      onDraft={setConnectorDraft} onError={setConnectorError} onTermination={value => {setTermination(value);setExported(false);}}
-      onSelect={housing => {setTermination(terminationFromHousing(housing));setConnectorDraft(d => draftFromHousing(housing,d));setConnectorError(null);setExported(false);}} /> : null}>
+      onDraft={setConnectorDraft} onError={setConnectorError} onTermination={value => {setTermination(value);}}
+      onSelect={housing => {setTermination(terminationFromHousing(housing));setConnectorDraft(d => draftFromHousing(housing,d));setConnectorError(null);}} /> : null}>
     {config.orientation === "horizontal" && config.count > 1 ? <p className="t-caption">{t("Ces options de câble et de connexion s’appliquent à chaque capteur.")}</p> : null}
   </CableConnectionPanel>;
 
-  const download = () => {
-    const brief = { ...createLevelBrief(context, config, { lengthMm: lengthChoice === "custom_to_confirm" ? cableLength : "", connector: connectorSummary }, {
-      name: business.contactName ?? "", company: business.contactCompany ?? "", email: business.contactEmail ?? "",
-      phone: business.contactPhone ?? "", country: business.siteCountry ?? "", city: business.siteCity ?? "" }),
-      cable_choices: { length: lengthChoice, connector: connectorChoice },
-      title: projectTitle ?? t("Nouveau projet"), project_details: business, additional_notes: projectNotes };
-    const url = URL.createObjectURL(new Blob([JSON.stringify(brief, null, 2)], { type: "application/json" }));
-    const anchor = document.createElement("a"); anchor.href = url; anchor.download = "Sensor-Studio-Niveau-Brouillon.json";
-    anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); setExported(true);
-  };
+  const reviewDossier = useMemo(() => levelDossier(reviewBase,context,config,{
+    lengthChoice,lengthMm:chosenLength && !cableInvalid ? Number(chosenLength) : null,connectorChoice,termination,
+  },projectTitle ?? (context.purpose || t("Nouveau projet"))),[reviewBase,context,config,lengthChoice,chosenLength,cableInvalid,connectorChoice,termination,projectTitle]);
   const scene = (productOnly = false) => <Suspense fallback={<SceneLoading />}>
     {active ? <LevelScene configuration={config} family={family} material={selected?.material === "to_define" ? family === "LS03" ? "PA" : "PP" : selected?.material ?? "PP"} levelMm={shownLevel} oil={context.fluid === "oil"} productOnly={productOnly} interactive={!productOnly} /> : null}
   </Suspense>;
@@ -336,10 +328,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             </> : <>
               <SelectField label={t("Niveau à détecter")} value={context.detectionGoal} onChange={v => changeContext({ detectionGoal: v as LevelContext["detectionGoal"] })}
                 options={[["unknown", t("À définir")], ["high", t("Un niveau haut")], ["low", t("Un niveau bas")], ["multiple", t("Plusieurs niveaux")], ["continuous", t("Suivre le niveau en continu")]]} />
-              {["high", "low"].includes(context.detectionGoal) ? <>
-                <HeightInputs label={t("Hauteur du niveau à détecter")} value={context.detectionHeight} heightMm={Number(context.tankHeight)} onChange={detectionHeight => changeContext({ detectionHeight })} />
-                <p className="t-caption">{t("Mesurée depuis le fond. Facultatif : une première position sera proposée.")}</p>
-              </> : null}
+              {["high", "low"].includes(context.detectionGoal) ? <p className="t-caption">{t("Une position adaptée au montage sera proposée. Vous pourrez l’ajuster dans le configurateur.")}</p> : null}
               {context.detectionGoal === "multiple" ? <>
                 <SelectField label={t("Combien de niveaux faut-il détecter ?")} value={String(context.detectionCount ?? 2)}
                   onChange={v => changeContext({detectionCount:Number(v), detectionHeights:(context.detectionHeights ?? []).slice(0,Number(v))})}
@@ -348,7 +337,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
                 {Array.from({length:context.detectionCount ?? 2},(_,i)=>i).reverse().map(i=><div key={i} id={`lv-intake-point-${i}`} className="lv-point-entry"><p className="t-caption text-primary">{t(i === 0 ? "Niveau bas" : i === (context.detectionCount ?? 2)-1 ? "Niveau haut" : "Niveau intermédiaire")}</p><HeightInputs label={`${t("Point")} ${i+1}`} value={context.detectionHeights?.[i] ?? ""} heightMm={Number(context.tankHeight)}
                   onChange={value => changeContext({detectionHeights:Array.from({length:context.detectionCount ?? 2},(_,index)=>index===i ? value : context.detectionHeights?.[index] ?? "")})} /></div>)}
               </> : null}
-              {["high","low","multiple"].includes(context.detectionGoal) ? <p className="t-caption text-muted-foreground">{t(context.tankHeight.trim() ? "Le pourcentage décrit la hauteur depuis le fond de la cuve, pas le volume de liquide." : "Renseignez la hauteur de cuve pour utiliser les pourcentages.")}</p> : null}
+              {context.detectionGoal === "multiple" ? <p className="t-caption text-muted-foreground">{t(context.tankHeight.trim() ? "Le pourcentage décrit la hauteur depuis le fond de la cuve, pas le volume de liquide." : "Renseignez la hauteur de cuve pour utiliser les pourcentages.")}</p> : null}
               <SelectField label={t("Le liquide peut-il faire des vaguelettes ?")} value={context.responsePriority} onChange={v => changeContext({ responsePriority: v as LevelContext["responsePriority"] })}
                 options={[["unknown", t("À définir")], ["limit", t("Non, le niveau reste plutôt stable")], ["movement", t("Oui, de petits mouvements sont à ignorer")]]} />
               <p className="t-caption text-muted-foreground">{t("Comme de l’eau qui clapote quand le réservoir bouge ou qu’une pompe démarre. Ces petits mouvements ne doivent pas provoquer d’alarme.")}</p>
@@ -391,7 +380,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
             <SelectField label={t("Finition de montage")} value={config.connection} onChange={v => changeConfig({ connection: v as LevelConfiguration["connection"] })}
               options={[["standard", t("Standard")], ["DK", "DK"], ["DL", "DL"], ["GZ", "GZ"]]} />}
           <RangeField label={t("Hauteur utile de la cuve")} value={config.tankHeightMm} min={minimumTankHeight(config)} max={config.mode === "continuous" && config.orientation === "vertical" ? MAX_REACH_MM : MAX_TANK_HEIGHT_MM} step={1} onChange={height => {
-            setPlaying(false); setExported(false);
+            setPlaying(false);
             setLevel(l => l * height / config.tankHeightMm); setConfig(c => constrainPointLayout(resizeTank(c, height)));
           }} />
           <p className="t-caption text-muted-foreground">{t("Changer la hauteur recale les points et le montage ; les dimensions des flotteurs restent fixes.")}</p>
@@ -512,58 +501,11 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
       </section>
     </main> : null}
 
-    {stage === "standex" ? <main className="lv-review-main space-y-5">
-      <div><h1 className="t-display-m" ref={headingRef} tabIndex={-1}>{t("Préparez la suite avec notre équipe.")}</h1>
-        <p className="t-body mt-2">{t("Cet aperçu prépare un brouillon. Aucun dossier n’est envoyé à Standex.")}</p></div>
-      <div className="review-grid">
-        <div className="space-y-4">
-          <section className="panel-block-lg">
-            <h2 className="t-title-m">{t("Votre projet")}</h2>
-            <ReviewFacts rows={[
-              [t("Application"), context.purpose || t("Non défini pour le moment")],
-              [t("Liquide"), context.fluidName || fluids.find(f => f[0] === context.fluid)![1]],
-              [t("Températures"), `${context.temperatureMin || "?"} ${t("à")} ${context.temperatureMax || "?"} °C`],
-              [t("Cuve"), t(context.tank === "vented" ? "À pression atmosphérique" : context.tank === "pressurised" ? "Sous pression ou sous vide" : "À définir")],
-              [t("Immersion du corps du capteur"), t(context.bodyExposure === "permanent" ? "En permanence" : context.bodyExposure === "intermittent" ? "Par intermittence" : "À définir")],
-              [t("Sortie de câble et câble"), t(context.cableExposure === "wet" ? "Seront immergés, même occasionnellement" : context.cableExposure === "dry" ? "Restent hors du liquide" : "À définir")],
-              ...(requestedPoints.length ? [[t("Niveaux demandés"), requestedPoints.map((_,i) => context.detectionHeights?.[i]?.trim() ? formatLevel(Number(context.detectionHeights[i]),Number(context.tankHeight) || 100) : t("À définir")).join(" ; ")]] as const : []),
-            ]} />
-            <button type="button" className="text-link mt-3 min-h-11" onClick={editApplication}>{t("Modifier le liquide et les températures")}</button>
-          </section>
-          <section className="panel-block-lg">
-            <h2 className="t-title-m">{t("Configuration technique")}</h2>
-            <p className="t-title-s mt-3">{productName}</p><p className="t-body mt-2">{productDescription}</p>
-            <ReviewFacts rows={[
-              [t("Détection"), config.mode === "continuous" ? t("En continu") : `${config.count} ${t("point(s)")} · ${config.pointsMm.map(p => formatLevel(p,config.tankHeightMm)).join(" ; ")}`],
-              [t("Hauteur utile de la cuve"), `${formatCm(config.tankHeightMm)} cm`],
-              [t("Montage"), config.orientation === "vertical" ? `${t("Vertical")} · ${t(config.mounting === "top" ? "Ouverture imposée en haut" : config.mounting === "support" ? "Capteur droit, hauteur de fixation libre" : "Insertion par le fond")}` : `${t("Horizontal")} · ${config.connection}`],
-              ...(config.orientation === "horizontal" ? [[t("Nombre de capteurs"), String(config.count)]] as const : []),
-              ...(config.mode === "points" && config.count === 1 ? [[t("Niveau à détecter"), t(config.closedWhen === "high" ? "Niveau haut" : "Niveau bas")],
-                [t("Forme de contact proposée"), proposedContactForm(config, family) ? `${t("Forme")} ${proposedContactForm(config, family)}` : t("À confirmer avec Standex")]] as const : []),
-              ...(config.orientation === "vertical" ? [[t("Longueur souhaitée"), `${formatCm(config.reachMm)} cm`] as const] : []),
-              [t("Câble"), cableSummary],
-              [t("Terminaison"), connectorSummary],
-            ]} />
-            <button type="button" className="text-link mt-3 min-h-11" onClick={() => go("review")}>{t("Modifier la configuration")}</button>
-          </section>
-          <section className="panel-block-lg space-y-4">
-            <h2 className="t-title-m">{t("Détails du projet")}</h2>
-            <ProjectContextFields business={business} onChange={next => { setBusiness(next); setExported(false); }} onInvalid={setVolumeError} />
-            {context.constraints ? <p className="t-body">{context.constraints}</p> : null}
-            <Field label={t("Contraintes complémentaires")}><Textarea value={projectNotes} onChange={e => { setProjectNotes(e.target.value); setExported(false); }} /></Field>
-          </section>
-        </div>
-        <aside className="space-y-4">
-          <section className="panel-block-lg space-y-3">
-            <h2 className="t-title-m">{t("Vos coordonnées")}</h2>
-            <ProjectContactFields business={business} onChange={patch => {setBusiness(b=>({...b,...patch}));setExported(false);}} />
-            <hr className="standex-rule" />
-            <p className="t-caption">{t("Cet aperçu prépare un brouillon. Aucun dossier n’est envoyé à Standex.")}</p>
-            <Button className="lv-continue w-full" disabled={Boolean(volumeError) || cableInvalid} onClick={download}><Download size={18} />{t("Télécharger le dossier de travail")}</Button>
-            {exported ? <p className="notice-success t-body" role="status">{t("Brouillon téléchargé. Il n’a pas été envoyé à Standex.")}</p> : null}
-          </section>
-        </aside>
-      </div>
-    </main> : null}
+    {reviewStarted ? <div className="lv-review-main" hidden={stage !== "standex"}>
+      <Suspense fallback={<p className="t-body">{t("Chargement…")}</p>}>
+        <StandexReview chrome="embedded" visible={active && stage === "standex"}
+          reviewOnly={{dossier:reviewDossier,onEditProject:editApplication,onEditConfiguration:()=>go("review")}} />
+      </Suspense>
+    </div> : null}
   </div>;
 }

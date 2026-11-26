@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { INITIAL_CONTEXT, configurationIssues, createLevelBrief, demonstrationMax, verticalMechanics, architectureFamily } from "../src/lib/level/configuration";
+import { INITIAL_CONTEXT, configurationIssues, fitStemToPoints, createLevelBrief, demonstrationMax, verticalMechanics, architectureFamily } from "../src/lib/level/configuration";
 import { intakeErrors, requestedIntakePoints, seedConfiguration } from "../src/lib/level/intake";
 import { dimensionFromPercent, heightPercent } from "../src/lib/level/dimensions";
 import { verticalSensorX } from "../src/lib/level/presentation";
@@ -36,12 +36,12 @@ test("percentages round trip decimal height while the mounting plane controls th
     const mm=Number(dimensionFromPercent(String(percent).replace(".",","),height));
     expect(heightPercent(mm,height)).toBeCloseTo(percent,3);
   }
-  const top=seedConfiguration({...INITIAL_CONTEXT,tankHeight:"312",mountingAccess:"top",detectionGoal:"low",detectionHeight:"23"});
+  const top=fitStemToPoints({...seedConfiguration({...INITIAL_CONTEXT,tankHeight:"312",mountingAccess:"top",detectionGoal:"low"}),pointsMm:[23]});
   expect(architectureFamily(top)).toBe("LS05");
   expect(demonstrationMax(top)).toBe(312);
   expect(verticalMechanics(top).floats[0]!.upperMm).toBeLessThan(60);
   expect(verticalSensorX(top)).toBe(0);
-  const support=seedConfiguration({...INITIAL_CONTEXT,tankHeight:"2000",mountingAccess:"free",detectionGoal:"high",detectionHeight:"1900"});
+  const support=fitStemToPoints({...seedConfiguration({...INITIAL_CONTEXT,tankHeight:"2000",mountingAccess:"free",detectionGoal:"high"}),pointsMm:[1900]});
   expect(demonstrationMax(support)).toBe(1907);
   expect(verticalSensorX(support)).toBeLessThan(0);
   expect(verticalSensorX({...support,mounting:"bottom"})).toBe(0);

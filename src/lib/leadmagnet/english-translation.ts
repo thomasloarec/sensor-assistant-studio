@@ -22,6 +22,8 @@ import {
   type Point,
 } from "./cabling";
 import type { ClientDossierDto } from "./dossier";
+import { levelProjectFacts, levelTechnicalFacts } from "../level/dossier";
+import { t } from "../i18n/core";
 
 export interface Segment {
   id: string;
@@ -50,6 +52,14 @@ function fields(dto: ClientDossierDto): Field[] {
       set: (d, v) => (d.freeConstraints = v),
     },
   ];
+  if (dto.levelStudy) {
+    for (const key of ["purpose", "fluidName", "constraints"] as const) {
+      list.push({ id: `level.${key}`, get: d => d.levelStudy?.context[key],
+        set: (d, v) => { if (d.levelStudy) d.levelStudy.context[key] = v; } });
+    }
+    list.push({ id: "level.customDescription", get: d => d.levelStudy?.configuration.customDescription,
+      set: (d, v) => { if (d.levelStudy) d.levelStudy.configuration.customDescription = v; } });
+  }
   dto.requirements.forEach((_, i) => {
     list.push(
       {
@@ -393,7 +403,8 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     "_English version of the customer report. The customer original is kept unchanged._",
     "",
     "## Requirements",
-    ...dto.requirements.map((r) => req(r) + (r.note ? `\n  Note: ${r.note}` : "")),
+    ...(dto.levelStudy ? levelProjectFacts(dto.levelStudy, text => t(text, "en")).map(([label,value]) => `- ${label}: ${value}`)
+      : dto.requirements.map((r) => req(r) + (r.note ? `\n  Note: ${r.note}` : ""))),
     "",
     "## Free constraints",
     dto.freeConstraints || "—",
@@ -401,6 +412,9 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     "## Open questions",
     ...(dto.openQuestions.length ? dto.openQuestions.map((q) => `- ${q}`) : ["—"]),
     "",
+    ...(dto.levelStudy ? ["## Technical configuration",
+      ...levelTechnicalFacts(dto, text => t(text, "en")).map(([label,value]) => `- ${label}: ${value}`),
+    ] : [
     "## Mechanical mounting",
     `- Mounting: ${mounting}`,
     `- Available envelope: ${env.lengthMm ?? "unknown"} × ${env.widthMm ?? "unknown"} × ${env.heightMm ?? "unknown"} mm`,
@@ -452,6 +466,7 @@ export function englishReportBody(dto: ClientDossierDto, meta: { revision: numbe
     "",
     "## Termination",
     ...terminationEnglish(dto),
+    ]),
     "",
     "## Project context",
     `- Phase: ${PHASE_EN[dto.business.projectPhase] ?? dto.business.projectPhase}`,

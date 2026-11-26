@@ -1,7 +1,12 @@
 /** Family lengths transcribed from the bundled manufacturer datasheets, p.1.
  * Family options are not orderable part numbers or an approval of the assembly. */
 const COMMON = [200, 300, 500, 1000, 1500, 2000, 3000, 5000] as const;
+// Series datasheets LS01–LS05, version 02, 05 Mar 2019, p. 1.
+// https://standexdetect.com/wp-content/uploads/sites/2/2025/09/datasheet-fluid-level-sensor-series-ls04.pdf
+// Same ordering table verified separately for ls01, ls02, ls03 and ls05.
 const OPTIONS: Record<string, readonly number[]> = {
+  LS01:[500,1000,5000], LS02:[500,1000,5000], LS03:[500,1000,5000],
+  LS04:[500,1000,5000], LS05:[500,1000,5000],
   MK02: COMMON,
   MK03: COMMON,
   MK04: COMMON,
