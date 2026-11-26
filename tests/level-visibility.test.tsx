@@ -24,7 +24,7 @@ describe("level viewport and requested thresholds", () => {
     }
     let c = fitStemToPoints({...INITIAL_CONFIGURATION, mode:"continuous"});
     for(let h=60; h<=2000; h+=10) { c=resizeTank(c,h); expect(configurationIssues(c)).toEqual([]); }
-    c = resizeTank(c,10000); expect(configurationIssues(c).join(" ")).toContain("2 m");
+    c = resizeTank(c,10000); expect(configurationIssues(c).join(" ")).toContain("200 cm");
     c = resizeTank(c,490); expect(c.reachMm).toBe(490); expect(configurationIssues(c)).toEqual([]);
   });
   test("cm input round trips into canonical mm and supports tanks beyond the stem range", () => {
@@ -96,7 +96,7 @@ describe("level viewport and requested thresholds", () => {
     }
   });
   test("large tanks preserve proportions and sensor inspection uses a local camera, never a rescaled model", () => {
-    expect(tankDimensions(2000).width / tankDimensions(490).width).toBeCloseTo(2000/490);
+    expect(tankDimensions(2000).width).toBe(tankDimensions(490).width);
     const c=seedConfiguration({...INITIAL_CONTEXT,tankHeight:"2000",detectionGoal:"high",detectionHeight:"1900"});
     const all=sceneFrame(c,"LS01",null,false), detail=sceneFrame(c,"LS01",1900,false);
     expect(detail.height).toBeLessThan(150); expect(all.height).toBeGreaterThan(2000);

@@ -4,13 +4,14 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Line, OrbitControls } from "@react-three/drei";
 import { Plus, Minus, Scan, Focus } from "lucide-react";
-import { CatmullRomCurve3, DoubleSide, MOUSE, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
+import { BoxGeometry, Float32BufferAttribute, CatmullRomCurve3, DoubleSide, MOUSE, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
+import { formatCm } from "@/lib/level/dimensions";
 import { FLOAT_HEIGHT_MM, floatCentres, horizontalFloatPosition, horizontalMountHeight, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 import { SceneLoading, SceneUnavailable } from "./scene-loading";
 import { SceneFrameReady } from "./scene-frame-ready";
-import { LS05_ENVELOPE, markerLayout, sceneFrame, tankDimensions, type ProjectedMarker } from "@/lib/level/presentation";
+import { LS05_ENVELOPE, markerLayout, sceneFrame, tankDimensions, verticalSensorX, type ProjectedMarker } from "@/lib/level/presentation";
 
 // Physical material colours are confined to the reconstructed scene, as in the existing workshop.
 const MAT = { pp: "#ebece3", pa: "#262b30", steel: "#adb6bd", seal: "#22282c", water: "#75bdd8", oil: "#b7954a" };
@@ -140,11 +141,11 @@ function VerticalSensor({ config, family, level, material }: {
   const floats = floatCentres(config, level, family);
   const stops = mechanics.floats.flatMap(range => [range.lowerMm - FLOAT_HEIGHT_MM / 2 - .75, range.upperMm + FLOAT_HEIGHT_MM / 2 + .75])
     .sort((a, b) => a - b).filter((y, i, all) => i === 0 || y - all[i - 1]! > 2);
-  return <group name={`level-sensor-${family}`}>
+  return <group name={`level-sensor-${family}`} position={[verticalSensorX(config),0,0]}>
     {config.mounting === "support" && datum < config.tankHeightMm - 1 ? <group name="adjustable-mount-support">
-      <mesh position={[-tankWidth(config.tankHeightMm) / 4 + 4, datum - .5, 0]} receiveShadow><boxGeometry args={[tankWidth(config.tankHeightMm) / 2 + 8, 1.5, 16]} />
+      <mesh position={[-13.5, datum - .5, 0]} receiveShadow><boxGeometry args={[43, 1.5, 16]} />
         <meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.3} /></mesh>
-      <mesh position={[-tankWidth(config.tankHeightMm) / 2 + 1, datum + 6, 0]}><boxGeometry args={[1.5, 14, 16]} />
+      <mesh position={[-34, datum + 6, 0]}><boxGeometry args={[1.5, 14, 16]} />
         <meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.3} /></mesh>
     </group> : null}
     {family === "LS04" ? <group position={[0, centre + (top ? 4 : -4), 0]}><GroovedStem reach={reach - 8} color={color} /></group> :
@@ -207,21 +208,26 @@ function HorizontalSensor({ config, level, material, index = 0 }: { config: Leve
   </group>;
 }
 const tankWidth = (height: number) => tankDimensions(height).width;
+/** Faded cut edge indicates continuation, not a closed right-hand tank wall. */
+function FadingTankPanel({ width, height, depth, y, z = 0, water = false, oil = false }: { width: number; height: number; depth: number; y: number; z?: number; water?: boolean; oil?: boolean }) {
+  const geometry = useMemo(() => {
+    const g = new BoxGeometry(width,height,depth,12,1,1), p=g.getAttribute("position"), colors=[];
+    for(let i=0;i<p.count;i++) { const u=p.getX(i)/width+.5; colors.push(1,1,1,Math.max(0,Math.min(1,(1-u)/.3))); }
+    g.setAttribute("color",new Float32BufferAttribute(colors,4)); return g;
+  },[width,height,depth]);
+  useEffect(()=>()=>geometry.dispose(),[geometry]);
+  return <mesh geometry={geometry} position={[0,y,z]} renderOrder={water?3:0}>
+    <meshStandardMaterial color={water ? oil ? MAT.oil : MAT.water : MAT.steel} vertexColors transparent opacity={water ? .35 : 1} metalness={water?0:.62} roughness={water ? .15 : .35} depthWrite={false} side={DoubleSide} />
+  </mesh>;
+}
 function Tank({ height, level, oil }: { height: number; level: number; oil: boolean }) {
   const { width, depth } = tankDimensions(height);
   return <group>
-    <mesh position={[0, -2, 0]} receiveShadow><boxGeometry args={[width + 6, 4, depth]} /><meshStandardMaterial color={MAT.steel} metalness={0.7} roughness={0.36} /></mesh>
-    <mesh position={[0, height / 2, -depth / 2]} receiveShadow><boxGeometry args={[width, height, 2]} /><meshStandardMaterial color={MAT.steel} metalness={0.62} roughness={0.35} /></mesh>
-    {[-1, 1].map(side => <mesh key={side} position={[side * width / 2, height / 2, 0]}>
-      <boxGeometry args={[2, height, depth]} /><meshStandardMaterial color={MAT.steel} metalness={0.7} roughness={0.28} transparent opacity={side > 0 ? 0.28 : 0.8} depthWrite={false} /></mesh>)}
-    <mesh position={[0, Math.max(0.1, level) / 2, 0]} renderOrder={3}>
-      <boxGeometry args={[width - 2, Math.max(0.1, level), depth - 2]} />
-      <meshPhysicalMaterial color={oil ? MAT.oil : MAT.water} transparent opacity={0.26} roughness={0.1} metalness={0} depthWrite={false} side={DoubleSide} />
-    </mesh>
-    <mesh position={[0, level + 0.2, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={4}>
-      <planeGeometry args={[width - 2, depth - 2]} /><meshPhysicalMaterial color={oil ? MAT.oil : MAT.water} transparent opacity={0.5} roughness={0.18} metalness={0.15} depthWrite={false} side={DoubleSide} />
-    </mesh>
-    {Array.from({ length: 11 }, (_, i) => <Line key={i} points={[[width / 2 + 5, i * height / 10, depth / 2], [width / 2 + (i % 5 === 0 ? 12 : 8), i * height / 10, depth / 2]]} color="#4a5861" lineWidth={1} />)}
+    <FadingTankPanel width={width} height={4} depth={depth} y={-2} />
+    <FadingTankPanel width={width} height={height} depth={2} y={height/2} z={-depth/2} />
+    <mesh position={[-width/2,height/2,0]}><boxGeometry args={[2,height,depth]} /><meshStandardMaterial color={MAT.steel} metalness={.7} roughness={.28} transparent opacity={.65} depthWrite={false} /></mesh>
+    <FadingTankPanel width={width-2} height={Math.max(.1,level)} depth={depth-2} y={Math.max(.1,level)/2} water oil={oil} />
+    {Array.from({ length: 11 }, (_, i) => <Line key={i} points={[[-width/2+5,i*height/10,-depth/2+2],[-width/2+(i%5===0?12:8),i*height/10,-depth/2+2]]} color="#4a5861" lineWidth={1} />)}
   </group>;
 }
 interface Projection { width: number; height: number; markers: ProjectedMarker[] }
@@ -233,7 +239,7 @@ function ProjectMarkers({ config, onChange }: { config: LevelConfiguration; onCh
     const markers = config.pointsMm.map((point, index) => {
       // Anchor to the sensor's plane, not the front tank wall: a deep tank must
       // not push a label to the bottom when the camera inspects a small sensor.
-      const v = new Vector3(config.orientation === "horizontal" ? -width / 2 + 35 : 0, point, 0).project(camera);
+      const v = new Vector3(config.orientation === "horizontal" ? -width / 2 + 35 : verticalSensorX(config), point, 0).project(camera);
       const sensorX = (v.x + 1) * size.width / 2;
       return { index, x: Math.round(Math.max(sensorX + 24, size.width * .78)), y: Math.round((1 - v.y) * size.height / 2),
         visible: sensorX >= 0 && sensorX <= size.width && v.z >= -1 && v.z <= 1 };
@@ -259,9 +265,12 @@ export default function LevelScene({ configuration, family, levelMm, material, o
   const markers = !productOnly && showMarkers && configuration.mode === "points";
   const layout = markerLayout(projection.markers, projection.height);
   useEffect(() => {
-    setFocus(interactive && configuration.tankHeightMm > 400 && (family === "LS01" || family === "LS02") ? configuration.pointsMm[0]! : null);
+    setFocus(interactive && configuration.tankHeightMm > 400 && (family === "LS01" || family === "LS02" || family === "LS03") ? configuration.pointsMm[0]! : null);
     setZoom(1);
   }, [family, configuration.tankHeightMm, configuration.orientation, interactive]);
+  useEffect(() => {
+    setFocus(current => current === null ? null : configuration.pointsMm[0] ?? null);
+  }, [configuration.pointsMm[0]]);
   const inspect = (height = configuration.pointsMm[0] ?? levelMm) => { setFocus(height); setZoom(1); setViewRevision(v => v + 1); };
   return <SceneBoundary><div className="lv-scene-stage" data-ready={ready} data-family={family}>
     {interactive ? <div className="lv-scene-toolbar" aria-label={t("Commandes de la vue")}>
@@ -287,7 +296,7 @@ export default function LevelScene({ configuration, family, levelMm, material, o
     <div className="lv-marker-rail" aria-label={t("Position des points")} onScroll={e => setRailScroll(e.currentTarget.scrollTop)}>
       <div className="lv-marker-track" style={{height:layout.contentHeight}}>{layout.markers.map(m => <button type="button" key={m.index}
         className="lv-point-marker t-caption t-metric" style={{top:m.labelY-22}} onClick={() => inspect(configuration.pointsMm[m.index])}
-        aria-label={`${t("Voir le point")} ${m.index+1} · ${configuration.pointsMm[m.index]} mm`}>P{m.index+1} · {configuration.pointsMm[m.index]} mm</button>)}</div>
+        aria-label={`${t("Voir le point")} ${m.index+1} · ${formatCm(configuration.pointsMm[m.index]!)} cm`}>P{m.index+1} · {formatCm(configuration.pointsMm[m.index]!)} cm</button>)}</div>
     </div>
   </> : null}</div>{!ready ? <SceneLoading /> : null}</div></SceneBoundary>;
 }
