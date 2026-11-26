@@ -1,6 +1,6 @@
 import ContactCircuit from "@/components/standex/workshop/contact-circuit";
 import { t } from "@/lib/i18n/core";
-import { cmValue, formatCm } from "@/lib/level/dimensions";
+import { cmValue, formatCm, formatPercent, formatLevel } from "@/lib/level/dimensions";
 import { FAMILY_LABELS, illustrativeReading, proposedContactForm, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 
 /** Operator display of the requested behaviour; no invented resistance codes. */
@@ -24,8 +24,8 @@ export function LevelMonitor({ configuration: c, family, level, available, candi
       : c.mode === "continuous" ? <>
         <output className="lv-monitor-value t-display-m t-metric">{formatCm(reading.steppedMm)} <span className="t-body">cm</span></output>
         <div className="lv-gauge-wrap">
-          <div className="lv-gauge-scale t-caption t-metric"><span>{formatCm(c.tankHeightMm)} cm</span><span>{formatCm(c.tankHeightMm / 2)} cm</span><span>0 cm</span></div>
-          <div className="lv-gauge" role="meter" aria-label={t("Hauteur du liquide")} aria-valuemin={0} aria-valuemax={cmValue(c.tankHeightMm)} aria-valuenow={cmValue(reading.steppedMm)} aria-valuetext={`${formatCm(reading.steppedMm)} cm`}>
+          <div className="lv-gauge-scale t-caption t-metric"><span>{formatLevel(c.tankHeightMm,c.tankHeightMm)}</span><span>{formatLevel(c.tankHeightMm / 2,c.tankHeightMm)}</span><span>0 cm · 0 %</span></div>
+          <div className="lv-gauge" role="meter" aria-label={t("Hauteur du liquide")} aria-valuemin={0} aria-valuemax={cmValue(c.tankHeightMm)} aria-valuenow={cmValue(reading.steppedMm)} aria-valuetext={formatLevel(reading.steppedMm,c.tankHeightMm)}>
             <div className="lv-gauge-fill" style={{ height: `${reading.steppedMm / c.tankHeightMm * 100}%` }} />
           </div><span className="t-metric t-title-l">{percent} %</span>
         </div>
@@ -34,7 +34,7 @@ export function LevelMonitor({ configuration: c, family, level, available, candi
         <p className="t-title-l lv-monitor-value">{t(reading.active ? "Signal actif" : "Signal inactif")}</p>
         <ContactCircuit contact={reading.active ? "closed" : "open"} />
         <div className="lv-single-level"><span className="t-caption">{t(c.closedWhen === "high" ? "Détection du niveau haut" : "Détection du niveau bas")}</span>
-          <span className="t-title-l t-metric">{formatCm(c.pointsMm[0]!)} cm</span>
+          <span className="t-title-l t-metric">{formatCm(c.pointsMm[0]!)} cm</span><span className="t-body t-metric">{formatPercent(c.pointsMm[0]!,c.tankHeightMm)} %</span>
           <span className="t-body">{t(reading.active ? "Niveau demandé détecté" : "Niveau demandé non détecté")}</span></div>
         <div className="lv-field t-caption"><span className="font-semibold">{family} · {t("Forme de contact proposée")}</span>
           <span>{form ? `${t("Forme")} ${form}` : t("À confirmer avec Standex")}</span></div>
@@ -46,7 +46,7 @@ export function LevelMonitor({ configuration: c, family, level, available, candi
           {[...reading.pointStates].reverse().map(point => {
             return <li key={point.index} data-active={point.active} data-point={point.index + 1}>
               <div className="lv-level-step-label"><span className="t-body">P{point.index + 1} · {t(point.index === 0 ? "Niveau bas" : point.index === c.count - 1 ? "Niveau haut" : "Niveau intermédiaire")}</span>
-                <span className="t-caption t-metric">{formatCm(point.heightMm)} cm</span></div>
+                <span className="lv-level-dimension t-caption t-metric"><span>{formatCm(point.heightMm)} cm</span><span>{formatPercent(point.heightMm,c.tankHeightMm)} %</span></span></div>
               <span className="lv-threshold-state t-caption"><i aria-hidden="true" />{t(point.active ? "Signal actif" : "Signal inactif")}</span>
             </li>;
           })}

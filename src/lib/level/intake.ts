@@ -1,9 +1,26 @@
-import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, horizontalPointBounds, setPointCount,
+import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, horizontalPointBounds, setPointCount, constrainPointLayout,
   type LevelConfiguration, type LevelContext } from "./configuration";
 
 /** Only explicit intake answers seed the design; prose is never silently classified. */
 export function intakeKey(context: LevelContext) {
-  return JSON.stringify([context.mountingAccess, context.tankHeight, context.detectionGoal, context.detectionHeight, context.responsePriority]);
+  return JSON.stringify([context.mountingAccess, context.tankHeight, context.detectionGoal, context.detectionHeight, context.responsePriority, context.detectionCount, context.detectionHeights]);
+}
+export function requestedIntakePoints(context: LevelContext) {
+  const height=finiteInput(context.tankHeight) ?? 100;
+  if(context.detectionGoal !== "multiple") return [finiteInput(context.detectionHeight)];
+  const requestedCount=context.detectionCount ?? 2;
+  const count=Number.isFinite(requestedCount) ? Math.max(2,Math.min(12,Math.round(requestedCount))) : 2;
+  const values=Array.from({length:count},(_,i)=>finiteInput(context.detectionHeights?.[i] ?? ""));
+  // Interpolate only unanswered positions between explicit neighbours.
+  // Never move a user's answer in order to repair invalid ordering.
+  return values.map((value,index)=>{
+    if(value!==null) return value;
+    let before=index-1, after=index+1;
+    while(before>=0 && values[before]===null) before--;
+    while(after<count && values[after]===null) after++;
+    const low=before>=0 ? values[before]! : 0, high=after<count ? values[after]! : height;
+    return Math.round((low+(high-low)*(index-before)/(after-before))*10000)/10000;
+  });
 }
 export function intakeErrors(context: LevelContext) {
   const errors: string[] = [];
@@ -13,6 +30,13 @@ export function intakeErrors(context: LevelContext) {
   if (["high", "low"].includes(context.detectionGoal) && context.detectionHeight.trim()
     && (point === null || point < 0 || point > (height ?? 100)))
     errors.push("Le niveau demandé doit être compris entre le fond et le haut de la cuve. Précisez aussi la hauteur de cuve si nécessaire.");
+  if(context.detectionGoal === "multiple") {
+    const count=context.detectionCount ?? 2, entries=context.detectionHeights ?? [];
+    if(!Number.isInteger(count) || count<2 || count>12) errors.push("Choisissez entre 2 et 12 niveaux pour cet aperçu.");
+    const points=requestedIntakePoints(context);
+    if(entries.slice(0,count).some(v=>v?.trim() && finiteInput(v)===null) || points.some((p,i)=>p===null || p<0 || p>(height??100) || (i>0 && p<=points[i-1]!)))
+      errors.push("Indiquez les niveaux du bas vers le haut, sans doublon, entre 0 % et 100 % de la hauteur de cuve.");
+  }
   return errors;
 }
 export function seedConfiguration(context: LevelContext): LevelConfiguration {
@@ -25,7 +49,11 @@ export function seedConfiguration(context: LevelContext): LevelConfiguration {
     orientation: context.mountingAccess === "side" ? "horizontal" : "vertical",
     travelPreference: long ? "long" : "short", floatTravelMm: long ? 34 : 10.5, reachMm: long ? 56 : 32.5 };
   if (context.detectionGoal === "continuous") return fitStemToPoints({ ...c, mode: "continuous" });
-  if (context.detectionGoal === "multiple") return setPointCount(c, 2);
+  if (context.detectionGoal === "multiple") {
+    const points=requestedIntakePoints(context) as number[];
+    c=setPointCount(c,points.length);
+    return constrainPointLayout(fitStemToPoints({...c,pointsMm:points}));
+  }
   const requested = finiteInput(context.detectionHeight);
   let point = requested ?? (mounting === "bottom" ? goal === "low" ? 15 : compactReach(c) - 7
     : goal === "high" ? height - 7 : Math.max(25, Math.round(height * .2)));

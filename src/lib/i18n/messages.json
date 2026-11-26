@@ -38604,5 +38604,104 @@
     "Адаптировано для Sensor Studio.",
     "Adattato per Sensor Studio.",
     "Sensor Studio向けに調整済み。"
+  ],
+  "Hauteur du niveau à détecter": [
+    "Target detection height",
+    "目标检测高度",
+    "Gewünschte Erfassungshöhe",
+    "Altura del nivel que detectar",
+    "Высота обнаруживаемого уровня",
+    "Altezza del livello da rilevare",
+    "検出する液面の高さ"
+  ],
+  "Combien de niveaux faut-il détecter ?": [
+    "How many levels should be detected?",
+    "需要检测几个液位？",
+    "Wie viele Füllstände sollen erfasst werden?",
+    "¿Cuántos niveles hay que detectar?",
+    "Сколько уровней нужно обнаруживать?",
+    "Quanti livelli occorre rilevare?",
+    "何段階の液位を検出しますか？"
+  ],
+  "Indiquez les hauteurs du bas vers le haut. Les champs laissés vides recevront une première proposition.": [
+    "Enter heights from bottom to top. Empty fields will receive an initial suggestion.",
+    "请从低到高输入高度。空白项将提供初始建议。",
+    "Höhen von unten nach oben eingeben. Für leere Felder wird ein erster Vorschlag erstellt.",
+    "Indique las alturas de abajo hacia arriba. Los campos vacíos recibirán una propuesta inicial.",
+    "Укажите высоты снизу вверх. Для пустых полей будут предложены начальные значения.",
+    "Indicate le altezze dal basso verso l’alto. Per i campi vuoti verrà proposta una posizione iniziale.",
+    "下から上の順に高さを入力してください。空欄には初期値が提案されます。"
+  ],
+  "Le pourcentage décrit la hauteur depuis le fond de la cuve, pas le volume de liquide.": [
+    "The percentage represents height from the tank bottom, not liquid volume.",
+    "百分比表示距罐底的高度，而非液体体积。",
+    "Der Prozentwert beschreibt die Höhe ab dem Tankboden, nicht das Flüssigkeitsvolumen.",
+    "El porcentaje representa la altura desde el fondo del depósito, no el volumen de líquido.",
+    "Процент обозначает высоту от дна резервуара, а не объём жидкости.",
+    "La percentuale rappresenta l’altezza dal fondo del serbatoio, non il volume del liquido.",
+    "割合はタンク底からの高さを示し、液量を示すものではありません。"
+  ],
+  "Renseignez la hauteur de cuve pour utiliser les pourcentages.": [
+    "Enter the tank height to use percentages.",
+    "请输入罐体高度以使用百分比。",
+    "Tankhöhe eingeben, um Prozentwerte zu verwenden.",
+    "Indique la altura del depósito para utilizar porcentajes.",
+    "Укажите высоту резервуара для использования процентов.",
+    "Indicate l’altezza del serbatoio per usare le percentuali.",
+    "割合を使用するにはタンクの高さを入力してください。"
+  ],
+  "La première proposition ajuste certains niveaux pour laisser le flotteur se déplacer. Les hauteurs demandées restent conservées dans le récapitulatif.": [
+    "The initial proposal adjusts some levels to leave room for float travel. Your requested heights are kept in the summary.",
+    "初始方案会调整部分液位，为浮子运动留出空间。您要求的高度保留在汇总中。",
+    "Der erste Vorschlag passt einige Füllstände an, damit sich der Schwimmer bewegen kann. Ihre gewünschten Höhen bleiben in der Zusammenfassung erhalten.",
+    "La propuesta inicial ajusta algunos niveles para permitir el movimiento del flotador. Las alturas solicitadas se conservan en el resumen.",
+    "В начальном предложении некоторые уровни скорректированы для свободного хода поплавка. Запрошенные высоты сохранены в сводке.",
+    "La proposta iniziale adatta alcuni livelli per consentire il movimento del galleggiante. Le altezze richieste restano nel riepilogo.",
+    "浮子の移動スペースを確保するため、初期提案では一部の液位を調整します。ご希望の高さは概要に保存されます。"
+  ],
+  "À propos de l’aperçu": [
+    "About this preview",
+    "关于此预览",
+    "Über diese Vorschau",
+    "Acerca de esta vista previa",
+    "Об этом предварительном просмотре",
+    "Informazioni sull’anteprima",
+    "プレビューについて"
+  ],
+  "La démonstration s’arrête au plan de fixation du capteur, avant le raccordement du câble. Ce n’est pas une limite de remplissage de votre cuve.": [
+    "The demonstration stops at the sensor mounting plane, below the cable connection. This is not a filling limit for your tank.",
+    "演示在传感器安装平面处停止，低于电缆连接处。这不是您的储罐填充上限。",
+    "Die Demonstration endet an der Befestigungsebene des Sensors, unterhalb des Kabelanschlusses. Dies ist keine Füllgrenze Ihres Tanks.",
+    "La demostración se detiene en el plano de fijación del sensor, por debajo de la conexión del cable. No es un límite de llenado del depósito.",
+    "Демонстрация останавливается на уровне крепления датчика, ниже соединения кабеля. Это не предел заполнения вашего резервуара.",
+    "La dimostrazione si ferma al piano di fissaggio del sensore, sotto il collegamento del cavo. Non è un limite di riempimento del serbatoio.",
+    "デモはケーブル接続部より下のセンサー取付面で停止します。実際のタンクの充填上限を示すものではありません。"
+  ],
+  "Niveaux demandés": [
+    "Requested levels",
+    "要求的液位",
+    "Gewünschte Füllstände",
+    "Niveles solicitados",
+    "Запрошенные уровни",
+    "Livelli richiesti",
+    "ご希望の液位"
+  ],
+  "Choisissez entre 2 et 12 niveaux pour cet aperçu.": [
+    "Choose between 2 and 12 levels for this preview.",
+    "此预览可选择2至12个液位。",
+    "Wählen Sie für diese Vorschau 2 bis 12 Füllstände.",
+    "Elija entre 2 y 12 niveles para esta vista previa.",
+    "Выберите от 2 до 12 уровней для этого просмотра.",
+    "Scegliete da 2 a 12 livelli per questa anteprima.",
+    "このプレビューでは2〜12段階を選択してください。"
+  ],
+  "Indiquez les niveaux du bas vers le haut, sans doublon, entre 0 % et 100 % de la hauteur de cuve.": [
+    "Enter levels from bottom to top without duplicates, between 0% and 100% of tank height.",
+    "请从低到高输入不重复的液位，范围为罐体高度的0%至100%。",
+    "Füllstände von unten nach oben ohne Duplikate zwischen 0 % und 100 % der Tankhöhe eingeben.",
+    "Indique los niveles de abajo hacia arriba, sin duplicados, entre el 0 % y el 100 % de la altura del depósito.",
+    "Укажите уровни снизу вверх без повторов, от 0 % до 100 % высоты резервуара.",
+    "Indicate i livelli dal basso verso l’alto, senza duplicati, tra lo 0% e il 100% dell’altezza del serbatoio.",
+    "タンクの高さの0〜100%の範囲で、重複せず下から上の順に液位を入力してください。"
   ]
 }

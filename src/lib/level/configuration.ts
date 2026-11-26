@@ -15,6 +15,8 @@ export interface LevelContext {
   tankHeight: string;
   detectionGoal: "unknown" | "high" | "low" | "multiple" | "continuous";
   detectionHeight: string;
+  detectionCount?: number;
+  detectionHeights?: string[];
   responsePriority: "unknown" | "limit" | "movement";
 }
 export interface LevelConfiguration {
@@ -37,7 +39,7 @@ export interface LevelConfiguration {
 export const INITIAL_CONTEXT: LevelContext = {
   fluid: "unknown", fluidName: "", temperatureMin: "", temperatureMax: "", purpose: "",
   tank: "unknown", bodyExposure: "unknown", cableExposure: "unknown", constraints: "",
-  mountingAccess: "unknown", tankHeight: "", detectionGoal: "unknown", detectionHeight: "", responsePriority: "unknown",
+  mountingAccess: "unknown", tankHeight: "", detectionGoal: "unknown", detectionHeight: "", detectionCount: 2, detectionHeights: [], responsePriority: "unknown",
 };
 export const INITIAL_CONFIGURATION: LevelConfiguration = {
   mode: "points", count: 1, orientation: "vertical", mounting: "support", reachMm: 32.5,
@@ -464,14 +466,13 @@ export function floatCentres(c: LevelConfiguration, levelMm: number, family?: Fa
   if (!mechanics.valid) return [];
   return mechanics.floats.map(f => Math.max(f.lowerMm, Math.min(f.upperMm, levelMm - FLOAT_IMMERSION_OFFSET_MM)));
 }
-/** Presentation limit only: show the highest float reaching its stop while
- * keeping an upright sensor's cable entry above liquid. Never a process limit. */
+/** Presentation limit at the mounting/sealing plane, below the dry cable entry.
+ * Float travel does not limit filling. Never a real process limit. */
 export function demonstrationMax(c: LevelConfiguration, family: Family = architectureFamily(c)) {
   if (c.orientation === "horizontal" || c.mounting === "bottom") return c.tankHeightMm;
   const mechanics = verticalMechanics(c, family);
   if (!mechanics.valid) return c.tankHeightMm;
-  return Math.max(0, Math.min(c.tankHeightMm, mechanics.datumMm - 1,
-    Math.max(...mechanics.floats.map(f => f.upperMm)) + FLOAT_IMMERSION_OFFSET_MM));
+  return Math.max(0, Math.min(c.tankHeightMm, mechanics.datumMm));
 }
 export function horizontalFloatPosition(c: LevelConfiguration, level: number, index = 0) {
   const pivotHeight = horizontalMountHeight(c, index);
