@@ -34,7 +34,7 @@ export function configurationGuidance(context: LevelContext, c: LevelConfigurati
       actions: (canFit ? ["horizontal_array", "fit_stem", "custom"] : ["horizontal_array", "custom"]) as Remedy[] };
   }
   if (c.mode === "continuous" && c.tankHeightMm > MAX_REACH_MM)
-    return { message: "Le suivi de toute cette hauteur dépasse les 2 m de tige présentés. Préparer une étude spécifique, ou choisir une détection par points.", actions: ["custom"] as Remedy[] };
+    return { message: "Le suivi de toute cette hauteur dépasse les 200 cm de tige présentés. Préparer une étude spécifique, ou choisir une détection par points.", actions: ["custom"] as Remedy[] };
   if (c.reachMm > (c.mounting === "bottom" ? c.tankHeightMm : mountingDatum(c)) && c.orientation === "vertical")
     return { message: issues[0]!, actions: ["shorten", "custom"] as Remedy[] };
   if (c.reachMm > MAX_REACH_MM && c.orientation === "vertical")

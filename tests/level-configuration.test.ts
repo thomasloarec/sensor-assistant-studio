@@ -75,7 +75,7 @@ describe("level journey prototype guards", () => {
     const c = { ...INITIAL_CONFIGURATION, travelPreference: "long" as const, reachMm: 50 };
     const result = assessConfiguration(water, c);
     expect(result.selected?.family).toBe("LS02");
-    expect(result.selected?.reasons.join(" ")).toContain("56 mm");
+    expect(result.selected?.reasons.join(" ")).toContain("5,6 cm");
     expect(c.reachMm).toBe(50);
   });
   test("four points from the initial compact sensor extend the stem and display two separate floats", () => {

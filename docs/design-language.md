@@ -1319,3 +1319,29 @@ Sur le capteur horizontal, le seuil demandé correspond au début du pivotement
 dans le sens de détection : montée depuis la position basse, descente depuis la
 position horizontale. Le moniteur et les repères partagent ce seuil illustratif ;
 aucun angle de commutation fabricant n’est présenté comme vérifié. Aucun nouveau jeton.
+
+### Centimètres et vue locale de cuve — 26 novembre 2026
+
+Le parcours niveau affiche désormais toutes ses dimensions en cm : questions,
+réglages, repères, moniteur, exemples, revue et câble. La virgule décimale est
+acceptée ; les unités du modèle et de l’export JSON restent explicitement en mm
+pour conserver les dossiers existants et les données des fiches. Les champs
+reprennent les surfaces, focus et cibles existants, sans nouveau jeton.
+
+L’aperçu représente une portion de cuve, ouverte et estompée à droite. La largeur
+n’est pas une cote de cuve. Un capteur vertical est placé près de la paroi gauche,
+avec un support court indépendant de la hauteur. Les grands réservoirs s’ouvrent
+en vue rapprochée pour les capteurs compacts et horizontaux ; le cadrage suit le
+point déplacé sans modifier les dimensions physiques ni l’angle de vue.
+
+Le remplissage illustratif d’un capteur vertical droit s’arrête lorsque les
+flotteurs atteignent leurs butées hautes, avant la sortie de câble. Le curseur
+de liquide partage cette limite, qui ne constitue pas une limite de remplissage
+du réservoir réel. Les montages par le fond et latéraux gardent leur câble hors
+de la cuve. Le moniteur et la scène utilisent le même niveau borné.
+
+Les curseurs des points respectent l’encombrement et les voisins, notamment
+l’amplitude du flotteur horizontal. Réduire une cuve horizontale recale les points
+et conserve l’espace nécessaire à leur nombre. Une saisie manuelle de point hors
+limites est conservée, signalée et suspend la simulation jusqu’à correction.
+Une saisie valide retrouve la même géométrie que le curseur.

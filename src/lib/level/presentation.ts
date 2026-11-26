@@ -4,9 +4,11 @@ import { horizontalMountHeight, verticalMechanics, type Family, type LevelConfig
  * A representative envelope inside those ranges, not a qualified SKU. */
 export const LS05_ENVELOPE = { stemDiameterMm: 12, floatDiameterMm: 32, floatHeightMm: 19 } as const;
 export function tankDimensions(height: number) {
-  // Tank width/depth are illustrative; the user only supplies its useful height.
-  return { width: Math.max(90, height * .7), depth: Math.max(42, height * .35) };
+  // Only a local slice of the tank is shown, open to the right. Its width/depth
+  // are not supplied dimensions and must not grow with the tank height.
+  return { width: Math.max(110, Math.min(240, height * .7)), depth: 60 };
 }
+export function verticalSensorX(c: LevelConfiguration) { return -tankDimensions(c.tankHeightMm).width / 2 + 35; }
 export interface ProjectedMarker { index: number; x: number; y: number; visible: boolean }
 /** Pack screen-space labels without changing their real measured heights.
  * If all labels cannot fit, the dedicated side rail scrolls instead of overlapping. */
@@ -30,6 +32,6 @@ export function sceneFrame(c: LevelConfiguration, family: Family, focus: number 
   }
   const m = verticalMechanics(c, family);
   const compact = family === "LS01" || family === "LS02";
-  return { target: [0, compact || productOnly ? (m.datumMm + m.endMm) / 2 + 15 : focus ?? m.datumMm - 40, 0] as const,
+  return { target: [verticalSensorX(c), compact || productOnly ? (m.datumMm + m.endMm) / 2 + (c.mounting === "bottom" ? -15 : 15) : focus ?? m.datumMm - 40, 0] as const,
     height: productOnly ? m.reachMm + 65 : compact ? m.reachMm + 65 : 130, width: productOnly ? 100 : 145 };
 }

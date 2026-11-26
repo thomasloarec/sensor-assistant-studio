@@ -16,12 +16,12 @@ const EXAMPLES: Record<string, readonly string[]> = {
     "Condensats de climatisation sans additif, de 5 à 35 °C.",
   ],
   level_installation: [
-    "Le réservoir est déjà monté dans la machine : seul un orifice de 25 mm est accessible par le dessus. Le capteur doit pouvoir être remplacé sans déposer la cuve.",
+    "Le réservoir est déjà monté dans la machine : seul un orifice de 2,5 cm est accessible par le dessus. Le capteur doit pouvoir être remplacé sans déposer la cuve.",
     "La cuve est nettoyée chaque semaine avec un détergent à 60 °C. Des dépôts peuvent se former sur la tige ; le flotteur doit rester accessible pour le nettoyage.",
     "Le réservoir est installé sur un véhicule soumis aux vibrations et aux freinages. Le liquide forme des vagues ; éviter les alertes brèves dues aux mouvements du véhicule.",
   ],
   level_detection: [
-    "Signaler un manque de liquide à 30 mm du fond. L’ouverture est en haut de la cuve : une longue tige doit atteindre cette zone basse.",
+    "Signaler un manque de liquide à 3 cm du fond. L’ouverture est en haut de la cuve : une longue tige doit atteindre cette zone basse.",
     "Arrêter le remplissage au niveau haut. Une course courte du flotteur est souhaitée près de cette limite.",
     "Le liquide bouge dans un réservoir peu profond. Prévoir une course plus longue du flotteur et vérifier les déclenchements en conditions réelles.",
   ],

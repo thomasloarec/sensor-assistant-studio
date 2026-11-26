@@ -65,7 +65,8 @@ function horizontalThresholdOffset(c: LevelConfiguration, index: number) {
 export function horizontalMountHeight(c: LevelConfiguration, index = 0) { return c.pointsMm[index]! + horizontalThresholdOffset(c, index); }
 export function horizontalPointBounds(c: LevelConfiguration, index = 0) {
   const offset = horizontalThresholdOffset(c, index);
-  return { min: Math.ceil(HORIZONTAL_CLEARANCE_MM.below - offset), max: Math.floor(c.tankHeightMm - HORIZONTAL_CLEARANCE_MM.above - offset) };
+  return { min: Math.round((HORIZONTAL_CLEARANCE_MM.below - offset)*10000)/10000,
+    max: Math.round((c.tankHeightMm - HORIZONTAL_CLEARANCE_MM.above - offset)*10000)/10000 };
 }
 export const FAMILY_LABELS: Record<Family, string> = {
   LS01: "Vertical compact", LS02: "Vertical à course plus longue", LS03: "Montage latéral",
@@ -132,12 +133,12 @@ export function assessFamily(family: Family, context: LevelContext, c: LevelConf
     excluded = true; reasons.push("La longueur souhaitée dépasse le corps standard représenté.");
   }
   if ((family === "LS01" && c.reachMm < 32.5) || (family === "LS02" && c.reachMm < 56))
-    reasons.push(`Longueur standard représentée : ${family === "LS01" ? 32.5 : 56} mm sous fixation. Écart avec la demande à étudier.`);
+    reasons.push(`Longueur standard représentée : ${family === "LS01" ? "3,25" : "5,6"} cm sous fixation. Écart avec la demande à étudier.`);
   if (family === "LS04" && c.reachMm > 250) {
     excluded = true; reasons.push("La longueur souhaitée dépasse la plage illustrée du LS04 ; extensions à étudier.");
   }
   if (family === "LS05" && c.reachMm > MAX_REACH_MM) {
-    excluded = true; reasons.push("La tige dépasse 2 000 mm. Réduire sa longueur ou demander une forme spécifique.");
+    excluded = true; reasons.push("La tige dépasse 200 cm. Réduire sa longueur ou demander une forme spécifique.");
   }
   if (family === "LS04" && Math.ceil(c.count / c.pointsPerFloat) > 6) {
     excluded = true; reasons.push("Le LS04 est limité à six flotteurs ; essayer deux points par flotteur ou une autre famille.");
@@ -300,7 +301,17 @@ function pointZone(c: LevelConfiguration) {
     : { min: mountingDatum(c) - c.reachMm + 19, max: mountingDatum(c) - 11 };
 }
 export function constrainPointLayout(c: LevelConfiguration): LevelConfiguration {
-  if (c.orientation !== "vertical" || c.mode !== "points") return c;
+  if (c.mode !== "points") return c;
+  if (c.orientation === "horizontal") {
+    const gap = HORIZONTAL_CLEARANCE_MM.below + HORIZONTAL_CLEARANCE_MM.above;
+    if (c.tankHeightMm < gap * c.count) return c;
+    const mounts = c.pointsMm.map((_,i) => Math.max(HORIZONTAL_CLEARANCE_MM.below,
+      Math.min(c.tankHeightMm - HORIZONTAL_CLEARANCE_MM.above, horizontalMountHeight(c,i))));
+    for(let i=mounts.length-2;i>=0;i--) mounts[i]=Math.min(mounts[i]!,mounts[i+1]!-gap);
+    mounts[0]=Math.max(HORIZONTAL_CLEARANCE_MM.below,mounts[0]!);
+    for(let i=1;i<mounts.length;i++) mounts[i]=Math.max(mounts[i]!,mounts[i-1]!+gap);
+    return {...c,pointsMm:mounts.map((height,i)=>Math.round((height-horizontalThresholdOffset(c,i))*10000)/10000)};
+  }
   if (c.count === 1 && isCompact(architectureFamily(c))) return fitStemToPoints(c);
   const limits = reachBounds(c);
   const min = c.count === 1 ? Math.min(limits.max, Math.max(limits.min, 30 + c.floatTravelMm)) : limits.min;
@@ -318,12 +329,30 @@ export function constrainPointLayout(c: LevelConfiguration): LevelConfiguration 
   for (let i = 1; i < pointsMm.length; i++) pointsMm[i] = Math.max(pointsMm[i]!, pointsMm[i - 1]! + gaps[i]!);
   return { ...next, pointsMm };
 }
+/** Minimum tank height for the current illustrated assembly, not a product rating. */
+export function minimumTankHeight(c: LevelConfiguration) {
+  if(c.mode !== "points") return 60;
+  if(c.orientation === "horizontal") return Math.max(60,c.count*(HORIZONTAL_CLEARANCE_MM.below+HORIZONTAL_CLEARANCE_MM.above));
+  const packed=c.pointsMm.slice(1).reduce((sum,_,i)=>sum+pointGap(c,i+1),0);
+  return Math.max(60,30+packed);
+}
 function singlePointZone(c: LevelConfiguration) {
   const zone = pointZone(c);
   return { min: zone.min + FLOAT_IMMERSION_OFFSET_MM + (c.closedWhen === "high" ? c.floatTravelMm : 0),
     max: zone.max + FLOAT_IMMERSION_OFFSET_MM - (c.closedWhen === "low" ? c.floatTravelMm : 0) };
 }
 export function pointBounds(c: LevelConfiguration, index: number) {
+  if (c.orientation === "horizontal") {
+    const clearance = HORIZONTAL_CLEARANCE_MM.below + HORIZONTAL_CLEARANCE_MM.above;
+    const offset = horizontalThresholdOffset(c, index), bounds = horizontalPointBounds(c, index);
+    return { min: index ? Math.max(bounds.min, horizontalMountHeight(c, index - 1) + clearance - offset) : bounds.min,
+      max: index < c.count - 1 ? Math.min(bounds.max, horizontalMountHeight(c, index + 1) - clearance - offset) : bounds.max };
+  }
+  if (c.count === 1 && isCompact(architectureFamily(c))) {
+    const min = c.closedWhen === "high" ? compactReach(c) - 7 : 15;
+    const max = c.closedWhen === "high" ? c.tankHeightMm - 7 : c.tankHeightMm - compactReach(c) + 15;
+    return c.mounting === "bottom" ? { min, max: min } : c.mounting === "top" ? { min: max, max } : { min, max };
+  }
   if (c.orientation === "vertical" && c.count === 1 && !isCompact(architectureFamily(c))) return singlePointZone(c);
   if (c.orientation === "vertical" && c.count > 1) {
     const zone = pointZone(c);
@@ -383,15 +412,15 @@ export function configurationIssues(c: LevelConfiguration, family: Family = arch
   if (c.orientation === "vertical" && c.reachMm > (c.mounting === "bottom" ? c.tankHeightMm : mountingDatum(c)) + .001)
     problems.push("La tige dépasse le fond de la cuve. Raccourcir la tige ou augmenter la hauteur de la cuve.");
   if (c.orientation === "vertical" && c.reachMm > MAX_REACH_MM)
-    problems.push("La tige dépasse 2 000 mm. Réduire sa longueur ou demander une forme spécifique.");
+    problems.push("La tige dépasse 200 cm. Réduire sa longueur ou demander une forme spécifique.");
   if (c.orientation === "vertical" && c.mode === "continuous" && c.tankHeightMm > MAX_REACH_MM)
-    problems.push("Le suivi de toute cette hauteur dépasse les 2 m de tige présentés. Préparer une étude spécifique, ou choisir une détection par points.");
+    problems.push("Le suivi de toute cette hauteur dépasse les 200 cm de tige présentés. Préparer une étude spécifique, ou choisir une détection par points.");
   if (c.orientation === "horizontal" && c.mode === "continuous")
     problems.push("La mesure continue demande ici un capteur vertical. Passer en vertical ou choisir un seul point en horizontal.");
   else if (c.orientation === "horizontal" && c.pointsMm.some((p, i) => p < horizontalPointBounds(c, i).min || p > horizontalPointBounds(c, i).max))
     problems.push("Le flotteur horizontal manque de place près du fond ou du haut de la cuve. Recentrer le point pour dégager son mouvement dans l’aperçu.");
   if (c.orientation === "horizontal" && c.mode === "points" && c.pointsMm.some((_, i) => i > 0
-    && horizontalMountHeight(c, i) - horizontalMountHeight(c, i - 1) < HORIZONTAL_CLEARANCE_MM.below + HORIZONTAL_CLEARANCE_MM.above))
+    && horizontalMountHeight(c, i) - horizontalMountHeight(c, i - 1) < HORIZONTAL_CLEARANCE_MM.below + HORIZONTAL_CLEARANCE_MM.above - .000001))
     problems.push("Les capteurs horizontaux sont trop proches. Espacer les points pour laisser chaque flotteur pivoter, ou choisir une tige verticale.");
   if (c.mode === "points") {
     if (c.pointsMm.some((p, i) => p < 0 || p > c.tankHeightMm || (i > 0 && p <= c.pointsMm[i - 1]!)))
@@ -434,6 +463,15 @@ export function floatCentres(c: LevelConfiguration, levelMm: number, family?: Fa
   const mechanics = verticalMechanics(c, family);
   if (!mechanics.valid) return [];
   return mechanics.floats.map(f => Math.max(f.lowerMm, Math.min(f.upperMm, levelMm - FLOAT_IMMERSION_OFFSET_MM)));
+}
+/** Presentation limit only: show the highest float reaching its stop while
+ * keeping an upright sensor's cable entry above liquid. Never a process limit. */
+export function demonstrationMax(c: LevelConfiguration, family: Family = architectureFamily(c)) {
+  if (c.orientation === "horizontal" || c.mounting === "bottom") return c.tankHeightMm;
+  const mechanics = verticalMechanics(c, family);
+  if (!mechanics.valid) return c.tankHeightMm;
+  return Math.max(0, Math.min(c.tankHeightMm, mechanics.datumMm - 1,
+    Math.max(...mechanics.floats.map(f => f.upperMm)) + FLOAT_IMMERSION_OFFSET_MM));
 }
 export function horizontalFloatPosition(c: LevelConfiguration, level: number, index = 0) {
   const pivotHeight = horizontalMountHeight(c, index);
