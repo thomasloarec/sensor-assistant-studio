@@ -33,7 +33,7 @@ test('horizontal point slider endpoints and intermediate values remain physicall
     }
   }
 });
-test('filling reaches all upright floats upper stops without wetting the cable entry',()=>{
+test('filling reaches the mounting plane beyond upper float stops without wetting the cable entry',()=>{
   const configurations:LevelConfiguration[]=[];
   for(const height of [100,490,2000]) for(const goal of ['high','low'] as const) for(const access of ['free','top'] as const)
     configurations.push(seedConfiguration({...INITIAL_CONTEXT,tankHeight:String(height),detectionGoal:goal,mountingAccess:access}));
@@ -43,7 +43,7 @@ test('filling reaches all upright floats upper stops without wetting the cable e
   for(const c of configurations) {
     expect(configurationIssues(c)).toEqual([]);
     const mechanics=verticalMechanics(c), max=demonstrationMax(c);
-    expect(max).toBeLessThan(mechanics.datumMm);
+    expect(max).toBe(mechanics.datumMm);
     expect(max).toBeLessThanOrEqual(c.tankHeightMm);
     floatCentres(c,max).forEach((centre,i)=>expect(centre).toBeCloseTo(mechanics.floats[i]!.upperMm));
   }

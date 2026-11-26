@@ -1329,13 +1329,14 @@ pour conserver les dossiers existants et les données des fiches. Les champs
 reprennent les surfaces, focus et cibles existants, sans nouveau jeton.
 
 L’aperçu représente une portion de cuve, ouverte et estompée à droite. La largeur
-n’est pas une cote de cuve. Un capteur vertical est placé près de la paroi gauche,
-avec un support court indépendant de la hauteur. Les grands réservoirs s’ouvrent
+n’est pas une cote de cuve. Un capteur vertical à fixation libre est placé près de
+la paroi gauche avec un support court ; un montage par le dessus reste centré.
+Les grands réservoirs s’ouvrent
 en vue rapprochée pour les capteurs compacts et horizontaux ; le cadrage suit le
 point déplacé sans modifier les dimensions physiques ni l’angle de vue.
 
-Le remplissage illustratif d’un capteur vertical droit s’arrête lorsque les
-flotteurs atteignent leurs butées hautes, avant la sortie de câble. Le curseur
+Le remplissage illustratif d’un capteur vertical droit s’arrête au plan de
+fixation, avant le raccordement du câble, et non aux butées du flotteur. Le curseur
 de liquide partage cette limite, qui ne constitue pas une limite de remplissage
 du réservoir réel. Les montages par le fond et latéraux gardent leur câble hors
 de la cuve. Le moniteur et la scène utilisent le même niveau borné.
@@ -1345,3 +1346,21 @@ l’amplitude du flotteur horizontal. Réduire une cuve horizontale recale les p
 et conserve l’espace nécessaire à leur nombre. Une saisie manuelle de point hors
 limites est conservée, signalée et suspend la simulation jusqu’à correction.
 Une saisie valide retrouve la même géométrie que le curseur.
+
+### Niveaux préparés et lisibilité sur portable — 26 novembre 2026
+
+La dernière question propose 2 à 12 niveaux avec saisie synchronisée en cm et en
+pourcentage de hauteur utile (jamais de volume). Ces réponses préparent le nombre
+de points, les flotteurs et leurs positions. Les objectifs 0 % / 100 % restent
+conservés dans le contexte ; tout décalage initial nécessaire au mouvement des
+flotteurs est annoncé et les valeurs demandées figurent dans le récapitulatif.
+Les réglages, repères latéraux, moniteur et revue affichent cm et pourcentages.
+La hauteur canonique reste en mm pour les calculs et les exports existants.
+
+« Lancer / Pause » est placé dans l’en-tête de la simulation. Le panneau central
+réserve sa hauteur disponible à la scène ; le pied regroupe le niveau, son curseur
+et le sens de variation. Les explications longues sont accessibles dans un volet
+« À propos de l’aperçu » dans le pied, ouvert au-dessus sans réduire la scène.
+Les repères à deux lignes conservent
+un espacement sans recouvrement ; tous les contrôles gardent une cible de 44 px.
+Les surfaces, échelles typographiques, focus et couleurs existants sont réutilisés.

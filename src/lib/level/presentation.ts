@@ -8,12 +8,12 @@ export function tankDimensions(height: number) {
   // are not supplied dimensions and must not grow with the tank height.
   return { width: Math.max(110, Math.min(240, height * .7)), depth: 60 };
 }
-export function verticalSensorX(c: LevelConfiguration) { return -tankDimensions(c.tankHeightMm).width / 2 + 35; }
+export function verticalSensorX(c: LevelConfiguration) { return c.mounting === "support" ? -tankDimensions(c.tankHeightMm).width / 2 + 35 : 0; }
 export interface ProjectedMarker { index: number; x: number; y: number; visible: boolean }
 /** Pack screen-space labels without changing their real measured heights.
  * If all labels cannot fit, the dedicated side rail scrolls instead of overlapping. */
 export function markerLayout(markers: ProjectedMarker[], height: number) {
-  const gap = 48, edge = 24;
+  const gap = 56, edge = 28;
   const contentHeight = Math.max(height, markers.length * gap + 8);
   const ordered = [...markers].sort((a, b) => a.y - b.y || b.index - a.index);
   const positions = ordered.map((m, i) => Math.max(edge + i * gap, Math.min(contentHeight - edge, m.y)));

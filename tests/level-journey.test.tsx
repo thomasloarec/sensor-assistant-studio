@@ -7,6 +7,67 @@ import LevelJourney, { RangeField } from "../src/components/level/level-journey"
 
 afterEach(() => { cleanup(); setLocale("fr"); });
 
+test("multiple level intake prepares five points in cm and percent and preserves the original endpoint objectives",async()=>{
+  setLocale("fr");
+  const view=render(<LevelJourney active={false}/>);
+  const click=async(name:string)=>{await act(async()=>fireEvent.click(view.getByRole("button",{name,exact:true})));};
+  const select=async(name:string,value:string)=>{await act(async()=>fireEvent.change(view.getByLabelText(name),{target:{value}}));};
+  await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer");
+  await select("Accès pour installer le capteur","top");
+  await changeInput(view.getByRole("textbox",{name:/Hauteur utile de la cuve/}),"100");
+  await click("Continuer"); await select("Niveau à détecter","multiple");
+  await select("Combien de niveaux faut-il détecter ?","5");
+  for(const i of [4,2,0,3,1]) {
+    await changeInput(view.getByRole("textbox",{name:`Point ${i+1} (%)`}),String(i*25));
+    expect((view.getByRole("textbox",{name:`Point ${i+1} (cm)`}) as HTMLInputElement).value).toBe(String(i*25));
+  }
+  await click("Ouvrir le configurateur");
+  expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("5");
+  expect(view.getByRole("heading",{name:"LS05",exact:true})).toBeTruthy();
+  expect(view.getByText(/La première proposition ajuste/)).toBeTruthy();
+  expect((view.getByRole("slider",{name:"Hauteur du liquide",exact:true}) as HTMLInputElement).max).toBe("100");
+  expect(within(view.getByRole("complementary",{name:"Moniteur de niveau"})).getByText("50 %")).toBeTruthy();
+  const cm=view.getByRole("textbox",{name:"Point 3 (cm)"}), percent=view.getByRole("textbox",{name:"Point 3 (%)"});
+  await changeInput(percent,"55"); await act(async()=>fireEvent.blur(percent));
+  expect((cm as HTMLInputElement).value).toBe("55");
+  await click("Revoir cette configuration");
+  expect(view.getByText("0 cm · 0 % ; 25 cm · 25 % ; 50 cm · 50 % ; 75 cm · 75 % ; 100 cm · 100 %")).toBeTruthy();
+  expect(view.getByText(/55 cm · 55 %/)).toBeTruthy();
+  await click("2. Configuration");
+  expect((view.getByRole("textbox",{name:"Point 3 (cm)"}) as HTMLInputElement).value).toBe("55");
+  await click("1. Mon besoin"); await click("Continuer"); await click("Continuer"); await click("Continuer");
+  expect((view.getByRole("textbox",{name:"Point 3 (%)"}) as HTMLInputElement).value).toBe("50");
+});
+
+test("single target percentages require a tank height and accept a decimal comma",async()=>{
+  setLocale("fr");
+  const view=render(<LevelJourney active={false}/>);
+  const click=async(name:string)=>{await act(async()=>fireEvent.click(view.getByRole("button",{name,exact:true})));};
+  await click("Configurer un capteur de niveau"); await click("Continuer"); await click("Continuer"); await click("Continuer");
+  await act(async()=>fireEvent.change(view.getByLabelText("Niveau à détecter"),{target:{value:"high"}}));
+  expect((view.getByRole("textbox",{name:"Hauteur du niveau à détecter (%)"}) as HTMLInputElement).disabled).toBe(true);
+  await click("Précédent");
+  await changeInput(view.getByRole("textbox",{name:/Hauteur utile de la cuve/}),"200");
+  await click("Continuer");
+  await changeInput(view.getByRole("textbox",{name:"Hauteur du niveau à détecter (%)"}),"95,25");
+  expect((view.getByRole("textbox",{name:"Hauteur du niveau à détecter (cm)"}) as HTMLInputElement).value).toBe("190,5");
+  await click("Ouvrir le configurateur");
+  expect((view.getByRole("textbox",{name:"Point 1 (%)"}) as HTMLInputElement).value).toBe("95,25");
+  expect(view.container.querySelector(".lv-visual-title button")?.textContent).toBe("Lancer");
+  expect(view.container.querySelectorAll(".lv-playback button")).toHaveLength(2);
+});
+
+test("focusing a rounded percentage never changes the exact height; invalid text restores the current value",async()=>{
+  let committed=23;
+  const view=render(<RangeField label="Point" value={23} heightMm={312} min={10} max={300} onChange={v=>{committed=v;}}/>);
+  const percent=view.getByRole("textbox",{name:"Point (%)"});
+  await act(async()=>{fireEvent.focus(percent);fireEvent.blur(percent);});
+  expect(committed).toBe(23);
+  await changeInput(percent,"abc"); await act(async()=>fireEvent.blur(percent));
+  expect(committed).toBe(23);
+  expect((percent as HTMLInputElement).value).toBe("7,37");
+});
+
 // Same input adapter as questionnaire-render: Happy DOM may share a React DOM
 // loaded before the DOM existed. Exercise the rendered handler and real state.
 async function changeInput(element: HTMLElement, value: string) {
@@ -60,7 +121,7 @@ test("intake seeds a top-mounted low level with a local float range; subsequent 
   await select("Accès pour installer le capteur", "top");
   await changeInput(view.getByRole("textbox", { name: /Hauteur utile de la cuve \(cm\)/ }), "18");
   await click("Continuer"); await select("Niveau à détecter", "low");
-  await changeInput(view.getByRole("textbox", { name: /Hauteur du niveau à détecter/ }), "3");
+  await changeInput(view.getByRole("textbox", { name: "Hauteur du niveau à détecter (cm)" }), "3");
   await click("Ouvrir le configurateur");
   expect(view.getByRole("heading", { name: "LS04", exact: true })).toBeTruthy();
   expect((view.getByLabelText("Fixation dans la cuve") as HTMLSelectElement).value).toBe("top");
@@ -149,13 +210,13 @@ test("decimal centimetres survive intake, configuration, cable review and Stande
   await changeInput(view.getByRole('textbox',{name:/Hauteur utile de la cuve/}),'200');
   await click('Continuer');
   await act(async()=>fireEvent.change(view.getByLabelText('Niveau à détecter'),{target:{value:'high'}}));
-  await changeInput(view.getByRole('textbox',{name:/Hauteur du niveau à détecter/}),'190,5');
+  await changeInput(view.getByRole('textbox',{name:'Hauteur du niveau à détecter (cm)'}),'190,5');
   await click('Ouvrir le configurateur');
   expect((view.getByRole('textbox',{name:'Point 1 (cm)'}) as HTMLInputElement).value).toBe('190,5');
   const level=view.getByRole('slider',{name:'Hauteur du liquide',exact:true}) as HTMLInputElement;
-  expect(Number(level.max)).toBe(190.5);
+  expect(Number(level.max)).toBe(191.2);
   await changeInput(level,'200');
-  expect(Number(level.value)).toBe(190.5);
+  expect(Number(level.value)).toBe(191.2);
   expect(view.getByText('Signal actif')).toBeTruthy();
   await click('Revoir cette configuration');
   await changeInput(view.getByRole('textbox',{name:'Longueur de câble souhaitée (cm)'}),'20,5');

@@ -7,7 +7,7 @@ import { Plus, Minus, Scan, Focus } from "lucide-react";
 import { BoxGeometry, Float32BufferAttribute, CatmullRomCurve3, DoubleSide, MOUSE, PMREMGenerator, Shape, Vector2, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { t } from "@/lib/i18n/core";
-import { formatCm } from "@/lib/level/dimensions";
+import { formatCm, formatPercent, formatLevel } from "@/lib/level/dimensions";
 import { FLOAT_HEIGHT_MM, floatCentres, horizontalFloatPosition, horizontalMountHeight, verticalMechanics, type Family, type LevelConfiguration } from "@/lib/level/configuration";
 import { SceneLoading, SceneUnavailable } from "./scene-loading";
 import { SceneFrameReady } from "./scene-frame-ready";
@@ -295,8 +295,9 @@ export default function LevelScene({ configuration, family, levelMm, material, o
       <path key={m.index} d={`M ${m.x} ${m.y} H ${projection.width - 4} L ${projection.width + 7} ${m.labelY - railScroll}`} />)}</svg>
     <div className="lv-marker-rail" aria-label={t("Position des points")} onScroll={e => setRailScroll(e.currentTarget.scrollTop)}>
       <div className="lv-marker-track" style={{height:layout.contentHeight}}>{layout.markers.map(m => <button type="button" key={m.index}
-        className="lv-point-marker t-caption t-metric" style={{top:m.labelY-22}} onClick={() => inspect(configuration.pointsMm[m.index])}
-        aria-label={`${t("Voir le point")} ${m.index+1} · ${formatCm(configuration.pointsMm[m.index]!)} cm`}>P{m.index+1} · {formatCm(configuration.pointsMm[m.index]!)} cm</button>)}</div>
+        className="lv-point-marker t-caption t-metric" style={{top:m.labelY-26}} onClick={() => inspect(configuration.pointsMm[m.index])}
+        aria-label={`${t("Voir le point")} ${m.index+1} · ${formatLevel(configuration.pointsMm[m.index]!,configuration.tankHeightMm)}`}>
+        <span>P{m.index+1} · {formatCm(configuration.pointsMm[m.index]!)} cm</span><span>{formatPercent(configuration.pointsMm[m.index]!,configuration.tankHeightMm)} %</span></button>)}</div>
     </div>
   </> : null}</div>{!ready ? <SceneLoading /> : null}</div></SceneBoundary>;
 }
