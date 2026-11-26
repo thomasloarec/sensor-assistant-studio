@@ -118,6 +118,7 @@ async function chooseFirstPairAndOpenResult(view: RenderResult, pcb = false) {
   );
   await act(async () => fireEvent.click(within(card).getByRole("button", { name: "Tester ce couple →" })));
   await act(async () => fireEvent.click(view.getByRole("button", { name: /3\. Résultat/ })));
+  return card.getAttribute("data-sensor-id")!;
 }
 
 function continueButton(view: RenderResult) {
@@ -313,7 +314,7 @@ describe("Connecteurs compacts — état réel du questionnaire", () => {
     expect(view.getByRole("button", { name: "JST PHR-2" }).getAttribute("aria-pressed")).toBe("true");
     const manual = view.getByText("Saisir une référence précise").closest("details");
     expect(manual?.open).toBe(false);
-    expect(manual?.querySelector<HTMLInputElement>('#connector-free-reference')?.value).toBe("");
+    expect((within(manual!).getByLabelText("Autre référence de connecteur") as HTMLInputElement).value).toBe("");
   }, 30_000);
 });
 
@@ -669,13 +670,13 @@ describe("Configuration câble/connecteur déplacée à l'étape « Résultat »
 
   test("configuration interactive en Résultat seulement ; récapitulatif en lecture seule en Avec Standex", async () => {
     const view = renderQuestionnaire(390);
-    await chooseFirstPairAndOpenResult(view);
+    const sensorId = await chooseFirstPairAndOpenResult(view);
     const config = view.getByTestId("configure-sensor");
     expect(view.queryByTestId("result-empty")).toBeNull();
     expect(config.textContent).not.toContain("Voici les possibilités de câble et de connecteur");
-    const sensorId = config.textContent?.match(/capteur (\S+)\./)?.[1] ?? "";
     expect(sensorId).not.toBe("");
-    expect(within(config).getByTestId("configured-sensor-preview").querySelector("[data-sensor]")?.getAttribute("data-sensor")).toBe(sensorId);
+    expect(within(config).queryByTestId("configured-sensor-preview")).toBeNull();
+    expect(config.querySelector("[data-sensor]")).toBeNull();
     expect(within(config).getByTestId("connector-choice")).toBeTruthy();
     expect(view.container.querySelector("#section-cablage")).not.toBeNull();
     // Longueur standard : les options viennent de standardLengthsMm pour CE capteur.

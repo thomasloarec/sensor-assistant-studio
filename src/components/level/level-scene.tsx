@@ -263,6 +263,9 @@ export default function LevelScene({ configuration, family, levelMm, material, o
   const [focus, setFocus] = useState<number | null>(null), [zoom, setZoom] = useState(1);
   const [projection, setProjection] = useState<Projection>({width:0,height:0,markers:[]});
   const [railScroll, setRailScroll] = useState(0);
+  // A product portrait is dry: gravity rests every float on its own lower stop.
+  // Keep the live liquid level untouched for the configurator when returning.
+  const sensorLevel = productOnly ? 0 : levelMm;
   const markers = !productOnly && showMarkers && configuration.mode === "points";
   const layout = markerLayout(projection.markers.filter(m => m.index < configuration.pointsMm.length), projection.height);
   useEffect(() => {
@@ -286,8 +289,8 @@ export default function LevelScene({ configuration, family, levelMm, material, o
     <StudioLight /><Framing config={configuration} family={family} productOnly={productOnly} focus={focus} zoom={zoom} viewRevision={viewRevision} interactive={interactive} />
     {!productOnly ? <Tank height={configuration.tankHeightMm} level={levelMm} oil={oil} /> : null}
     {markers ? <ProjectMarkers config={configuration} onChange={setProjection} /> : null}
-    {family === "LS03" ? configuration.pointsMm.map((_, i) => <HorizontalSensor key={i} index={i} config={configuration} level={levelMm} material={material} />) :
-      <VerticalSensor config={configuration} family={family} level={levelMm} material={material} />}
+    {family === "LS03" ? configuration.pointsMm.map((_, i) => <HorizontalSensor key={i} index={i} config={configuration} level={sensorLevel} material={material} />) :
+      <VerticalSensor config={configuration} family={family} level={sensorLevel} material={material} />}
     <ContactShadows position={[0, -5, 0]} scale={configuration.tankHeightMm * 3} opacity={0.3} blur={2.5} far={configuration.tankHeightMm * 1.4} resolution={256} color="#203343" />
     <SceneFrameReady onReady={() => setReady(true)} />
   </Canvas></div>

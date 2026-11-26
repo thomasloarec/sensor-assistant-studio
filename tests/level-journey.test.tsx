@@ -24,13 +24,15 @@ test("multiple level intake prepares five points in cm and percent and preserves
   await click("Ouvrir le configurateur");
   expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("5");
   expect(view.getByRole("heading",{name:"LS05",exact:true})).toBeTruthy();
-  expect(view.getByText(/La première proposition ajuste/)).toBeTruthy();
+  expect(view.queryByText(/La première proposition ajuste/)).toBeNull();
   expect((view.getByRole("slider",{name:"Hauteur du liquide",exact:true}) as HTMLInputElement).max).toBe("100");
   expect(within(view.getByRole("complementary",{name:"Moniteur de niveau"})).getByText("50 cm · 50 %")).toBeTruthy();
   const cm=view.getByRole("textbox",{name:"Point 3 (cm)"}), percent=view.getByRole("textbox",{name:"Point 3 (%)"});
   await changeInput(percent,"55"); await act(async()=>fireEvent.blur(percent));
   expect((cm as HTMLInputElement).value).toBe("55");
   await click("Revoir cette configuration");
+  expect(view.queryByRole("heading",{name:"Détails du projet"})).toBeNull();
+  await click("4. Avec Standex");
   expect(view.getByText("0 cm · 0 % ; 25 cm · 25 % ; 50 cm · 50 % ; 75 cm · 75 % ; 100 cm · 100 %")).toBeTruthy();
   expect(view.getByText(/55 cm · 55 %/)).toBeTruthy();
   await click("2. Configuration");
@@ -183,8 +185,7 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
   expect(within(monitor).getByText("Sur mesure")).toBeTruthy();
   await changeInput(view.getByLabelText("Votre forme et vos contraintes"), "Corps coudé pour accès latéral.");
   await click("Préparer la demande");
-  expect(view.getByRole("heading", { name: "Résultat", exact: true })).toBeTruthy();
-  expect(view.getByText("Corps coudé pour accès latéral.")).toBeTruthy();
+  expect(view.getByRole("heading", { name: /Forme spécifique.*Corps coudé/ })).toBeTruthy();
 });
 
 
@@ -219,8 +220,9 @@ test("decimal centimetres survive intake, configuration, cable review and Stande
   expect(Number(level.value)).toBe(191.2);
   expect(view.getByText('Signal actif')).toBeTruthy();
   await click('Revoir cette configuration');
-  await changeInput(view.getByRole('textbox',{name:'Longueur de câble souhaitée (cm)'}),'20,5');
-  expect(view.getByText('20,5 cm')).toBeTruthy();
+  await click('Sur mesure');
+  await changeInput(view.getByRole('textbox',{name:'Longueur sur mesure (cm)'}),'20,5');
+  expect((view.getByRole('textbox',{name:'Longueur sur mesure (cm)'}) as HTMLInputElement).value).toBe('20,5');
   expect(view.getByText(/1 point\(s\) · 190,5 cm/)).toBeTruthy();
   await click('4. Avec Standex');
   expect(view.getByText('20,5 cm')).toBeTruthy();
@@ -261,4 +263,35 @@ test("points keep physical order and rejected cm or percent edits leave the work
   }
   await changeInput(cm,"11"); await act(async()=>fireEvent.blur(cm));
   expect((cm as HTMLInputElement).value).toBe("11"); expect(view.queryByRole("alert")).toBeNull();
+});
+
+test("Result owns cable choices; Standex owns business fields and keeps contact and cable decisions on return",async()=>{
+  setLocale("fr"); const view=render(<LevelJourney active={false}/>);
+  const click=async(name:string)=>{await act(async()=>fireEvent.click(view.getByRole("button",{name,exact:true})));};
+  await click("Configurer un capteur de niveau"); await click("2. Configuration");
+  const controls=view.getByRole("complementary",{name:"Votre configuration"});
+  expect(within(controls).getByRole("button",{name:/Modifier le liquide/})).toBeTruthy();
+  expect(within(controls).queryByRole("button",{name:"Revoir cette configuration"})).toBeNull();
+  await click("Revoir cette configuration");
+  expect(view.queryByRole("heading",{name:"Détails du projet"})).toBeNull();
+  expect(view.queryByRole("heading",{name:"Vos coordonnées"})).toBeNull();
+  await click("Standard");
+  expect(view.getByText("Aucune longueur standard documentée pour cette gamme. À définir avec Standex.")).toBeTruthy();
+  await click("Sur mesure");
+  await changeInput(view.getByRole("textbox",{name:"Longueur sur mesure (cm)"}),"20,5");
+  await click("Pas besoin de connecteur");
+  await click("Continuer avec Standex →");
+  expect(view.getByRole("heading",{name:"Détails du projet"})).toBeTruthy();
+  expect(view.queryByRole("heading",{name:"Câble et connexion"})).toBeNull();
+  expect(view.getByText("20,5 cm")).toBeTruthy(); expect(view.getByText("Fils nus")).toBeTruthy();
+  await changeInput(view.getByRole("textbox",{name:"Nom",exact:true}),"Test local");
+  await click("Modifier la configuration");
+  expect((view.getByRole("textbox",{name:"Longueur sur mesure (cm)"}) as HTMLInputElement).value).toBe("20,5");
+  const length=within(view.getByRole("group",{name:"Longueur de câble"}));
+  await act(async()=>fireEvent.click(length.getByRole("button",{name:"Je ne sais pas"})));
+  const connector=within(view.getByRole("group",{name:"Connecteur"}));
+  await act(async()=>fireEvent.click(connector.getByRole("button",{name:"Je ne sais pas"})));
+  await click("Continuer avec Standex →");
+  expect(view.queryByText("20,5 cm")).toBeNull(); expect(view.queryByText("Fils nus")).toBeNull();
+  expect((view.getByRole("textbox",{name:"Nom",exact:true}) as HTMLInputElement).value).toBe("Test local");
 });
