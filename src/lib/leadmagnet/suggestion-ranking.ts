@@ -19,6 +19,7 @@
  * Le matériau n'intervient pas non plus : MK26 est en PBT renforcé de fibres de
  * verre (fiche de série), il n'est ni inox ni « premium ».
  */
+import { signalVoltageV } from "./requirement-context";
 import { thermalWarning, type SiteRangeC } from "./thermal-fit";
 import { VALIDATION_POINT, type FitAssessment } from "./application-fit";
 import type { CandidateResult } from "./candidates";
@@ -61,13 +62,7 @@ const norm = (v: string) =>
 
 /** Plus haute tension de commutation écrite pour le SIGNAL (V), ou null. */
 export function requestedVoltageV(requirements: readonly Requirement[]): number | null {
-  const text = norm(requirements.filter((r) => r.key === "electrical").map((r) => r.value).join(" "));
-  let max: number | null = null;
-  for (const m of text.matchAll(/(\d{1,4}(?:[.,]\d+)?)\s*v(?:dc|ac| dc| ac)?\b/g)) {
-    const v = Number(m[1]!.replace(",", "."));
-    if (Number.isFinite(v)) max = max === null ? v : Math.max(max, v);
-  }
-  return max;
+  return signalVoltageV(requirements);
 }
 
 const maxVoltage = (id: string) =>

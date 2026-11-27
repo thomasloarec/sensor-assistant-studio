@@ -43,8 +43,8 @@ function StepButton({
 /** Trois natures distinctes, jamais confondues à l'affichage. */
 export type FitIssueKind = "modality" | "review" | "insufficient";
 export function fitIssueKind(id: FitIssue["id"]): FitIssueKind {
-  if (id === "extreme_temperature_review" || id === "extreme_gap_review" || id === "hall_analog_review") return "review";
-  if (id === "no_meaningful_requirement") return "insufficient";
+  if (id === "extreme_temperature_review" || id === "extreme_gap_review" || id === "hall_analog_review" || id === "continuous_quantity_review") return "review";
+  if (id === "no_meaningful_requirement" || id === "requirement_clarification" || id === "outside_sensor_scope" || id === "invalid_dimension") return "insufficient";
   return "modality";
 }
 /* i18n-canonical : statuts et libellés de l'encart. */
@@ -103,7 +103,7 @@ function IssueBlock({
           {first ? (
             <StepButton step={first.step} label={t(FIT_PANEL.changeAction)} onGoToStep={onGoToStep} />
           ) : null}
-          {kind !== "insufficient" && onContactStandex ? (
+          {issue.id !== "outside_sensor_scope" && issue.id !== "no_meaningful_requirement" && onContactStandex ? (
             <Button
               variant={kind === "review" ? "default" : "secondary"}
               className="min-h-11 text-base"

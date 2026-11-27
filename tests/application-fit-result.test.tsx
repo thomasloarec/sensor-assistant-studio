@@ -67,7 +67,7 @@ describe("rapport exporté", () => {
     const sections = projectReportSections(d, {}, (s: string) => s, null);
     const flat = JSON.stringify(sections);
     expect(flat).toContain("Compatibilité de votre application");
-    expect(flat).toContain("Le capteur ne peut pas couper lui-même");
+    expect(flat).toContain("La commutation directe de cette charge nécessite une interface adaptée");
     expect(flat).toContain("8 A");
     expect(flat).toContain("Aucun produit n'est proposé");
   });

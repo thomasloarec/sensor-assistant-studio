@@ -18,11 +18,12 @@
  */
 import type { SensorModel, SensorShape } from "@/lib/standex/sensor-catalog";
 
-export type MountingIntentKind = "screw" | "adhesive" | "press_fit" | "clamp" | "pcb";
+export type MountingIntentKind = "screw" | "adhesive" | "press_fit" | "clamp" | "pcb" | "groove";
 
 /** Formes de boîtier dont la fixation décrite est documentée. Le collage porte sur
  * un boîtier ayant une surface d'appui : il n'ouvre pas les reeds nus CMS. */
 const SHAPES_BY_INTENT: Readonly<Record<MountingIntentKind, readonly SensorShape[]>> = {
+  groove: [], // No catalogue body is documented as fitting an arbitrary cylinder groove.
   screw: ["flange", "block", "threaded"],
   adhesive: ["flange", "block", "threaded", "cylinder", "pressfit"],
   press_fit: ["pressfit", "cylinder", "threaded"],
@@ -36,8 +37,10 @@ const SHAPES_BY_INTENT: Readonly<Record<MountingIntentKind, readonly SensorShape
  * caractère de mot, donc `/vissé\b/` ne reconnaît PAS « vissé » suivi d'un espace.
  * C'est exactement le piège qui laissait passer la réponse française. */
 const PATTERNS: Readonly<Record<MountingIntentKind, readonly RegExp[]>> = {
-  screw: [/\bviss/i, /\bvis\b/i, /\bécrou/i, /\bscrew/i, /\bbolt(s|ed)?\b/i, /\bnut(s)?\b/i],
+  groove: [/rainure|t[- ]slot|cylinder groove|zylindernut|ranura|scanalatura|паз|气缸槽|シリンダ.*溝/i],
+  screw: [/schraub|tornill|\bviti\b|avvitat|винт|螺钉|螺丝|ねじ|ネジ/i, /\bviss/i, /\bvis\b/i, /\bécrou/i, /\bscrew/i, /\bbolt(s|ed)?\b/i, /\bnut(s)?\b/i],
   adhesive: [
+    /klebe|pegad|adesiv|incolla|кле|粘|接着/i,
     /\bcoll(e|er|é|age)/i,
     /\badhés/i,
     /\bruban\b/i,
@@ -47,9 +50,10 @@ const PATTERNS: Readonly<Record<MountingIntentKind, readonly RegExp[]>> = {
     /\btape[dr]?\b/i,
     /\bbond(ed|ing)\b/i,
   ],
-  press_fit: [/\bemmanch/i, /\bencastr/i, /\bdans un trou\b/i, /\bpress[- ]?fit(ted)?\b/i, /\binto a hole\b/i],
+  press_fit: [/embo[iî]t|einpress|a presi[oó]n|прессов|压入|圧入/i, /\bemmanch/i, /\bencastr/i, /\bdans un trou\b/i, /\bpress[- ]?fit(ted)?\b/i, /\binto a hole\b/i],
   clamp: [/\bcollier/i, /\bbrid(e|é)/i, /\bclip/i, /\bclamp(ed|ing)?\b/i, /\bstrap(ped)?\b/i],
   pcb: [
+    /platine|leiterplatte|circuito impreso|circuito stampato|печатн.{0,12}плат|电路板|プリント基板/i,
     /\bcircuit imprim/i,
     /\bsur carte\b/i,
     /\bcms\b/i,
@@ -66,6 +70,7 @@ const PATTERNS: Readonly<Record<MountingIntentKind, readonly RegExp[]>> = {
  * report sur carte pour l'EXCLURE : le lire comme une fixation possible était le
  * défaut qui laissait passer un MK15 sur une porte vitrée. */
 const NEGATIONS: readonly RegExp[] = [
+  /\b(?:kein\w*|nicht|ohne|sin|senza|nessun\w*)\b|без|нет|禁止|不允许|不可|なし|禁止/i,
   /\bno\b/i,
   /\bnot\b/i,
   /\bnone\b/i,
@@ -107,6 +112,7 @@ export interface MountingIntent {
   explicit: boolean;
   /** Formes de boîtier acceptées par AU MOINS UNE des fixations nommées. */
   allowedShapes: SensorShape[];
+  pcbTechnology?: "through_hole" | "smd";
 }
 
 const EMPTY: MountingIntent = { kinds: [], excluded: [], explicit: false, allowedShapes: [] };
@@ -140,7 +146,10 @@ export function detectMountingIntent(text: string | null | undefined): MountingI
             (k) => !excluded.has(k) && SHAPES_BY_INTENT[k].includes(shape),
           ),
         );
-  return { kinds: [...kinds], excluded: [...excluded], explicit: true, allowedShapes };
+  const pcbClauses=clausesOf(text).filter(c=>!NEGATIONS.some(re=>re.test(c)));
+  const through=kinds.has("pcb") && pcbClauses.some(c=>/traversant|through[- ]hole|\btht\b|durchsteck|pasante|passante|сквозн|通孔|スルーホール/i.test(c));
+  const smd=kinds.has("pcb") && pcbClauses.some(c=>/\b(?:cms|smd|smt)\b|oberfl[aä]chen|superficial|поверхност|表面実装|表面贴装/i.test(c));
+  return { kinds: [...kinds], excluded: [...excluded], explicit: true, allowedShapes, ...(through!==smd?{pcbTechnology:through?"through_hole" as const:"smd" as const}:{}) };
 }
 
 /** Le boîtier a-t-il une fixation documentée compatible d'au moins une des
@@ -149,11 +158,14 @@ export function detectMountingIntent(text: string | null | undefined): MountingI
 export function satisfiesMountingIntent(sensor: SensorModel, intent: MountingIntent): boolean {
   if (!intent.explicit) return true;
   if (sensor.shape === "custom_pcb") return true;
+  if(intent.pcbTechnology === "through_hole" && intent.kinds.length === 1)return sensor.category === "THT" || sensor.shape === "glass";
+  if(intent.pcbTechnology === "smd" && intent.kinds.length === 1)return sensor.shape === "smd" && sensor.category !== "THT";
   return intent.allowedShapes.includes(sensor.shape);
 }
 
 /** Libellé lisible de la contrainte, pour l'expliquer sur la carte du capteur. */
 export const MOUNTING_INTENT_LABEL: Readonly<Record<MountingIntentKind, string>> = {
+  groove: "Montage en rainure à étudier",
   screw: "fixation vissée",
   adhesive: "fixation collée",
   press_fit: "emmanchement dans un trou",

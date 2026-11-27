@@ -22,7 +22,7 @@ import { threadOf } from "./candidates";
 /* i18n-canonical : gabarits de puces, traduits au rendu avec leurs valeurs. */
 export const FILTER_LABEL = {
   hole: "Corps tubulaire qui entre dans un trou de {0} mm",
-  envelope: "Tient dans la place annoncée ({0})",
+  envelope: "Place annoncée pour le capteur ({0})",
   thread: "Filetage M{0}",
   or: "{0} ou {1}",
 } as const;
@@ -163,12 +163,12 @@ export function suggestionFilters(input: {
     if (intent.explicit)
       filters.push({
         id: "fixation",
-        label: intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]).join(" ou "),
+        label: intent.pcbTechnology === "through_hole" ? "Fixation traversante" : intent.pcbTechnology === "smd" ? "Fixation par report CMS" : intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]).join(" ou "),
         labelParts: intent.kinds.map((k) => MOUNTING_INTENT_LABEL[k]),
         requirementKey: "mounting",
         technical: `Fixation nommée dans votre réponse. Formes de boîtier retenues : ${intent.allowedShapes.join(", ")}. Aucune fixation n'est ajoutée à un boîtier qui ne la documente pas.`,
         source: "answers",
-        criteria: { shapes: intent.allowedShapes },
+        criteria: { shapes: intent.allowedShapes, ...(intent.pcbTechnology && intent.kinds.length === 1 ? {mountingKind:intent.pcbTechnology === "through_hole" ? "pcb_through_hole" : "pcb_smd"} : {}) },
       });
   }
   if (input.mounting.kind === "screw" && input.mounting.style === "threaded_body" && input.mounting.threadMm) {
@@ -205,7 +205,7 @@ export function suggestionFilters(input: {
   if (dims.length)
     filters.push({
       id: "encombrement",
-      label: `Tient dans la place annoncée (${dims.map((d) => `${d} mm`).join(" × ")})`,
+      label: `Place annoncée pour le capteur (${dims.map((d) => `${d} mm`).join(" × ")})`,
       labelKey: FILTER_LABEL.envelope,
       labelArgs: [dims.map((d) => `${fmtMm(d)} mm`).join(" × ")],
       requirementKey: "envelope",
@@ -275,7 +275,7 @@ export function passesFilter(
     case "fixation": {
       /* Fixation nommée en texte libre : les formes acceptées sont portées par
          le filtre. Une conception sur mesure passe déjà par `alwaysVisible`. */
-      if (filter.criteria?.shapes) return filter.criteria.shapes.includes(model.shape);
+      if (filter.criteria?.shapes && !filter.criteria.mountingKind) return filter.criteria.shapes.includes(model.shape);
       /* Un filtre d'exploration porte son propre critère : il REMPLACE la
          fixation déclarée, il ne s'y ajoute pas. */
       const kind=filter.criteria?.mountingKind ?? input.mounting.kind;

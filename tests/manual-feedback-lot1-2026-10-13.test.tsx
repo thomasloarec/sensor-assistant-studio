@@ -287,8 +287,8 @@ describe("Puces paramétrées dans les huit langues", () => {
       const out = chips.map((f) => filterLabel(f, (s) => t(s, l.id), (k, a) => msg(k, a, l.id)));
       expect(out.join(" ")).toContain("9.6");
       expect(out.join(" ")).toContain("35 mm × 15 mm × 10 mm");
-      if (l.id !== "fr") expect(out.join(" ")).not.toMatch(/Tient dans la place|Corps tubulaire/);
-      else expect(out.join(" ")).toContain("Tient dans la place annoncée (35 mm × 15 mm × 10 mm)");
+      if (l.id !== "fr") expect(out.join(" ")).not.toMatch(/Place annoncée pour le capteur|Corps tubulaire/);
+      else expect(out.join(" ")).toContain("Place annoncée pour le capteur (35 mm × 15 mm × 10 mm)");
     });
   test("l'écran ne traduit plus une phrase interpolée", () => {
     const src = readFileSync("src/components/leadmagnet/design-space.tsx", "utf8");

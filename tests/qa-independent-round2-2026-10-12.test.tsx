@@ -9,6 +9,7 @@ import * as React from 'react';
 import { act, cleanup, fireEvent, render, waitFor, within, type RenderResult } from '@testing-library/react';
 import { RouterContextProvider, createMemoryHistory, createRootRoute, createRouter } from '@tanstack/react-router';
 import { assessApplicationFit, isSubstantive, temperaturesC, VALIDATION_POINT } from '@/lib/leadmagnet/application-fit';
+import { INCOMPLETE_REVIEW } from '@/lib/leadmagnet/requirement-context';
 import { createDossier, type DesignDossier, type Requirement } from '@/lib/leadmagnet/dossier';
 import { evaluateCandidates } from '@/lib/leadmagnet/candidates';
 import { blockedBy, suggestionFilters } from '@/lib/leadmagnet/suggestion-filters';
@@ -80,7 +81,9 @@ function observe(f: Fixture) {
  const eligible = rows.filter(r=>r.id !== 'GENERIC' && blockedBy(sensorById(r.id),filters,filters.map(x=>x.id),{mounting,envelope}).length===0);
  const candidateIds = fit.blocking ? [] : pairCards(eligible.map(r=>r.id),{limit:3}).map(c=>c.sensorId);
  const issues = fit.issues.map(i=>i.id);
- const classification: Classification = issues.includes('no_meaningful_requirement') ? 'insufficient' : issues.some(x=>['direct_load_switching','no_magnetic_source','continuous_temperature_measurement','continuous_flow_measurement'].includes(x)) ? 'out-of-scope' : fit.blocking || fit.validationPoints.length ? 'engineering' : fit.explorationOnly ? 'exploration' : 'catalog';
+ // Missing optional answers now get a visible reminder, not an engineering incompatibility.
+ const engineeringPoints = fit.validationPoints.filter(point=>point !== INCOMPLETE_REVIEW);
+ const classification: Classification = issues.includes('no_meaningful_requirement') ? 'insufficient' : issues.some(x=>['direct_load_switching','no_magnetic_source','continuous_temperature_measurement','continuous_flow_measurement'].includes(x)) ? 'out-of-scope' : fit.blocking || engineeringPoints.length ? 'engineering' : fit.explorationOnly ? 'exploration' : 'catalog';
  const caveats = [...fit.validationPoints,...fit.issues.flatMap(i=>[i.why,...i.cautions]),...candidateIds.flatMap(id=>{const w=thermalWarning(id,fit.sensorSiteC);return w?[w.text,...w.documented.map(d=>d.condition)]:[];})];
  const unchanged = JSON.stringify(requirements)===JSON.stringify(req(f.a));
  return {classification,candidateIds,eligibleIds:eligible.map(r=>r.id),issues,caveats,sensorSiteC:fit.sensorSiteC,lossOfRequirements:!unchanged};
