@@ -142,7 +142,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 1 entry: explain the reachable stem range and automatic point adjustment.
     // + 14 entries: physical point order, local validation and discrete level bars.
     // + 1 entry: automatic feasible position for single high/low intake.
-    expect(Object.keys(dictionary)).toHaveLength(4743);
+    // + 3 entries: catalogue introduction and compact material guidance.
+    expect(Object.keys(dictionary)).toHaveLength(4746);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );

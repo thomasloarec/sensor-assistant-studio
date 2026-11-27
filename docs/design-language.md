@@ -1,5 +1,21 @@
 # Langage de design Standex DETECT
 
+### Catalogue : commandes et guide des matériaux — 27 novembre 2026
+
+Capteurs/Aimants et Vue 3D/Vue 2D partagent une barre de commandes dans
+l’en-tête : segments égaux, pouce glissant, cibles de 44 px, retour à la ligne
+sur écran étroit. « Même échelle » est désactivé à chaque nouvelle ouverture ;
+les produits sont cadrés individuellement par défaut. Un choix explicite reste
+conservé lors des changements de vue et de famille dans le catalogue ouvert.
+
+Le filtre matériau rejoint les commandes. Le guide occupe le haut droit sur
+ordinateur et passe sous les commandes sur petit écran. La réserve sur la
+distance reste visible ; le matériau filtré affiche directement son conseil.
+Les explications complètes et la réserve documentaire restent accessibles dans
+« En savoir plus », replié par défaut. Aucun texte technique n’est supprimé.
+Surfaces, élévations, typographie et focus réutilisent les jetons existants ;
+le pouce ne s’anime pas sous mouvement réduit. Les huit langues sont couvertes.
+
 ### Parcours niveau en aperçu — 25 novembre 2026
 
 Le menu principal ouvre « Capteurs de niveau · aperçu » dans le panneau plein
