@@ -44,6 +44,9 @@ test("lookup failure stays invisible; a missing calendar never fabricates a book
   view.rerender(<RoutedBooking open country="DE" onOpenChange={() => {}} loadContact={async () => ({ ...assigned, contact: { ...assigned.contact!, booking_url: null } })} />);
   await waitFor(() => expect(view.getByRole("dialog").textContent).toContain("Thomas Franke"));
   expect(view.queryByRole("link")).toBeNull();
+  expect(view.getByRole("dialog").textContent).toContain("The calendar is not connected yet.");
+  expect(view.getByRole("dialog").textContent).not.toMatch(/demonstration|demonstration mode|simulated booking/i);
+  expect(view.queryByRole("button",{name:/confirm.*meeting|reserve/i})).toBeNull();
 });
 
 test("late contact from a previous country is ignored, and no country still shows confirmation", async () => {

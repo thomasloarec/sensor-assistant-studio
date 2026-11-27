@@ -1479,3 +1479,20 @@ Les dimensions nulles ou négatives portent une erreur liée au champ (`aria-inv
 de qualification ou d'information manque de confirmation. L'espace saisi est
 nommé « Place annoncée » : cette contrainte n'affirme aucune compatibilité du sur-mesure.
 Ces états réutilisent les surfaces, typographies et jetons existants.
+# Recette du parcours niveau — 27 novembre 2026
+
+Les contraintes du questionnaire niveau apparaissent dans un encart `notice-warning`
+avant le configurateur et restent présentes dans le résultat et la revue Standex.
+Un accès « Modifier le besoin » conserve les réponses. Sans contrainte détectée,
+aucun emplacement vide n'est réservé à cet encart.
+
+Sous 768 px, l'étape Configuration utilise le libellé court « Réglages » ; ses
+indicateurs décoratifs sont masqués, le texte se replie entre les mots sans césure
+et les cibles conservent une hauteur minimale de 44 px. Les jetons existants restent
+la source des couleurs, surfaces, espacements typographiques et mouvements.
+Sous 360 px, les quatre étapes occupent deux lignes pour préserver leurs libellés,
+y compris dans les traductions longues. Sur ordinateur, les contraintes ont leur
+propre zone défilante limitée à 30 % de la hauteur, laissant le configurateur accessible.
+L'en-tête des panneaux conserve ses règles de disposition dans la couche de styles
+du composant : les utilitaires ne remplacent plus sa grille mobile ni la largeur
+de sa seconde rangée. Le titre se replie à côté du logo, sans débordement à 320 px.

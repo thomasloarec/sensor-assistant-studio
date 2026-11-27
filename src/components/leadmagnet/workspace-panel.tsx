@@ -158,7 +158,7 @@ export function WorkspacePanel({
             : "hidden"
         }
       >
-        <div className="workspace-panel-header shrink-0 material sticky top-0 z-10 flex min-h-14 items-center gap-3 border-b border-[var(--hairline)] px-4 sm:px-6">
+        <div className="workspace-panel-header shrink-0 material sticky top-0 z-10 min-h-14 items-center gap-3 border-b border-[var(--hairline)] px-4 sm:px-6">
           {onBack ? (
             <Button
               variant="ghost"
@@ -170,7 +170,7 @@ export function WorkspacePanel({
               <span className="hidden sm:inline">{backLabel ?? t("Retour")}</span>
             </Button>
           ) : null}
-          <div className="workspace-panel-heading flex min-w-0 flex-1 items-center gap-3">
+          <div className="workspace-panel-heading flex min-w-0 items-center gap-3">
             {/* Point 11 : la marque et le nom de l'outil restent visibles dans
                 les panneaux plein écran, où l'en-tête d'application est masqué.
                 Le logo n'est jamais recomposé : bloc « S » sous le plancher de

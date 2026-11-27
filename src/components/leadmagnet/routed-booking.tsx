@@ -59,6 +59,7 @@ export function RoutedBooking({
       ? result.value.contact
       : null;
   const liveCalendar = import.meta.env["VITE_BOOKING_PROVIDER"] === "outlook";
+  const demoCalendar = import.meta.env["VITE_BOOKING_PROVIDER"] === "demo";
   const provider = useMemo(
     () =>
       liveCalendar && contact ? outlookBookingProvider(dossierId, contact.id) : demoBookingProvider,
@@ -102,7 +103,7 @@ export function RoutedBooking({
             </Button>
           </>
         ) : null}
-        {known && contact && !url ? (
+        {known && contact && !url && (liveCalendar || demoCalendar) ? (
           <BookingCalendar
             key={JSON.stringify([lookupKey, contact.id, dossierId])}
             contactName={contact.name}
@@ -110,7 +111,8 @@ export function RoutedBooking({
             onClose={() => onOpenChange(false)}
           />
         ) : null}
-        {(!known || url) && (
+        {known && !url && !liveCalendar && !demoCalendar ? <p className="notice-info t-body">{t("Le calendrier n’est pas encore connecté. Votre interlocuteur Standex vous contactera pour convenir d’un rendez-vous.")}</p> : null}
+        {(!known || url || (!liveCalendar && !demoCalendar)) && (
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("Revenir à mon projet")}
           </Button>

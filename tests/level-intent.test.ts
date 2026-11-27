@@ -82,12 +82,14 @@ describe("level intent, mounting and a shared float/signal model", () => {
       }
     }
   });
-  test("single-target defaults fit every mounting, even with legacy impossible heights and ripple travel", () => {
+  test("single-target defaults fit or preserve an unreachable request for engineering, ignoring legacy heights", () => {
     for (const access of ["top", "free", "bottom", "side"] as const) for (const goal of ["high", "low"] as const)
       for (const height of [60,100,250,2000,10000]) for(const priority of ["limit","movement"] as const) {
         const context={ ...INITIAL_CONTEXT, mountingAccess:access,tankHeight:String(height),detectionGoal:goal,responsePriority:priority };
         const c=seedConfiguration(context);
-        expect(configurationIssues(c)).toEqual([]);
+        if(access === "top" && goal === "low" && height === 10000) {
+          expect(c.pointsMm).toEqual([2000]); expect(configurationIssues(c).length).toBeGreaterThan(0);
+        } else expect(configurationIssues(c)).toEqual([]);
         for(const detectionHeight of ["0",String(height),"12.5"])
           expect(seedConfiguration({...context,detectionHeight})).toEqual(c);
       }

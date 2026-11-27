@@ -396,7 +396,7 @@ export const guidedQuestionProgress = (focusIndex: number, total: number): numbe
 export interface DesignSpaceProps {
   /** Reuse the entire review, NDA, consent, PDF and submission flow for level studies.
    * The caller keeps this instance mounted across edits, preserving server identity. */
-  reviewOnly?: { dossier: DesignDossier; onEditProject: () => void; onEditConfiguration: () => void };
+  reviewOnly?: { dossier: DesignDossier; onEditProject: () => void; onEditConfiguration: () => void; onIdentity?: (title:string, source:DesignDossier["titleSource"]) => void };
 
   /** "page" : route /design autonome. "embedded" : monté dans l'espace projet de l'accueil. */
   chrome?: "page" | "embedded";
@@ -433,6 +433,10 @@ export function DesignSpace({
     setDossier(previous => ({ ...reviewOnly.dossier, business: previous.business,
       revision: previous.revision, updatedAt: new Date().toISOString() }));
   }, [reviewOnly?.dossier]);
+  useEffect(() => {
+    if (reviewOnly && dossier.titleSource && (dossier.title !== reviewOnly.dossier.title || dossier.titleSource !== reviewOnly.dossier.titleSource))
+      reviewOnly.onIdentity?.(dossier.title,dossier.titleSource);
+  }, [dossier.title,dossier.titleSource,reviewOnly?.onIdentity]);
   const usageConsent = useSyncExternalStore(subscribeUsage, usageChoice, () => null);
   useEffect(() => { if (visible) { setUsageFlow(dossier.id); trackUsage("project_started", {}, true); } }, [visible, dossier.id, usageConsent]);
   /** L'espace est monté CACHÉ dès l'accueil : la langue d'origine du projet
@@ -643,7 +647,8 @@ export function DesignSpace({
   const [pendingSaved, setPendingSaved] = useState<{ id: string; email: string } | null>(null);
   const questionnaireReady = focusIdx >= GUIDED_QUESTIONS.length - 1 || GUIDED_QUESTIONS.every(q =>
     dossier.requirements.some(r => r.key === q.key && r.value.trim()) || (dossier.delegatedDecisions ?? []).includes(delegatedQuestion(q.key)));
-  useProjectIdentity(dossier, setDossier, visible && questionnaireReady && tab !== "besoin" && !pendingSaved && !nda.required);
+  const identityReady = dossier.levelStudy ? Boolean(dossier.levelStudy.context.purpose.trim()) : questionnaireReady;
+  useProjectIdentity(dossier, setDossier, visible && identityReady && tab !== "besoin" && !pendingSaved && !nda.required);
   const pendingIdentityRef = useRef<{ localId: string; email: string; assetKey: string | null; identity: PendingIdentity } | null>(null);
   const pendingIdentity = () => {
     const email = dossier.business.contactEmail?.trim().toLowerCase() ?? "";

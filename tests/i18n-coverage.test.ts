@@ -144,7 +144,8 @@ describe("Couverture des langues de l'interface", () => {
     // + 1 entry: automatic feasible position for single high/low intake.
     // + 3 entries: catalogue introduction and compact material guidance.
     // + 31 entries: nine questionnaire audit fixes, clarification and qualification copy.
-    expect(Object.keys(dictionary)).toHaveLength(4777);
+    // + 18 entries: level requirements, edit action, compact step and honest booking fallback.
+    expect(Object.keys(dictionary)).toHaveLength(4795);
     const broken = Object.entries(dictionary).filter(
       ([, v]) => v.length !== 7 || v.some((x) => typeof x !== "string" || x.trim() === ""),
     );
