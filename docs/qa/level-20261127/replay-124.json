@@ -1,0 +1,1091 @@
+{
+  "date": "2026-11-27",
+  "baseCommit": "df196eb2da34df15711a571ffe969b8f8bc53f9f",
+  "scope": "Pre-merge local branch replay. No publication or production mutation.",
+  "counts": {
+    "LOCAL_OK": 111,
+    "DEPLOYMENT_CHECK": 13
+  },
+  "questionnaires": 80,
+  "workflow": 44,
+  "suite": {
+    "passed": 2638,
+    "failed": 0,
+    "skipped": 1,
+    "files": 200
+  },
+  "criteria": [
+    {
+      "id": "L001",
+      "name": "Cuve eau complète, niveau bas en accès haut",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L002",
+      "name": "Toutes réponses inconnues",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L003",
+      "name": "Application seule",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L004",
+      "name": "Réponse vague je ne sais pas",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L005",
+      "name": "Demande sans rapport : météo",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L006",
+      "name": "Demande sans rapport : pizza",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L007",
+      "name": "Niveau de poudre sèche",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L008",
+      "name": "Champ magnétique interdit partout",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L009",
+      "name": "Champ interdit localement, déport possible",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L010",
+      "name": "Cible sans flotteur ni pièce mobile",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L011",
+      "name": "Température maximale 70 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L012",
+      "name": "Température maximale 71 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L013",
+      "name": "Température maximale 80 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L014",
+      "name": "Température maximale 81 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L015",
+      "name": "Température maximale 160 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L016",
+      "name": "Température maximale 161 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L017",
+      "name": "Température maximale 200 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L018",
+      "name": "Température maximale 201 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L019",
+      "name": "Température minimale -20 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L020",
+      "name": "Température minimale -21 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L021",
+      "name": "Température minimale -40 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L022",
+      "name": "Température minimale -41 °C",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L023",
+      "name": "Températures inversées",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L024",
+      "name": "Température sous le zéro absolu",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L025",
+      "name": "Température maximale inconnue",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L026",
+      "name": "Température minimale inconnue",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L027",
+      "name": "Huile hydraulique",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L028",
+      "name": "Liquide eau glycol automobile",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L029",
+      "name": "Acide sulfurique concentré",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L030",
+      "name": "Fluide alimentaire lait",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L031",
+      "name": "Essence en atmosphère explosive",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L032",
+      "name": "Fluide très visqueux",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L033",
+      "name": "Autre liquide sans référence",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L034",
+      "name": "Liquide non défini",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L035",
+      "name": "Cuve sous pression",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L036",
+      "name": "Immersion permanente du corps",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L037",
+      "name": "Sortie de câble immergée",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L038",
+      "name": "Pression et immersion du câble cumulées",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L039",
+      "name": "Hauteur de cuve 0 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L040",
+      "name": "Hauteur de cuve -5 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L041",
+      "name": "Hauteur de cuve 5,9 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L042",
+      "name": "Hauteur de cuve 6 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L043",
+      "name": "Hauteur de cuve 10 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L044",
+      "name": "Hauteur de cuve 20,5 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L045",
+      "name": "Hauteur de cuve 100 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L046",
+      "name": "Hauteur de cuve 200 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L047",
+      "name": "Hauteur de cuve 1000 cm",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L048",
+      "name": "Hauteur de cuve 1000,1 cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L049",
+      "name": "Hauteur de cuve abc cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L050",
+      "name": "Position de fixation libre — Un niveau haut",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L051",
+      "name": "Position de fixation libre — Un niveau bas",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L052",
+      "name": "Ouverture imposée en haut — Un niveau haut",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L053",
+      "name": "Ouverture imposée en haut — Un niveau bas",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L054",
+      "name": "Accès par une paroi latérale — Un niveau haut",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L055",
+      "name": "Accès par une paroi latérale — Un niveau bas",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L056",
+      "name": "Insertion par le fond — Un niveau haut",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L057",
+      "name": "Insertion par le fond — Un niveau bas",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L058",
+      "name": "Cuve peu profonde avec vaguelettes",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L059",
+      "name": "Suivi continu vertical",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L060",
+      "name": "Suivi continu et accès latéral",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L061",
+      "name": "Deux niveaux explicites",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L062",
+      "name": "Quatre niveaux explicites",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L063",
+      "name": "Douze niveaux",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L064",
+      "name": "Niveaux multiples en accès latéral",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L065",
+      "name": "Niveaux inversés",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L066",
+      "name": "Niveaux en doublon",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L067",
+      "name": "Niveau hors cuve",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L068",
+      "name": "Niveaux en pourcentage",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L069",
+      "name": "Pourcentage au-delà de 100",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L070",
+      "name": "Pourcentage négatif",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L071",
+      "name": "Niveaux partiellement renseignés",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L072",
+      "name": "Injonction de contourner les réserves",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L073",
+      "name": "Commande directe moteur 230 V 10 A",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L074",
+      "name": "Besoin de sécurité SIL3 OSSD",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L075",
+      "name": "Aucun perçage de cuve possible",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L076",
+      "name": "Exigence précision continue garantie 0,01 mm",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L077",
+      "name": "Autonomie sans alimentation externe",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L078",
+      "name": "Liquide gelé dans la plage demandée",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L079",
+      "name": "Contradiction accès texte et liste",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "L080",
+      "name": "Contradiction niveau haut et demande libre",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "React DOM questionnaire replay",
+      "evidence": "tests/level-audit-80.test.tsx + tests/fixtures/level-80-20261127.json",
+      "observed": "Original questionnaire inputs replayed through the four real components; expected family, engineering path or validation block asserted, with targeted constraint/geometry checks."
+    },
+    {
+      "id": "NAV001",
+      "name": "Accès par le menu au parcours niveau",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local",
+      "observed": "Public home → Menu → level preview → four questions. The isolated /niveau route retains its existing staff gate."
+    },
+    {
+      "id": "NDA001",
+      "name": "Présence du formulaire NDA dans Avec Standex",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome + component",
+      "observed": "Confidentiality checkbox opens the seven-field NDA form in the level review."
+    },
+    {
+      "id": "AUTO001",
+      "name": "Secteur automatique pour une application automobile",
+      "before": "NOK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Component; Claude response simulated",
+      "observed": "Automotive input reaches the identity endpoint and populates Automotive. Real Claude availability/output must be rechecked after publication."
+    },
+    {
+      "id": "AUTO002",
+      "name": "Nom automatique du projet niveau",
+      "before": "NOK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Component; Claude response simulated",
+      "observed": "Generated title is accepted and forwarded to the level journey callback. Real provider and published header must be rechecked."
+    },
+    {
+      "id": "SUB001",
+      "name": "Validation du formulaire incomplet",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component",
+      "observed": "Incomplete level submission displays the missing industry/contact/consent requirements instead of submitting."
+    },
+    {
+      "id": "NDA002",
+      "name": "Blocage sans NDA en vigueur",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome + contract",
+      "observed": "Unsigned NDA remains requested, with explicit signed-proof warning and no confidential submission. NDA/consent guards pass in nda-optional and level-dossier tests."
+    },
+    {
+      "id": "NDA003",
+      "name": "Génération du NDA non signé",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome + downloaded file",
+      "observed": "Preview then download produced a valid unsigned DOCX. All seven fictitious values found in word/document.xml; no XML signature added. Template preservation tests pass."
+    },
+    {
+      "id": "NDA004",
+      "name": "Préparation de la fiche NDA",
+      "before": "OK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Contract; live check pending",
+      "observed": "NDA synchronization/permission tests pass. Creating a new server stub with this branch requires deployment and an authenticated test session."
+    },
+    {
+      "id": "SUB002",
+      "name": "Consentement obligatoire avec dossier complet",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Submission contract",
+      "observed": "The consent-bound level snapshot is required; technical changes require renewed consent (level-dossier tests)."
+    },
+    {
+      "id": "SUB003",
+      "name": "Affectation commerciale France/Paris/Automobile",
+      "before": "OK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Routing contract; live data pending",
+      "observed": "Territory/industry tests pass. The actual France/Paris/Automotive assignment and selected city must be verified against deployed configuration."
+    },
+    {
+      "id": "SUB004",
+      "name": "Soumission réelle du dossier niveau non confidentiel",
+      "before": "OK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Submission contract; live send pending",
+      "observed": "Level snapshot and submission boundary pass. No new project was sent to the production database from this branch."
+    },
+    {
+      "id": "RDV001",
+      "name": "Proposition de rendez-vous après envoi",
+      "before": "RÉSERVE",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Component; live routing pending",
+      "observed": "Unconfigured calendar shows a truthful not-connected message. An existing booking URL remains supported. The published post-submit flow needs retest."
+    },
+    {
+      "id": "RDV002",
+      "name": "Navigation et sélection de créneau",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component; explicit demo provider",
+      "observed": "Week/day/slot selection and confirmation pass with VITE_BOOKING_PROVIDER=demo. This proves calendar UI only, not live availability."
+    },
+    {
+      "id": "RDV003",
+      "name": "Réservation et invitation réelles",
+      "before": "NOK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Microsoft contract; live invitation pending",
+      "observed": "Graph availability/event tests pass with simulated responses. Standex IT must activate the real provider; no real meeting/invitation was created."
+    },
+    {
+      "id": "SUB005",
+      "name": "Projet visible dans Mon espace après envoi",
+      "before": "OK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Live check pending",
+      "observed": "Cannot confirm the new branch in Mon espace before a real post-deployment submission."
+    },
+    {
+      "id": "SUB006",
+      "name": "Reprise de la version envoyée",
+      "before": "OK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Serialization contract; live restore pending",
+      "observed": "Level context, raw thresholds, cable and family survive the DTO round trip. Real customer-space restoration/version 2 needs deployment."
+    },
+    {
+      "id": "AUTO003",
+      "name": "Secteur automatique application médicale",
+      "before": "NOK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Component; Claude response simulated",
+      "observed": "Dialysis input reaches the identity endpoint and populates Medical. Real provider output remains pending."
+    },
+    {
+      "id": "AUTO004",
+      "name": "Nom automatique sur le parcours direct",
+      "before": "NOK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Component; Claude response simulated",
+      "observed": "Medical level review accepts and forwards a concise generated title. Authenticated isolated route needs a published retest."
+    },
+    {
+      "id": "AUTO005",
+      "name": "Titre du dossier après retrait du NDA et envoi",
+      "before": "NOK",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Submission contract; RPCs simulated",
+      "observed": "An existing masked stub is renamed to the consented current title before revision submission; a refused rename prevents submission. Real database/list display needs retest."
+    },
+    {
+      "id": "CFG001",
+      "name": "Renommage manuel et navigation",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component",
+      "observed": "Manual project rename persists through configuration/result navigation; it is marked as user-authored."
+    },
+    {
+      "id": "CFG002",
+      "name": "Conversion pourcentage vers cm",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component",
+      "observed": "Decimal cm/percent conversion and exact heights pass in level-journey, level-percent-intake and level-cm-wall tests."
+    },
+    {
+      "id": "CFG003",
+      "name": "Seuil de configuration hors plage",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component",
+      "observed": "Out-of-range/empty/nonnumeric configuration edits preserve the prior valid value and display feedback."
+    },
+    {
+      "id": "CFG004",
+      "name": "Détection niveau bas aux deux extrêmes",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "Low-level monitor active/contact closed with empty tank; inactive/open with full tank. Illustration only."
+    },
+    {
+      "id": "CFG005",
+      "name": "Animation lancer/pause",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local",
+      "observed": "Start changes the liquid level; Pause stops it. WebGL tank, stem and float render on desktop."
+    },
+    {
+      "id": "CFG006",
+      "name": "Câble standard et terminaison",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "100 cm standard cable and bare leads appear unchanged in With Standex and the exported project PDF."
+    },
+    {
+      "id": "CFG007",
+      "name": "Longueur de câble négative",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "Negative custom length blocks Continue; component cases also cover zero and nonnumeric input."
+    },
+    {
+      "id": "CFG008",
+      "name": "Contournement par navigation de la longueur invalide",
+      "before": "NOK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "Top-step navigation can no longer bypass an invalid custom cable length; it stays on Result with the error."
+    },
+    {
+      "id": "CFG009",
+      "name": "Retour câble à Je ne sais pas",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component",
+      "observed": "Explicitly choosing unknown clears invalid cable state and permits the review without retaining the bad length."
+    },
+    {
+      "id": "CFG010",
+      "name": "Correction température et maintien du seuil",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "Changing maximum water temperature from 40 to 85 °C changes LS04 to LS05 while preserving 5 cm / 20%; component tests cover retained manual geometry."
+    },
+    {
+      "id": "CFG011",
+      "name": "Coordonnées conservées après modification technique",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "Contact name and email survive a return to the questionnaire, temperature edit and review."
+    },
+    {
+      "id": "I18N001",
+      "name": "Revue en anglais",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "English level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "I18N002",
+      "name": "Revue en allemand et retour français",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "German level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "VIS001",
+      "name": "Revue mobile 390 × 844",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local",
+      "observed": "390 × 844: level panel width equals scroll width, header and four step labels remain readable. Targeted check, not all mobile devices."
+    },
+    {
+      "id": "VIS002",
+      "name": "Revue et configurateur 320 × 740",
+      "before": "RÉSERVE",
+      "result": "LOCAL_OK",
+      "method": "Chrome local",
+      "observed": "320 × 740: title stays beside the logo on a separate header row; steps use two rows, no horizontal overflow. Additional header cascade defect fixed during replay."
+    },
+    {
+      "id": "VIS003",
+      "name": "Configurateur tablette 768 × 1024",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local",
+      "observed": "768 × 1024: panel width equals scroll width; review cards and controls remain accessible. Desktop 3D scene also inspected."
+    },
+    {
+      "id": "CFG012",
+      "name": "Demande de forme spécifique",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome local + component",
+      "observed": "Specific-shape request switches to custom study, retains the threshold and suppresses a misleading simulated detection result."
+    },
+    {
+      "id": "I18N003",
+      "name": "Revue en Español",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "Spanish level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "I18N004",
+      "name": "Revue en Italiano",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "Italian level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "I18N005",
+      "name": "Revue en Русский",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "Russian level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "I18N006",
+      "name": "Revue en 简体中文",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "Simplified Chinese level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "I18N007",
+      "name": "Revue en 日本語",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Component + catalogue",
+      "observed": "Japanese level review renders, preserves the raw request, and translates all new constraint messages. Complete eight-language catalogue test passes; native linguistic review is not claimed."
+    },
+    {
+      "id": "DOC001",
+      "name": "PDF niveau téléchargé : lecture des cinq pages",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "Chrome download + Poppler visual review",
+      "observed": "Local draft PDF generated and all 3 pages inspected. This draft has no contact details and fewer pages than the original 5-page submitted dossier; pagination is content-dependent. Application, LS04, 25 cm tank, 22.3 cm stem, 5 cm/20%, 100 cm cable and NDA not required are correct."
+    },
+    {
+      "id": "DOC002",
+      "name": "Données jointes au PDF et empreinte",
+      "before": "OK",
+      "result": "LOCAL_OK",
+      "method": "PDF attachment + hash",
+      "observed": "dossier-complet.json extracted: LS04, pointsMm=[50], tankHeightMm=250, reachMm=223. Canonical JSON SHA-256 1cf35dc281bb5421fce74e7512f1ade64a0c5ac6e6fa2caaa16b459cdca5a734 matches the visibly printed digest on page 3."
+    },
+    {
+      "id": "MAIL001",
+      "name": "Réception de notification côté client",
+      "before": "RÉSERVE",
+      "result": "DEPLOYMENT_CHECK",
+      "method": "Live check pending",
+      "observed": "No new real submission was sent, so client/sales notification receipt cannot be revalidated locally. Check authorized test mailbox after publication."
+    }
+  ]
+}

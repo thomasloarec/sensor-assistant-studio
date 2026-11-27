@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { assessConfiguration, FAMILY_LABELS, proposedContactForm, type LevelContext, type LevelConfiguration } from "./configuration";
+import { FAMILY_LABELS, proposedContactForm, type LevelContext, type LevelConfiguration } from "./configuration";
+import { assessLevelProject } from "./requirements";
 import { formatCm, formatLevel } from "./dimensions";
 import { type DesignDossier } from "../leadmagnet/dossier";
 import { terminationLabel, type Termination } from "../leadmagnet/connectors";
@@ -34,14 +35,14 @@ export type LevelStudy = z.infer<typeof levelStudySchema>;
 
 export function levelDossier(base:DesignDossier, context:LevelContext, configuration:LevelConfiguration,
   cable:{lengthChoice:DesignDossier["cabling"]["lengthChoice"];lengthMm:number|null;connectorChoice:LevelStudy["connectorChoice"];termination:Termination}, title:string):DesignDossier {
-  const assessment=assessConfiguration(context,configuration);
+  const assessment=assessLevelProject(context,configuration);
   const levelStudy:LevelStudy={version:1,context,configuration,cableLengthMm:cable.lengthMm,connectorChoice:cable.connectorChoice};
   return {...base,title,levelStudy,selectedSensorId:assessment.selected?.family??null,
     requirements:[{key:"detection_goal",label:"Application",value:context.purpose,unit:null,state:context.purpose?"confirmed":"unknown",source:"user"}],
     mounting:{kind:"other",description:configuration.orientation+" · "+configuration.mounting},
     cabling:{...base.cabling,lengthChoice:cable.lengthChoice}, termination:cable.termination,
     delegatedDecisions:[...(cable.connectorChoice==="undecided"?[DELEGATED_CONNECTOR]:cable.connectorChoice==="bare"?[CHOSEN_BARE_LEADS]:[]),...(cable.lengthChoice==="undecided"?["cable"]:[])],
-    freeConstraints:context.constraints,openQuestions:assessment.selected?.reasons??[],
+    freeConstraints:context.constraints,openQuestions:assessment.warnings,
   };
 }
 
@@ -60,7 +61,7 @@ export function levelProjectFacts(study:LevelStudy,tr:Translator):[string,string
   ];
 }
 export function levelTechnicalFacts(d:Pick<DesignDossier,"levelStudy"|"cabling"|"termination">,tr:Translator):[string,string][] {
-  const study=d.levelStudy! ,c=study.configuration, selected=assessConfiguration(study.context,c).selected;
+  const study=d.levelStudy! ,c=study.configuration, assessment=assessLevelProject(study.context,c), selected=assessment.selected;
   return [
     [tr("Capteur"),c.custom?tr("Forme spécifique"):selected?.family??tr("Configuration à étudier")],
     [tr("Votre capteur"),c.custom?c.customDescription:selected?tr(FAMILY_LABELS[selected.family]):tr("À définir")],
@@ -73,5 +74,6 @@ export function levelTechnicalFacts(d:Pick<DesignDossier,"levelStudy"|"cabling"|
     [tr("Choix de longueur"),tr(d.cabling.lengthChoice==="standard_to_confirm"?"Standard":d.cabling.lengthChoice==="custom_to_confirm"?"Sur mesure":"À définir")],
     [tr("Terminaison"),study.connectorChoice==="undecided"?tr("À définir"):study.connectorChoice==="bare"?tr("Fils nus"):d.termination.kind==="bare_leads"?tr("À confirmer avec Standex"):tr(terminationLabel(d.termination))],
     [tr("À retenir"),tr("Illustration du besoin")+" · "+tr("Seuils à confirmer par Standex")],
+    ...(assessment.warnings.length ? [[tr("Points à préciser"), assessment.warnings.map(message=>tr(message)).join("\n")]] as [string,string][] : []),
   ];
 }

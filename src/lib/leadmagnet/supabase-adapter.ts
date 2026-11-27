@@ -17,6 +17,7 @@ import {
 
 import type { StaffRole } from "./review";
 import type { SubmissionBackend, SubmissionSnapshot } from "./submission";
+import { persistSubmission } from "./persist-submission";
 
 export interface LeadSchemaProbe {
   /** Variables Supabase présentes dans cet environnement. */
@@ -681,13 +682,6 @@ export function createSupabaseSubmissionBackend(options: {
   if (!available) return { available: false };
   return {
     available: true,
-    submit: async (snapshot) => {
-      const dossierId =
-        options.dossierId ??
-        (await createDossier(snapshot.dto.title ?? "Dossier", options.ndaRequired));
-      if (!options.dossierId) options.onDossierCreated?.(dossierId);
-      const result = await submitRevision(dossierId, options.expectedRevision, snapshot);
-      return { id: result.revision_id, at: result.submitted_at };
-    },
+    submit: snapshot => persistSubmission(snapshot,options,{create:createDossier,rename:setDossierTitle,submit:submitRevision}),
   };
 }

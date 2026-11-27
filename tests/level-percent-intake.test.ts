@@ -21,9 +21,9 @@ test("empty answers interpolate, ordering errors stay explicit and endpoints rem
   const context={...INITIAL_CONTEXT,tankHeight:"1000",mountingAccess:"top" as const,detectionGoal:"multiple" as const,detectionCount:5,detectionHeights:["0","250","500","750","1000"]};
   expect(intakeErrors(context)).toEqual([]);
   const c=seedConfiguration(context);
-  expect(configurationIssues(c)).toEqual([]);
-  expect(c.pointsMm[0]).toBeGreaterThan(0);
-  expect(c.pointsMm.at(-1)).toBeLessThan(1000);
+  expect(configurationIssues(c).length).toBeGreaterThan(0);
+  // Impossible endpoints remain the customer's request, requiring an explicit repair.
+  expect(c.pointsMm).toEqual([0,250,500,750,1000]);
   const brief=createLevelBrief(context,c,{lengthMm:"",connector:""},{name:"",company:"",email:"",phone:"",country:"",city:""});
   expect(JSON.stringify(brief)).toContain('"detectionHeights":["0","250","500","750","1000"]');
   expect(requestedIntakePoints({...context,detectionCount:4,detectionHeights:["","200","","800"]})).toEqual([100,200,500,800]);

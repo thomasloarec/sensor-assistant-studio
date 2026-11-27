@@ -1,6 +1,6 @@
 # Calendrier Sensor Studio — raccordement Microsoft Outlook
 
-Le parcours est déjà partagé : choix de la semaine, du jour, d'un horaire de 30 minutes, récapitulatif dans le fuseau du visiteur, confirmation. Par défaut, les créneaux sont fictifs, explicitement signalés comme démonstration. Aucun appel Microsoft ni invitation n'est effectué dans ce mode.
+Le parcours est partagé entre position et niveau : choix de la semaine, du jour, d'un horaire de 30 minutes, récapitulatif dans le fuseau du visiteur, confirmation. Par défaut, aucun créneau fictif n'est proposé. Sans connexion Outlook ni lien personnel, le site confirme le projet et indique que le calendrier n'est pas connecté. Le mode de démonstration exige désormais `VITE_BOOKING_PROVIDER=demo` ; aucun appel Microsoft ni invitation n'est effectué dans ce mode.
 
 La résolution du commercial utilise les règles existantes pays/ville/industrie. Ce lot ne crée ni ne modifie aucune attribution. Sans commercial résolu, le dialogue affiche uniquement la confirmation du projet. Un lien de réservation personnel existant reste utilisé en mode par défaut. Le mode Outlook intégré prend ensuite la priorité sur ce lien et conserve le calendrier Sensor Studio.
 
@@ -24,7 +24,7 @@ La résolution du commercial utilise les règles existantes pays/ville/industrie
 `days` : lundi = 1, vendredi = 5. `windows` : minutes depuis minuit dans le fuseau du commercial, ici 09:00–12:00 et 14:00–17:00. Ces plages configurent les heures proposées, pas les heures de travail Outlook ; les deux doivent être cohérentes. Les indisponibilités Outlook sont ensuite exclues. Configurer toutes les personnes ayant une attribution avant d'activer globalement le mode réel.
 
 4. Le serveur utilise les paramètres existants `STANDEX_SITE_URL` (origine publique HTTPS exacte), `STANDEX_SUPABASE_URL` et `SUPABASE_PUBLISHABLE_KEY`. Le chemin `/api/booking` doit être servi par l'entrée serveur de l'application, comme `/api/customer-access` ; un hébergement uniquement statique ne suffit pas.
-5. Définir `VITE_BOOKING_PROVIDER=outlook` puis reconstruire et déployer l'application. En son absence, le mode démonstration reste actif. Le changement ne demande aucune modification du composant calendrier. Le mode réel ne bascule jamais silencieusement en simulation en cas d'erreur.
+5. Définir `VITE_BOOKING_PROVIDER=outlook` puis reconstruire et déployer l'application. En son absence, aucun calendrier de démonstration n'est affiché. Le changement ne demande aucune modification du composant calendrier. Le mode réel ne bascule jamais silencieusement en simulation en cas d'erreur.
 
 ## Autorisations et données
 

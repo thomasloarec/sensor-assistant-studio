@@ -980,6 +980,12 @@
   .workspace-panel-title {
     overflow-wrap: anywhere;
   }
+  .workspace-panel-header {
+    display: flex;
+  }
+  .workspace-panel-heading {
+    flex: 1 1 0%;
+  }
   .project-stepper-sticky {
     position: sticky;
     top: var(--standex-header-h, 56px);
@@ -1414,8 +1420,9 @@
       min-width: 0;
     }
     .workspace-panel-shell:has(.workspace-panel-bare) .workspace-panel-title {
-      flex: 1 0 auto;
-      min-width: max-content;
+      flex: 1 1 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
       margin: 0;
     }
     .workspace-panel-shell:has(.workspace-panel-bare) .workspace-panel-heading > span {

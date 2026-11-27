@@ -1,4 +1,5 @@
 import { levelProjectFacts, levelTechnicalFacts } from "../level/dossier";
+import { levelRequirements } from "../level/requirements";
 import { isIndustry } from "./industries";
 import { validSiteCountry } from "./sales-contact";
 import { isPcbSensor } from "./product-presentation";
@@ -150,6 +151,8 @@ export type SubmissionCheck = { ok: true } | { ok: false; problems: string[] };
 
 export async function checkSubmission(input: SubmissionInput): Promise<SubmissionCheck> {
   const problems: string[] = [];
+  if (input.dossier.levelStudy) problems.push(...levelRequirements(input.dossier.levelStudy.context)
+    .filter(issue => issue.id === "scope" || issue.id === "empty").map(issue => issue.message));
   if (!isIndustry(input.dossier.business.industry))
     problems.push("Choisissez une industrie.");
   if (!input.dossier.business.contactEmail?.trim())

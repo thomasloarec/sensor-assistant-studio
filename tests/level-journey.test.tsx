@@ -18,8 +18,9 @@ test("multiple level intake prepares five points in cm and percent and preserves
   await click("Continuer"); await select("Niveau à détecter","multiple");
   await select("Combien de niveaux faut-il détecter ?","5");
   for(const i of [4,2,0,3,1]) {
-    await changeInput(view.getByRole("textbox",{name:`Point ${i+1} (%)`}),String(i*25));
-    expect((view.getByRole("textbox",{name:`Point ${i+1} (cm)`}) as HTMLInputElement).value).toBe(String(i*25));
+    const target=[5,25,50,75,95][i]!;
+    await changeInput(view.getByRole("textbox",{name:`Point ${i+1} (%)`}),String(target));
+    expect((view.getByRole("textbox",{name:`Point ${i+1} (cm)`}) as HTMLInputElement).value).toBe(String(target));
   }
   await click("Ouvrir le configurateur");
   expect((view.getByLabelText("Points de détection souhaités") as HTMLSelectElement).value).toBe("5");
@@ -33,7 +34,7 @@ test("multiple level intake prepares five points in cm and percent and preserves
   await click("Revoir cette configuration");
   expect(view.queryByRole("heading",{name:"Détails du projet"})).toBeNull();
   await click("4. Avec Standex");
-  expect(await view.findByText("0 cm · 0 % ; 25 cm · 25 % ; 50 cm · 50 % ; 75 cm · 75 % ; 100 cm · 100 %",{}, {timeout:5000})).toBeTruthy();
+  expect(await view.findByText("5 cm · 5 % ; 25 cm · 25 % ; 50 cm · 50 % ; 75 cm · 75 % ; 95 cm · 95 %",{}, {timeout:5000})).toBeTruthy();
   expect(view.getByText(/55 cm · 55 %/)).toBeTruthy();
   await click("2. Configuration");
   expect((view.getByRole("textbox",{name:"Point 3 (cm)"}) as HTMLInputElement).value).toBe("55");
@@ -151,6 +152,7 @@ test("operator monitor follows resizes and explicit repairs across point, horizo
   const view = render(<LevelJourney active={false} />);
   const click = async (name: string) => { await act(async () => fireEvent.click(view.getByRole("button", { name, exact: true }))); };
   await click("Configurer un capteur de niveau");
+  await changeInput(view.getByLabelText("Votre application"),"Détecter le niveau du liquide dans un réservoir.");
   await click("Continuer"); await click("Continuer"); await click("Continuer"); await click("Ouvrir le configurateur");
   await act(async () => fireEvent.change(view.getByLabelText("Points de détection souhaités"), { target: { value: "4" } }));
   const monitor = view.getByRole("complementary", { name: "Moniteur de niveau" });
@@ -271,7 +273,9 @@ test("points keep physical order and rejected cm or percent edits leave the work
 test("Result owns cable choices; Standex owns business fields and keeps contact and cable decisions on return",async()=>{
   setLocale("fr"); const view=render(<LevelJourney active={false}/>);
   const click=async(name:string)=>{await act(async()=>fireEvent.click(view.getByRole("button",{name,exact:true})));};
-  await click("Configurer un capteur de niveau"); await click("2. Configuration");
+  await click("Configurer un capteur de niveau");
+  await changeInput(view.getByLabelText("Votre application"),"Détecter le niveau du liquide dans un réservoir.");
+  await click("2. Configuration");
   const controls=view.getByRole("complementary",{name:"Votre configuration"});
   expect(within(controls).getByRole("button",{name:/Modifier le liquide/})).toBeTruthy();
   expect(within(controls).queryByRole("button",{name:"Revoir cette configuration"})).toBeNull();

@@ -8,6 +8,6 @@ export function LevelReviewFacts({dossier,technical=false,onEdit}:{dossier:Desig
   return <section className="panel-block-lg">
     <h3 className="t-title-m">{t(technical?"Configuration technique":"Votre projet")}</h3>
     <dl className="review-facts mt-3">{rows.map(([label,value])=><div className="review-fact" key={label}><dt className="review-fact-label">{label}</dt><dd className="t-body">{value}</dd></div>)}</dl>
-    {onEdit?<button type="button" className="text-link mt-3 min-h-11" onClick={onEdit}>{t(technical?"Modifier la configuration":"Modifier le liquide et les températures")}</button>:null}
+    {onEdit?<button type="button" className="text-link mt-3 min-h-11" onClick={onEdit}>{t(technical?"Modifier la configuration":"Modifier le besoin")}</button>:null}
   </section>;
 }

@@ -7,11 +7,14 @@ const { BookingCalendar } = await import("../src/components/leadmagnet/booking-c
 const { RoutedBooking } = await import("../src/components/leadmagnet/routed-booking");
 import { setLocale } from "../src/lib/i18n/core";
 import type { BookingProvider } from "../src/lib/leadmagnet/booking-provider";
+const originalBookingMode=process.env["VITE_BOOKING_PROVIDER"];
 afterEach(() => {
   cleanup();
   setLocale("fr");
+  if(originalBookingMode===undefined)delete process.env["VITE_BOOKING_PROVIDER"];else process.env["VITE_BOOKING_PROVIDER"]=originalBookingMode;
 });
-test("assigned representative with no calendar restores demo, selection, confirmation and reset", async () => {
+test("explicit demo mode supports selection, confirmation and reset without a real calendar", async () => {
+  process.env["VITE_BOOKING_PROVIDER"]="demo";
   setLocale("en");
   const loadContact = async () => ({
     reason: "assigned" as const,

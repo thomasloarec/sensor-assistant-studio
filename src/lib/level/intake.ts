@@ -1,9 +1,10 @@
 import { INITIAL_CONFIGURATION, MAX_TANK_HEIGHT_MM, compactReach, finiteInput, fitStemToPoints, horizontalPointBounds, setPointCount, constrainPointLayout, configurationIssues, setReach,
   type LevelConfiguration, type LevelContext } from "./configuration";
+import { statedLevelGoal } from "./requirements";
 
-/** Only explicit intake answers seed the design; prose is never silently classified. */
+/** Explicit choices win. A narrowly recognized free-text goal is explained in the UI. */
 export function intakeKey(context: LevelContext) {
-  return JSON.stringify([context.mountingAccess, context.tankHeight, context.detectionGoal, context.responsePriority, context.detectionCount, context.detectionHeights]);
+  return JSON.stringify([context.mountingAccess, context.tankHeight, context.detectionGoal === "unknown" ? statedLevelGoal(context) ?? "unknown" : context.detectionGoal, context.responsePriority, context.detectionCount, context.detectionHeights]);
 }
 export function requestedIntakePoints(context: LevelContext) {
   const height=finiteInput(context.tankHeight) ?? 100;
@@ -38,7 +39,7 @@ export function intakeErrors(context: LevelContext) {
 }
 export function seedConfiguration(context: LevelContext): LevelConfiguration {
   const height = finiteInput(context.tankHeight) ?? 100;
-  const goal = context.detectionGoal === "low" ? "low" : "high";
+  const goal = (context.detectionGoal === "unknown" ? statedLevelGoal(context) : context.detectionGoal) === "low" ? "low" : "high";
   const long = context.responsePriority === "movement";
   const mounting = context.mountingAccess === "top" ? "top" : context.mountingAccess === "bottom" ? "bottom" : "support";
   let c: LevelConfiguration = { ...INITIAL_CONFIGURATION, pointsMm: [...INITIAL_CONFIGURATION.pointsMm],
@@ -49,7 +50,9 @@ export function seedConfiguration(context: LevelContext): LevelConfiguration {
   if (context.detectionGoal === "multiple") {
     const points=requestedIntakePoints(context) as number[];
     c=setPointCount(c,points.length);
-    return constrainPointLayout(fitStemToPoints({...c,pointsMm:points}));
+    // Preserve requested thresholds even when the catalogue stem cannot reach them.
+    // The assessment offers an engineering route instead of silently moving a target.
+    return fitStemToPoints({...c,pointsMm:points});
   }
   // Legacy single-target answers no longer constrain the initial proposal.
   let point = (mounting === "bottom" ? goal === "low" ? 15 : compactReach(c) - 7
@@ -64,7 +67,9 @@ export function seedConfiguration(context: LevelContext): LevelConfiguration {
     point = Math.max(bounds.min, Math.min(bounds.max, Math.round(height * (goal === "high" ? .7 : .2))));
   }
   c = { ...c, pointsMm: [point] };
-  const fitted = constrainPointLayout(fitStemToPoints(c));
+  const raw = fitStemToPoints(c);
+  if (raw.orientation === "vertical" && raw.pointsMm.some(p => raw.mounting === "bottom" ? p > raw.reachMm : p < raw.mountingHeightMm - raw.reachMm)) return raw;
+  const fitted = constrainPointLayout(raw);
   // A shallow tank may only accommodate the fixed long-travel compact.
   return configurationIssues(fitted).length ? setReach(c, compactReach(c)) : fitted;
 }

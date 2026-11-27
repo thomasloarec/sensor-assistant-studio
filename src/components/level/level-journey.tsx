@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { Droplets, SlidersHorizontal, Play, Pause, Pencil, ChevronDown } from "lucide-react";
 import { LevelProjectHeader } from "./level-project-header";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,14 @@ import { intakeErrors, intakeKey, seedConfiguration } from "@/lib/level/intake";
 import { cmValue, formatCm, dimensionFromCm, dimensionInCm, formatPercent, formatLevel, dimensionFromPercent } from "@/lib/level/dimensions";
 import { standardLengthsMm } from "@/lib/leadmagnet/cable-options";
 import { levelDossier } from "@/lib/level/dossier";
-import { createDossier } from "@/lib/leadmagnet/dossier";
+import { createDossier, type DesignDossier } from "@/lib/leadmagnet/dossier";
+import { ProjectTitle } from "@/components/leadmagnet/project-title";
+import { assessLevelProject } from "@/lib/level/requirements";
 import { DEFAULT_TERMINATION, EMPTY_CONNECTOR_DRAFT, type Termination } from "@/lib/leadmagnet/connectors";
 import { draftFromHousing, terminationFromHousing } from "@/lib/leadmagnet/connector-library";
 import { getLocale, t } from "@/lib/i18n/core";
 import { useLocale } from "@/lib/i18n/react";
-import { assessConfiguration, architectureFamily, configurationIssues, contextErrors, FAMILY_LABELS,
+import { architectureFamily, configurationIssues, contextErrors, FAMILY_LABELS,
   illustrativeReading, demonstrationMax, INITIAL_CONFIGURATION, INITIAL_CONTEXT, setPointCount, resizeTank, pointBounds, MAX_REACH_MM, MAX_TANK_HEIGHT_MM,
   constrainPointLayout, minimumTankHeight, reachBounds, setReach, fitStemToPoints, setDetectionGoal, setMounting, setTravelPreference, isCompact, mountingDatum, proposedContactForm,
   type LevelConfiguration, type LevelContext } from "@/lib/level/configuration";
@@ -131,13 +133,18 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
   const [connectorDraft, setConnectorDraft] = useState({ ...EMPTY_CONNECTOR_DRAFT });
   const [connectorError, setConnectorError] = useState<string | null>(null);
   const [projectTitle, setProjectTitle] = useState<string | null>(null);
+  const [titleSource, setTitleSource] = useState<DesignDossier["titleSource"]>();
+  const acceptIdentity = useCallback((title:string, source:DesignDossier["titleSource"]) => {
+    setProjectTitle(title); setTitleSource(source);
+  }, []);
+  const renameProject = (title:string) => acceptIdentity(title,"user");
   const [reviewBase] = useState(() => createDossier(undefined,getLocale()));
   const [reviewStarted,setReviewStarted] = useState(false);
   const reduced = useReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const controlsRef = useRef<HTMLElement>(null);
   const seededKey = useRef<string | null>(null);
-  const assessment = assessConfiguration(context, config);
+  const assessment = assessLevelProject(context, config);
   const errors = contextErrors(context);
   const intakeProblems = intakeErrors(context);
   const questionProblems = question === 2 ? intakeErrors({ ...context, detectionGoal: "unknown" }) : intakeProblems;
@@ -162,7 +169,18 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     if (problem) return problem;
     setPlaying(false); setConfig(fitted); return undefined;
   };
-  const go = (s: Stage) => { setPlaying(false); setStage(s); if(s === "standex") setReviewStarted(true); };
+  const go = (s: Stage) => {
+    setPlaying(false);
+    if (["configure","review","standex"].includes(s) && (errors.length || intakeProblems.length)) {
+      setQuestion(errors.length ? 1 : intakeErrors({...context,detectionGoal:"unknown"}).length ? 2 : 3);
+      setStage("questions"); return;
+    }
+    if (s === "standex" && cableInvalid) { setStage("review"); return; }
+    if (["review","standex"].includes(s) && seededKey.current !== intakeKey(context)) {
+      const next = seedConfiguration(context); setConfig(next); setLevel(next.tankHeightMm / 2); seededKey.current = intakeKey(context);
+    }
+    setStage(s); if(s === "standex") setReviewStarted(true);
+  };
   const openConfigurator = () => {
     if (intakeProblems.length) { setQuestion(intakeErrors({ ...context, detectionGoal: "unknown" }).length ? 2 : 3); go("questions"); return; }
     const key = intakeKey(context);
@@ -244,15 +262,16 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     {config.orientation === "horizontal" && config.count > 1 ? <p className="t-caption">{t("Ces options de câble et de connexion s’appliquent à chaque capteur.")}</p> : null}
   </CableConnectionPanel>;
 
-  const reviewDossier = useMemo(() => levelDossier(reviewBase,context,config,{
+  const reviewDossier = useMemo(() => levelDossier({...reviewBase,titleSource},context,config,{
     lengthChoice,lengthMm:chosenLength && !cableInvalid ? Number(chosenLength) : null,connectorChoice,termination,
-  },projectTitle ?? (context.purpose || t("Nouveau projet"))),[reviewBase,context,config,lengthChoice,chosenLength,cableInvalid,connectorChoice,termination,projectTitle]);
+  },projectTitle ?? t("Nouveau projet")),[reviewBase,context,config,lengthChoice,chosenLength,cableInvalid,connectorChoice,termination,projectTitle,titleSource]);
   const scene = (productOnly = false) => <Suspense fallback={<SceneLoading />}>
     {active ? <LevelScene configuration={config} family={family} material={selected?.material === "to_define" ? family === "LS03" ? "PA" : "PP" : selected?.material ?? "PP"} levelMm={shownLevel} oil={context.fluid === "oil"} productOnly={productOnly} interactive={!productOnly} /> : null}
   </Suspense>;
 
   return <div className={`lv-journey${embedded ? " lv-embedded" : ""}${stage === "configure" ? " lv-config-active" : ""}`} data-readable>
-    {!embedded ? <LevelProjectHeader title={projectTitle ?? t("Nouveau projet")} onRename={setProjectTitle} onChoice={() => go("choice")} onClassic={classic} /> : null}
+    {!embedded ? <LevelProjectHeader title={projectTitle ?? t("Nouveau projet")} onRename={renameProject} onChoice={() => go("choice")} onClassic={classic} /> :
+      <div className="lv-topbar"><ProjectTitle title={projectTitle ?? t("Nouveau projet")} onRename={renameProject} /></div>}
     {stage !== "choice" ? <div className="project-stepper-bar lv-stepper-bar project-stepper-sticky"><nav className={`project-stepper project-stepper-${currentIndex} lv-project-stepper`} aria-label={t("Étapes du projet de niveau")}>
       <span className="project-stepper-thumb" aria-hidden="true" />
       {stages.map((s, i) => <button type="button" key={s.id} aria-label={`${i + 1}. ${s.label}`} aria-current={stage === s.id ? "step" : undefined}
@@ -261,7 +280,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
         <span className="project-stepper-content flex min-w-0 items-center gap-2 text-base font-semibold">
           <span className={`standex-bar !h-3 !w-1 transition-opacity duration-[var(--d-base)] ${stage === s.id ? "opacity-100" : "opacity-25"}`} aria-hidden="true" />
           <span className={`project-stepper-label${s.id === "configure" ? " lv-step-full" : ""}`}>{i + 1}. {s.label}</span>
-          {s.id === "configure" ? <span className="project-stepper-label lv-step-short" aria-hidden="true">{i + 1}. {t("Configurer")}</span> : null}
+          {s.id === "configure" ? <span className="project-stepper-label lv-step-short" aria-hidden="true">{i + 1}. {t("Réglages")}</span> : null}
         </span>
       </button>)}
     </nav></div> : null}
@@ -358,6 +377,11 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
       </section>
     </main> : null}
 
+    {assessment.requirements.length > 0 && (stage === "configure" || stage === "review" || stage === "standex") ? <section className="lv-review-main lv-requirements" aria-label={t("Points à préciser")}>
+      {assessment.requirements.length ? <div className="notice-warning" role="status"><ul className="lv-notes t-body">{assessment.requirements.map(issue => <li key={issue.id}>{t(issue.message)}</li>)}</ul>
+        <Button variant="secondary" onClick={() => {setQuestion(0);go("questions");}}>{t("Modifier le besoin")}</Button>
+      </div> : null}
+    </section> : null}
     {stage === "configure" ? <main className="lv-config-main">
       <h1 className="sr-only" tabIndex={-1} ref={headingRef}>{t("Configuration")}</h1>
       <div className="lv-config-grid">
@@ -486,7 +510,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
           <p className="t-body">{productDescription}</p>
           <ReviewFacts rows={[
             [t("Montage"), config.orientation === "vertical" ? t(config.mounting === "top" ? "Ouverture imposée en haut" : config.mounting === "support" ? "Capteur droit, hauteur de fixation libre" : "Insertion par le fond") : t("Montage latéral")],
-            ...(config.mode === "points" && config.count === 1 ? [[t("Forme de contact proposée"), proposedContactForm(config,family) ? t("Forme") + " " + proposedContactForm(config,family) : t("À confirmer avec Standex")]] as const : []),
+            ...(config.mode === "points" && config.count === 1 ? [[t("Forme de contact proposée"), selected && proposedContactForm(config,family) ? t("Forme") + " " + proposedContactForm(config,family) : t("À confirmer avec Standex")]] as const : []),
           ]} />
           <p className="t-caption">{t("Illustration du besoin")} · {t("Seuils à confirmer par Standex")}</p>
         </aside>
@@ -504,7 +528,7 @@ export default function LevelJourney({ embedded = false, active = true, onClassi
     {reviewStarted ? <div className="lv-review-main" hidden={stage !== "standex"}>
       <Suspense fallback={<p className="t-body">{t("Chargement…")}</p>}>
         <StandexReview chrome="embedded" visible={active && stage === "standex"}
-          reviewOnly={{dossier:reviewDossier,onEditProject:editApplication,onEditConfiguration:()=>go("review")}} />
+          reviewOnly={{dossier:reviewDossier,onEditProject:()=>{setQuestion(0);go("questions");},onEditConfiguration:()=>go("review"),onIdentity:acceptIdentity}} />
       </Suspense>
     </div> : null}
   </div>;
