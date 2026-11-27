@@ -185,6 +185,7 @@ function Num({
   testId?: string;
 }) {
   const [invalid, setInvalid] = useState(false);
+  const displayedValue = Math.round(value * 1000) / 1000;
   return (
     <label className="mw-select-label">
       {msg("{0} ({1})", [t(label), u])}
@@ -196,19 +197,21 @@ function Num({
         max={max}
         step={step}
         key={value}
-        defaultValue={Math.round(value * 1000) / 1000}
+        defaultValue={displayedValue}
         onKeyDown={(e) => {
           if (e.key === "Enter") e.currentTarget.blur();
         }}
         onBlur={(e) => {
           const n = Number(e.target.value.replace(",", "."));
           if (e.target.value.trim() === "" || !Number.isFinite(n) || n < min || n > max) {
-            e.target.value = String(Math.round(value * 1000) / 1000);
+            e.target.value = String(displayedValue);
             setInvalid(true);
             return;
           }
           setInvalid(false);
-          onCommit(n);
+          // Merely leaving a field must neither fill the undo stack nor round
+          // the stored pose to the display precision.
+          if (n !== displayedValue && n !== value) onCommit(n);
         }}
         aria-invalid={invalid || undefined}
       />

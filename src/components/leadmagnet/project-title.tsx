@@ -39,7 +39,7 @@ export function ProjectTitle({ title, onRename }: { title: string; onRename: (ne
 
   if (!editing)
     return (
-      <div className="project-title-display flex min-w-0 flex-1 items-center gap-2">
+      <div className="project-header-title project-title-display flex min-w-0 flex-1 items-center gap-2">
         <h1 className="t-title-l min-w-0" title={title}>
           {title}
         </h1>
@@ -56,7 +56,7 @@ export function ProjectTitle({ title, onRename }: { title: string; onRename: (ne
     );
 
   return (
-    <div className="min-w-[min(100%,18rem)] flex-1">
+    <div className="project-header-title min-w-0 flex-1">
       <Label htmlFor="project-title" className="t-label">
         {t("Nom du projet")}
       </Label>
