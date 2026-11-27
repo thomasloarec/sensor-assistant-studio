@@ -47,7 +47,7 @@ describe("Positions de détection dans le Workshop intégré", () => {
       const original=JSON.stringify(draft.machine);
       expect((view.getByRole('radio',{name:'À travers une paroi'}) as HTMLButtonElement).disabled).toBe(true);
       await act(async()=>fireEvent.click(view.getByTestId('guide-change-sensor')));
-      expect(view.getByText('Le catalogue des capteurs')).toBeTruthy();
+      expect(view.getByRole('dialog', { name: 'Catalogue', exact: true })).toBeTruthy();
       await act(async()=>fireEvent.click(view.getByRole('button',{name:'Fermer le catalogue'})));
       expect(JSON.stringify(draft.machine)).toBe(original);
       expect(view.getByTestId('guide-target-sensor').textContent).toContain('Sélectionné');

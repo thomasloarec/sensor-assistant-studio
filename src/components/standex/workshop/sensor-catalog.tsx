@@ -1,4 +1,4 @@
-import MagnetCatalog from "./magnet-catalog";
+import MagnetCatalog, { MagnetMaterialFilter, MagnetMaterialGuide } from "./magnet-catalog";
 import { useEffect, useRef, useState } from "react";
 import { Search, X, ArrowUpRight, Check } from "lucide-react";
 import { sizeLabel, sensorDrawingSource, sensorDisplayTitle } from "@/lib/standex/sensor-catalog";
@@ -64,6 +64,7 @@ export default function SensorCatalog({
 }) {
   useLocale();
   const [productType, setProductType] = useState<"sensors" | "magnets">("sensors");
+  const [material, setMaterial] = useState("");
   const [view, setView] = useState<"2d" | "3d">("3d");
   const Choice = inline ? "div" : "button";
   const [card, setCard] = useState<string | null>(null);
@@ -75,7 +76,7 @@ export default function SensorCatalog({
     [maxLength, setMaxLength] = useState(""),
     [maxWidth, setMaxWidth] = useState(""),
     [maxHeight, setMaxHeight] = useState(""),
-    [sameScale, setSameScale] = useState(true);
+    [sameScale, setSameScale] = useState(false);
   useEffect(() => {
     if (inline) return;
     const dialog = ref.current;
@@ -91,7 +92,10 @@ export default function SensorCatalog({
     maxWidth,
     maxHeight,
   });
-  const list = matches.filter((s,i,all)=>!s.productFamily || all.findIndex(v=>v.productFamily===s.productFamily)===i);
+  const list = matches.filter(
+    (s, i, all) =>
+      !s.productFamily || all.findIndex((v) => v.productFamily === s.productFamily) === i,
+  );
   const documented = documentedCount(list);
   const activeCount = [
     query.trim(),
@@ -135,52 +139,73 @@ export default function SensorCatalog({
           }}
         />
       )}
-      <header>
-        <div>
+      <header className="mw-catalog-header" data-magnets={productType === "magnets"}>
+        <div className="mw-catalog-heading">
           <p className="mw-eyebrow">{t("Choisir une forme et un format")}</p>
-          <h2 id="catalog-title">{t("Le catalogue des capteurs")}</h2>
-          <p>{t("Capteurs Standex cotés et reed pédagogique, à échelle commune.")}</p>
+          <h2 id="catalog-title">{t("Catalogue")}</h2>
+          <p className="mw-catalog-intro">
+            {t("Capteurs et aimants Standex : formes, dimensions et matériaux.")}
+          </p>
+          <div className="mw-catalog-toolbar">
+            <div
+              className="mw-catalog-view"
+              data-second={productType === "magnets"}
+              role="group"
+              aria-label={t("Catalogue")}
+            >
+              <button
+                type="button"
+                aria-pressed={productType === "sensors"}
+                onClick={() => setProductType("sensors")}
+              >
+                {t("Capteurs")}
+              </button>
+              <button
+                type="button"
+                aria-pressed={productType === "magnets"}
+                onClick={() => setProductType("magnets")}
+              >
+                {t("Aimants")}
+              </button>
+            </div>
+            <div
+              className="mw-catalog-view"
+              data-second={view === "2d"}
+              role="group"
+              aria-label={t("Affichage")}
+            >
+              <button type="button" aria-pressed={view === "3d"} onClick={() => setView("3d")}>
+                {t("Vue 3D")}
+              </button>
+              <button type="button" aria-pressed={view === "2d"} onClick={() => setView("2d")}>
+                {t("Vue 2D")}
+              </button>
+            </div>
+            <label className="mw-check mw-catalog-scale-toggle">
+              <input
+                type="checkbox"
+                checked={sameScale}
+                onChange={(e) => setSameScale(e.target.checked)}
+              />
+              {t("Même échelle")}
+            </label>
+          </div>
+          {productType === "magnets" && (
+            <MagnetMaterialFilter material={material} onChange={setMaterial} />
+          )}
         </div>
-        <button aria-label={t("Fermer le catalogue")} className="mw-icon-button" onClick={onClose}>
+        {productType === "magnets" && <MagnetMaterialGuide material={material} />}
+        <button
+          type="button"
+          aria-label={t("Fermer le catalogue")}
+          className="mw-icon-button mw-catalog-close"
+          onClick={onClose}
+        >
           <X />
         </button>
       </header>
-      <div className="mw-catalog-view" role="group" aria-label={t("Catalogue")}>
-        <button
-          type="button"
-          aria-pressed={productType === "sensors"}
-          onClick={() => setProductType("sensors")}
-        >
-          {t("Capteurs")}
-        </button>
-        <button
-          type="button"
-          aria-pressed={productType === "magnets"}
-          onClick={() => setProductType("magnets")}
-        >
-          {t("Aimants")}
-        </button>
-      </div>
       {productType === "magnets" ? (
-        <>
-          <div className="mw-catalog-view" role="group" aria-label={t("Affichage")}>
-            <button type="button" aria-pressed={view === "3d"} onClick={() => setView("3d")}>
-              {t("Vue 3D")}
-            </button>
-            <button type="button" aria-pressed={view === "2d"} onClick={() => setView("2d")}>
-              {t("Vue 2D")}
-            </button>
-          </div>
-          <label className="mw-check">
-            <input
-              type="checkbox"
-              checked={sameScale}
-              onChange={(e) => setSameScale(e.target.checked)}
-            />
-            {t("Même échelle")}
-          </label>
-          <MagnetCatalog view={view} sameScale={sameScale} />
-        </>
+        <MagnetCatalog view={view} sameScale={sameScale} material={material} />
       ) : (
         <>
           <div className="mw-catalog-tools">
@@ -265,22 +290,6 @@ export default function SensorCatalog({
               />
             </label>
 
-            <div className="mw-catalog-view" role="group" aria-label={t("Affichage")}>
-              <button type="button" aria-pressed={view === "3d"} onClick={() => setView("3d")}>
-                {t("Vue 3D")}
-              </button>
-              <button type="button" aria-pressed={view === "2d"} onClick={() => setView("2d")}>
-                {t("Vue 2D")}
-              </button>
-            </div>
-            <label className="mw-check">
-              <input
-                type="checkbox"
-                checked={sameScale}
-                onChange={(e) => setSameScale(e.target.checked)}
-              />
-              {t("Même échelle")}
-            </label>
             <button type="button" className="mw-secondary" onClick={resetFilters}>
               {t("Réinitialiser les filtres")}
             </button>
@@ -333,7 +342,9 @@ export default function SensorCatalog({
                         }
                         aria-hidden="true"
                       >
-                        <g transform={s.id==="MK07"?"rotate(180)":undefined}><SensorPlan model={s} xray={false} /></g>
+                        <g transform={s.id === "MK07" ? "rotate(180)" : undefined}>
+                          <SensorPlan model={s} xray={false} />
+                        </g>
                         {sameScale && (
                           <g stroke="#a3b2bd" strokeWidth={0.25}>
                             <path d="M-25 14 H25 M-25 13 V15 M25 13 V15" />
@@ -346,12 +357,11 @@ export default function SensorCatalog({
                     )}
                   </div>
                   <div className="mw-catalog-name">
-                    <strong className="t-title-s">{t(sensorDisplayTitle(s.id,s.name))}</strong>
+                    <strong className="t-title-s">{t(sensorDisplayTitle(s.id, s.name))}</strong>
                     {!inline && selected === s.id && <Check size={17} />}
                   </div>
                   <span className="mw-catalog-size t-metric">{t(sizeLabel(s))}</span>
                   <p>{t(s.description)}</p>
-
                 </Choice>
                 <button className="mw-product-card-button" onClick={() => setCard(s.id)}>
                   {t("Découvrir ce capteur")}
