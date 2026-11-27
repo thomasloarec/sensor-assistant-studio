@@ -114,6 +114,7 @@ import {
 import { detectMountingIntent } from "@/lib/leadmagnet/mounting-intent";
 import { CANDIDATE_DISCLAIMER, evaluateCandidates } from "@/lib/leadmagnet/candidates";
 import { assessApplicationFit, FIT_PANEL, VALIDATION_POINT } from "@/lib/leadmagnet/application-fit";
+import { pairGapWarning } from "@/lib/leadmagnet/requirement-context";
 import { THERMAL_SHORT, thermalWarning } from "@/lib/leadmagnet/thermal-fit";
 import { detectEnvelopeFromText, ENVELOPE_TEXT, envelopeIsEmpty } from "@/lib/leadmagnet/envelope-text";
 import { CompatibilityPanel } from "./compatibility-panel";
@@ -969,6 +970,7 @@ export function DesignSpace({
     () =>
       assessApplicationFit(dossier.requirements, dossier.freeConstraints, {
         mountingChosen: dossier.mounting.kind !== "undecided",
+        invalidDimensions: Object.values(dossier.envelope).some(v=>v !== null && (!Number.isFinite(v) || v <= 0)),
         envelopeSet: [dossier.envelope.lengthMm, dossier.envelope.widthMm, dossier.envelope.heightMm].some(
           (v) => v !== null,
         ),
@@ -1969,6 +1971,8 @@ export function DesignSpace({
                   className="answer-field t-metric text-right"
                   inputMode="decimal"
                   value={dossier.envelope[k] ?? ""}
+                  aria-invalid={dossier.envelope[k] !== null && dossier.envelope[k]! <= 0 || undefined}
+                  aria-describedby={dossier.envelope[k] !== null && dossier.envelope[k]! <= 0 ? `guided-${k}-error` : undefined}
                   onChange={(e) => {
                     const v = num(e.target.value);
                     setDossier((d) => ({
@@ -1981,6 +1985,7 @@ export function DesignSpace({
                 />
                 <span className="t-metric">mm</span>
               </div>
+              {dossier.envelope[k] !== null && dossier.envelope[k]! <= 0 ? <p id={`guided-${k}-error`} role="alert" className="notice-warning t-body-s">{t("Saisissez une dimension strictement positive, ou laissez le champ vide si elle est inconnue.")}</p> : null}
             </div>
           ))}
         </div>
@@ -2704,6 +2709,8 @@ export function DesignSpace({
       ...shownFilters.filter(f => activeBlocked.includes(f.id)).map(fl),
     ])];
     const thermal = card.sensorId === CUSTOM_SENSOR_ID ? null : thermalWarning(card.sensorId, fit.sensorSiteC);
+    const gapWarning = card.sensorId === CUSTOM_SENSOR_ID ? null : pairGapWarning(fit.gapsMm ?? [], card.guideToMm ?? card.maxPullInMm);
+    const recommendable = card.sensorId !== CUSTOM_SENSOR_ID && !fit.explorationOnly && !thermal && !gapWarning && !fit.validationPoints.length && !compromises.length && !candidate?.electricalIncompatible;
     return (
       <div
         key={card.sensorId}
@@ -2718,7 +2725,7 @@ export function DesignSpace({
         />
         <div className="pair-card-status mt-3 flex flex-wrap items-center gap-2">
           <p className="t-label">
-            {index === 0 && !compact && !fit.explorationOnly ? t("Recommandé") : t(card.familyLabel)}
+            {index === 0 && !compact ? t(recommendable ? "Recommandé" : "Piste à étudier avec Standex") : t(card.familyLabel)}
           </p>
           {chosen ? <Badge className="candidate-status-badge">{t("Choisi ✓")}</Badge> : null}
         </div>
@@ -2733,10 +2740,11 @@ export function DesignSpace({
           return reason ? <p className="t-caption" data-testid="rank-reason">{t(reason)}</p> : null;
         })()}
         {card.sensorId !== CUSTOM_SENSOR_ID ? <PairFacts card={card} /> : null}
-        {thermal || compromises.length > 0 || candidate?.retention === "adapter_required" || candidate?.electricalIncompatible ? (
+        {thermal || gapWarning || compromises.length > 0 || candidate?.retention === "adapter_required" || candidate?.electricalIncompatible ? (
           <div className="notice-warning space-y-2" data-testid="pair-vigilance">
             <p className="t-body flex items-center gap-2"><AlertTriangle className="size-4 shrink-0" aria-hidden="true" /><strong>{t("Points de vigilance")}</strong></p>
             {compromises.length > 0 ? <p className="t-caption">{t("Compromis nécessaire avec vos critères")} : {compromises.join(" · ")}</p> : null}
+            {gapWarning ? <p className="t-caption" data-testid="pair-gap-warning">{msg(gapWarning.text, gapWarning.args)}</p> : null}
             {thermal ? <p className="t-caption" data-testid="thermal-warning" data-status={thermal.status}>{msg(THERMAL_SHORT[thermal.status], [thermal.asked])}</p> : null}
             {candidate?.retention === "adapter_required" ? <p className="t-caption">{t("Retenue mécanique à définir : douille ou adaptateur nécessaire.")}</p> : null}
             {candidate?.electricalIncompatible ? <p className="t-caption">{t("Cette taille du MK06 ne couvre pas les valeurs électriques indiquées avec un même contact documenté.")}</p> : null}

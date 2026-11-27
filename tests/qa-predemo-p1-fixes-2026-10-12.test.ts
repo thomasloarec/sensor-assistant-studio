@@ -1,6 +1,7 @@
 /** Correctifs P1 pré-démo du 12/10/2026 — variantes, contre-exemples, propriétés.
  *  Voir docs/QA_PREDEMO_P1_FIXES_2026-10-12.md. */
 import { describe, expect, test } from "bun:test";
+import { INCOMPLETE_REVIEW } from "@/lib/leadmagnet/requirement-context";
 import {
   assessApplicationFit,
   MAX_DOCUMENTED_GAP_MM,
@@ -149,10 +150,10 @@ describe("C03 — écart, câble, petits aimants", () => {
   test("petit aimant et ±1 mm restent des points explicites, même sous le seuil", () => {
     const r = fit({ states_motion: "A 5mm diameter x 2mm magnet at 10 mm, ±1 mm" });
     expect(r.blocking).toBe(false);
-    expect(r.validationPoints).toEqual([VALIDATION_POINT.tinyMagnet, VALIDATION_POINT.precision]);
+    expect(r.validationPoints).toEqual([VALIDATION_POINT.tinyMagnet, VALIDATION_POINT.precision, INCOMPLETE_REVIEW]);
   });
-  test("aimant ordinaire, sans précision : aucun point ajouté", () =>
-    expect(fit({ states_motion: "Magnet 20 x 10 mm at 10 mm" }).validationPoints).toEqual([]));
+  test("aimant ordinaire, sans précision : seul le rappel des réponses manquantes", () =>
+    expect(fit({ states_motion: "Magnet 20 x 10 mm at 10 mm" }).validationPoints).toEqual([INCOMPLETE_REVIEW]));
 });
 
 describe("Soumission — contexte projet essentiel", () => {

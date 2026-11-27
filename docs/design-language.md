@@ -1470,3 +1470,12 @@ données niveau alimentent le récapitulatif, le résumé d’envoi, le PDF et s
 dossier joint. Une modification technique renouvelle le consentement lié au
 contenu sans perdre les coordonnées ni l’identité serveur. Les conditions de
 confidentialité et d’accès existantes restent applicables.
+
+## Questionnaire — clarification et réserves (27 novembre 2026)
+
+Les dimensions nulles ou négatives portent une erreur liée au champ (`aria-invalid`,
+`aria-describedby`, `role="alert"`) dans une `notice-warning`. Les cartes affichent
+« Piste à étudier avec Standex » lorsqu'une réserve de température, d'entrefer,
+de qualification ou d'information manque de confirmation. L'espace saisi est
+nommé « Place annoncée » : cette contrainte n'affirme aucune compatibilité du sur-mesure.
+Ces états réutilisent les surfaces, typographies et jetons existants.

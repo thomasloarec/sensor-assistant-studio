@@ -16,6 +16,7 @@
  *  - les textes sont canoniques en français et traduits au rendu par `t()`.
  */
 import type { Requirement } from "./dossier";
+import { explicitGapsMm, CONTACT_REVIEW, REMOTE_MAGNET_REVIEW, QUALIFICATION_REVIEW, INCOMPLETE_REVIEW, SPECIAL_MOUNT_REVIEW } from "./requirement-context";
 import { ACTIVATION_GUIDE } from "@/lib/standex/activation-guide";
 import { SENSOR_SPECIFICATIONS } from "@/lib/standex/sensor-specifications";
 
@@ -27,7 +28,11 @@ export type FitIssueId =
   | "extreme_temperature_review"
   | "extreme_gap_review"
   | "no_meaningful_requirement"
-  | "hall_analog_review";
+  | "hall_analog_review"
+  | "requirement_clarification"
+  | "continuous_quantity_review"
+  | "outside_sensor_scope"
+  | "invalid_dimension";
 
 export interface FitStep {
   /** Clé d'exigence à ouvrir dans le questionnaire (jamais modifiée ici). */
@@ -80,6 +85,7 @@ export interface FitAssessment {
   /** Seuls des choix mécaniques (montage, cotes) existent, aucun but écrit :
    *  les couples ne sont qu'une EXPLORATION du catalogue, jamais recommandés. */
   explorationOnly: boolean;
+  gapsMm?: number[];
 }
 
 /* i18n-canonical : libellés d'étapes, identiques à ceux du questionnaire. */
@@ -239,8 +245,8 @@ const NOT_ALREADY = [
 
 const FERROUS = /\b(ferrous|ferreux|ferreuse|ferromagnetic|ferromagnetique|steel|acier|iron|fer|fonte|eisen|stahl|acero|acciaio)\b/;
 const NEGATED_FERROUS = /\b(no|non|without|sans|pas de|aucun|aucune|not)\b[^.,;]{0,20}\b(ferrous|ferreux|ferreuse|steel|acier|iron|fer)\b|\b(nonferrous|non-ferrous|non ferreux|stainless|inox)\b/;
-const INTERNAL_BIAS = /\b(mk02|internal|integrated|built-in|built in|integre|integree|interne|incorpore|bias)\b[^.]{0,30}\b(magnet|aimant|bias)\b|\bmk02\b/;
-const MAGNET_ANYWHERE = /\b(anywhere|partout|nulle part|at all|du tout|whatsoever)\b/;
+const INTERNAL_BIAS = /\b(?:polarisation|bias)\b[^.;]{0,45}\b(?:integre\w*|internal|integrated|built[- ]in|cote capteur|sensor side)\b|\b(?:aimant|magnet)\b[^.;]{0,45}\b(?:integre\w*|internal|integrated|built[- ]in)\b|\b(?:internal|integrated|integre\w*)\b[^.;]{0,45}\b(?:aimant|magnet|bias|polarisation)\b|\bmk02\b/;
+const MAGNET_ANYWHERE = /\b(anywhere|partout|nulle part|at all|du tout|whatsoever|tout l equipement|whole equipment)\b/;
 
 const NON_MAGNETIC = [
   /\b(aluminium|aluminum|alu)\b/,
@@ -274,19 +280,20 @@ const orderedSteps = (evidence: FitEvidence[], required: FitStep[]): FitStep[] =
 export interface StructuredIntake {
   mountingChosen: boolean;
   envelopeSet: boolean;
+  invalidDimensions?: boolean;
 }
 
 /** Réponses de remplissage (« je ne sais pas », « ??? ok ») : elles ne
  *  décrivent aucun besoin. Liste volontairement courte et explicite : seules ces
  *  formules sont reconnues, aucune couverture sémantique n'est revendiquée. */
-const FILLER = /\b(je ne sais pas|je sais pas|sais pas|aucune idee|pas d idee|je ne sais|ne sais pas encore|i don t know|i dont know|don t know|dont know|do not know|idk|no idea|not sure|unsure|unknown|inconnu|inconnue|n a|na|tbd|a definir|to be defined|nothing|rien|ok|okay|yes|no|oui|non|test|xxx|asdf|weiss nicht|keine ahnung|no lo se|no se|non lo so|nessuna idea|ne znayu|wakaranai)\b/g;
+const FILLER = /\b(je ne sais pas encore|je ne sais pas|je sais pas|sais pas|aucune idee|pas d idee|je ne sais|ne sais pas encore|i don t know|i dont know|don t know|dont know|do not know|idk|no idea|not sure|unsure|unknown|inconnu|inconnue|n a|na|tbd|a definir|to be defined|nothing|rien|ok|okay|yes|no|oui|non|test|xxx|asdf|weiss nicht|keine ahnung|no lo se|no se|non lo so|nessuna idea|ne znayu|wakaranai)\b/g;
 const normFill = (v: string) =>
   v.toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’`/]/g, " ");
 /** Vrai si le texte contient une information au-delà des formules de remplissage. */
 export function isSubstantive(value: string | null | undefined): boolean {
-  const rest = normFill(value ?? "").replace(FILLER, " ");
+  const rest = normFill(value ?? "").replace(/^(?:capteurs?|sensors?)\s*$/i, "").replace(/不知道|不确定|わからない|未定|не знаю/gu, " ").replace(FILLER, " ");
   // Un mot sans voyelle (« qzxv ») n'est pas une information.
-  return /\p{N}|[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/u.test(rest) ||
+  return /[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/u.test(rest) || /\d\s*(?:mm|cm|ma|v|a|°c)\b/i.test(rest) ||
     rest.split(/[^\p{L}]+/u).some((w) => w.length >= 3 && (/[aeiouy]/.test(w) || /[^a-z]/.test(w)));
 }
 
@@ -317,6 +324,10 @@ export function assessApplicationFit(
 ): FitAssessment {
   const frags = fragments(requirements, freeConstraints);
   const issues: FitIssue[] = [];
+  if(structured?.invalidDimensions){
+    const issue=clarificationIssue("invalid_dimension",[],"Une dimension reste à clarifier","Saisissez une dimension strictement positive, ou laissez le champ vide si elle est inconnue.");
+    issue.changes[0]!.step=stepFor("mounting");issue.steps=[stepFor("mounting")];issues.push(issue);
+  }
   if (structured && intakeIsEmpty(requirements, freeConstraints, structured)) {
     const steps = ["detection_goal", "target_object", "states_motion"].map(stepFor);
     issues.push({
@@ -352,7 +363,7 @@ export function assessApplicationFit(
   // « Not without a contactor » : double négation, l'interface est EXIGÉE.
   const DOUBLE_NEG = /\b(not|never|pas|jamais|nicht)\s+(without|sans|ohne)\b/;
   const refuseInterface = anyMatch(frags, REFUSE_INTERFACE).filter((f) => !localSafe(f) && !DOUBLE_NEG.test(f.text));
-  const load = heavyLoad(frags);
+  const load = heavyLoad(frags.filter(f => f.step.key === "electrical" || direct.includes(f) || refuseInterface.includes(f)));
   if ((direct.length > 0 || refuseInterface.length > 0) && load.found) {
     const evidence: FitEvidence[] = [...direct, ...refuseInterface].map((f) => ({
       step: f.step,
@@ -361,11 +372,11 @@ export function assessApplicationFit(
     const changes: FitChange[] = [
       {
         step: stepFor("electrical"),
-        text: "Décrire le capteur comme un signal de commande (par exemple 24 V continu vers un automate ou une entrée logique) et garder l'alimentation du moteur sur un circuit séparé.",
+        text: "Décrire le capteur comme un signal de commande (par exemple 24 V continu vers un automate ou une entrée logique) et garder la puissance de la charge sur un circuit séparé.",
       },
       {
         step: stepFor("electrical"),
-        text: "Prévoir entre ce signal et le moteur un relais, un contacteur ou une interface de puissance dimensionnés pour la charge réelle du moteur.",
+        text: "Prévoir un relais, un contacteur ou une interface de puissance dimensionnés pour la charge réelle et ses transitoires.",
       },
     ];
     if (refuseInterface.length)
@@ -380,23 +391,23 @@ export function assessApplicationFit(
       });
     issues.push({
       id: "direct_load_switching",
-      title: "Le capteur ne peut pas couper lui-même l'alimentation du moteur",
+      title: "La commutation directe de cette charge nécessite une interface adaptée",
       whatWorks:
         "Un capteur reed convient tout à fait pour donner le SIGNAL de position : savoir si le capot est fermé, et transmettre cette information.",
       whatFails: load.label
-        ? "Faire passer l'alimentation du moteur ({0}) directement dans le contact du capteur."
-        : "Faire passer l'alimentation du moteur directement dans le contact du capteur.",
+        ? "Faire passer la puissance de la charge ({0}) directement dans le contact du capteur."
+        : "Faire passer la puissance de la charge directement dans le contact du capteur.",
       whatFailsArgs: load.label ? [load.label] : [],
-      why: "La charge du moteur et son courant d'appel au démarrage dépassent largement ce qu'un contact reed peut couper. Les contacts peuvent se souder ou se dégrader, et la machine peut alors démarrer ou rester en marche sans commande.",
+      why: "La charge déclarée exige une vérification simultanée de la tension, du courant, de la puissance et des transitoires, notamment le courant d'appel. Une interface séparée évite de faire passer cette puissance dans le contact de signal.",
       diagram: [
         "Capteur reed (signal de position)",
         "Entrée de commande compatible (automate, carte, entrée logique)",
         "Relais ou contacteur dimensionné pour la charge",
-        "Moteur (circuit de puissance séparé)",
+        "Charge (circuit de puissance séparé)",
       ],
       cautions: [
-        "Le circuit de puissance du moteur et le circuit de signal du capteur restent deux circuits distincts.",
-        "Un moteur est une charge inductive à fort courant d'appel : l'interface de puissance doit être dimensionnée et protégée en conséquence, avec une protection adaptée au type d'alimentation. Voir les précautions de charge Standex.",
+        "Le circuit de puissance de la charge et le circuit de signal du capteur restent deux circuits distincts.",
+        "En présence d'une charge inductive, prévoir une protection adaptée au type d'alimentation et au courant d'appel. La nature de votre charge reste à confirmer avec Standex.",
         "Un capteur reed sur un capot donne une information de position. Il ne constitue pas à lui seul un verrouillage de sécurité machine certifié.",
       ],
       changes,
@@ -410,8 +421,13 @@ export function assessApplicationFit(
   // qu'un aimant existe déjà et que seul un aimant SUPPLÉMENTAIRE est inutile.
   // « Aucun aimant ne peut être ajouté » en Montage reste une contradiction même
   // si une autre réponse mentionne un aimant déjà posé.
+  const alreadyInstalled = frags.some(f => MAGNET_ALREADY_LOCAL.some(p=>p.test(f.text)) && !NOT_ALREADY.some(p=>p.test(f.text)));
+  const remoteAllowed = frags.some(f => /\b(?:support|porte[- ]flacon|levier|linkage|carrier)\b/.test(f.text) && /\b(?:peut|possible|autorise|can|may)\b[^.;]{0,45}\b(?:aimant|magnet)\b/.test(f.text));
+  const correction = frags.some(f => /\b(?:correction|finalement|actually|updated answer)\b/.test(f.text) && /\b(?:aimant|magnet)\b/.test(f.text));
   const refuseMagnet = anyMatch(frags, REFUSE_MAGNET).filter(
     (f) =>
+      !(alreadyInstalled && /\b(?:supplementaire|additional|second|extra)\b/.test(f.text) && !MAGNET_ANYWHERE.test(f.text) && !/no magnet or|aucun aimant ou/.test(f.text)) &&
+      !(remoteAllowed && f.step.key === "target_object" && !MAGNET_ANYWHERE.test(f.text)) &&
       !(
         MAGNET_ALREADY_LOCAL.some((p) => p.test(f.text)) &&
         !NOT_ALREADY.some((p) => p.test(f.text))
@@ -420,13 +436,14 @@ export function assessApplicationFit(
   // Cible ferreuse + aimant de polarisation INTÉGRÉ au capteur (MK02) : le
   // refus porte sur un aimant EXTERNE seulement. Un « aucun aimant nulle part »
   // ou une cible non ferreuse continuent de bloquer.
-  const ferrousTarget = frags.some((f) => FERROUS.test(f.text) && !NEGATED_FERROUS.test(f.text));
+  const ferrousTarget = frags.filter(f=>f.step.key === "target_object").some((f) => FERROUS.test(f.text) && !NEGATED_FERROUS.test(f.text));
   const internalBias = frags.some((f) => INTERNAL_BIAS.test(f.text));
   const absoluteRefusal = refuseMagnet.some((f) => MAGNET_ANYWHERE.test(f.text));
   const internalBiasCase = refuseMagnet.length > 0 && ferrousTarget && internalBias && !absoluteRefusal;
-  if (refuseMagnet.length > 0 && !internalBiasCase) {
+  if (correction && refuseMagnet.length > 0) issues.push(clarificationIssue("requirement_clarification", refuseMagnet, "Vos réponses décrivent des contraintes différentes", "Confirmez quelle contrainte d’aimant conserver. Nous pouvons étudier le montage autorisé sans réécrire vos réponses."));
+  if (refuseMagnet.length > 0 && !internalBiasCase && !correction) {
     const evidence: FitEvidence[] = refuseMagnet.map((f) => ({ step: f.step, quote: f.quote }));
-    const materialFrag = anyMatch(frags, NON_MAGNETIC)[0] ?? null;
+    const materialFrag = anyMatch(frags.filter(f=>f.step.key === "target_object" && !/\b(?:pas en|not|n est pas|is not)\b/.test(f.text)), NON_MAGNETIC)[0] ?? null;
     const material = materialFrag
       ? (MATERIAL_LABEL.find((m) => m.pattern.test(materialFrag.text))?.label ?? null)
       : null;
@@ -447,6 +464,10 @@ export function assessApplicationFit(
       changes: [
         {
           step: stepFor("target_object"),
+          text: "Préciser si un aimant et son capteur peuvent être déportés sur un support lié au mouvement, hors de la zone où le champ est interdit. Sinon, étudier une autre technologie avec Standex.",
+        },
+        {
+          step: stepFor("mounting"),
           text: "Autoriser un aimant sur la pièce mobile ou sur son support : c'est la voie la plus simple.",
         },
         {
@@ -474,10 +495,21 @@ export function assessApplicationFit(
   }
 
   issues.push(...assessModalityAndLimits(frags));
+  const purpose = frags.filter(f=>f.step.key === "detection_goal");
+  const outside = purpose.filter(f=>/\b(?:commander une pizza|pizza delivery|livraison de pizza|application meteo|weather app|ecrire un poeme|write a poem)\b/.test(f.text));
+  if(outside.length && !purpose.some(f=>/\b(?:detect\w*|mesur\w*|measur\w*|sensor|capteur)\b/.test(f.text) && !/aucun capteur|no sensor/.test(f.text))) issues.push(clarificationIssue("outside_sensor_scope",outside,"Cette demande ne décrit pas un projet de capteur","Décrivez le phénomène à détecter si votre demande concerne un capteur. Sinon, elle sort du périmètre de Sensor Studio."));
+  const badGap=frags.filter(f=>explicitGapsMm(f.text).some(n=>n<0));
+  if(badGap.length)issues.push(clarificationIssue("invalid_dimension",badGap,"Une dimension reste à clarifier","Indiquez une distance réelle positive ou nulle pour un contact, ou laissez cette donnée inconnue. Une valeur négative ne définit pas un entrefer."));
+  const gaps=frags.flatMap(f=>explicitGapsMm(f.text));
+  if(new Set(gaps.filter(n=>n>=0)).size>1 && !issues.some(i=>i.id === "extreme_gap_review")) issues.push(clarificationIssue("requirement_clarification",frags.filter(f=>explicitGapsMm(f.text).length>0),"Vos réponses décrivent des contraintes différentes","Précisez l’entrefer à l’état détecté et les autres distances du mouvement ; aucune valeur n’est choisie à votre place."));
+  const points=validationPoints(frags);
+  if(remoteAllowed)points.push(REMOTE_MAGNET_REVIEW);
+  if(structured && hasStatedPurpose(requirements, freeConstraints) && ["target_object","states_motion","mounting","electrical","environment"].some(k=>!isSubstantive(requirements.find(r=>r.key===k)?.value)))points.push(INCOMPLETE_REVIEW);
   return {
     issues,
     blocking: issues.length > 0,
-    validationPoints: validationPoints(frags),
+    validationPoints: [...new Set(points)],
+    gapsMm: gaps,
     sensorSiteC: sensorSiteRange(frags),
     explorationOnly: issues.length === 0 && !!structured && !hasStatedPurpose(requirements, freeConstraints),
   };
@@ -575,11 +607,12 @@ export const MAX_VERIFIED_OPERATING_C = Math.max(
 
 const isSensorSiteTemperature = (f: Fragment) =>
   temperaturesC(f.text).length > 0 &&
-  THERMAL_OPERATING.test(f.text) &&
+  (f.step.key === "environment" || THERMAL_OPERATING.test(f.text)) &&
   !THERMAL_COMPARISON.test(f.text) &&
   !THERMAL_PROCESS.test(f.text) &&
   // « Chamber at 220°C » sans mention du capteur : zone voisine, pas le capteur.
-  !(OTHER_ZONE.test(f.text) && !SENSOR_WORD.test(f.text));
+  !(OTHER_ZONE.test(f.text) && !SENSOR_WORD.test(f.text) &&
+    /\b(chamber|chambre|oven|four|enceinte|furnace|process|fluid|fluide|liquid|liquide|water|eau|oil|huile)\b[^.;]{0,20}\b(?:at|a|is|est|atteint|reaches)\b[^.;]{0,10}[+-]?\d/.test(f.text));
 
 function sensorSiteRange(frags: Fragment[]): { min: number | null; max: number | null } | null {
   const temps = frags.filter(isSensorSiteTemperature).flatMap((f) => temperaturesC(f.text));
@@ -597,33 +630,6 @@ export const MAX_DOCUMENTED_GAP_MM = (() => {
     for (const v of [r.upMm, r.toMm]) if (typeof v === "number" && Number.isFinite(v)) max = Math.max(max, v);
   return max;
 })();
-const GAP_CONTEXT = /\b(aimant|magnet|sensing|detect\w*|capteur|sensor|ecart|gap|entrefer|distance|away|loin|portee|range)\b/;
-const CABLE_WORD = /\b(cable|cables|cord|wire|wires|fil|fils|lead|leads|harness)\b/;
-
-// Check each measurement separately: a speed must not hide a real excessive
-// gap elsewhere in the same answer (m/s, m per second, m.s-1 or m·s⁻¹).
-const RATE_SUFFIX = /^\s*(?:(?:[/⁄∕]|(?:per|par|pro|por)\s+)\s*(?:s|sec|seconds?|secondes?|min|minutes?|h|hr|hours?|heures?)\b|[.·⋅*]?\s*(?:s|sec|min|h)\s*(?:\^\s*)?[-−⁻]\s*[1¹])/;
-
-function explicitGapsMm(text: string): number[] {
-  if (!GAP_CONTEXT.test(text)) return [];
-  const out: number[] = [];
-  const unit = (n: number, u: string) => (u === "m" ? n * 1000 : u === "cm" ? n * 10 : n);
-  // La longueur de câble est écartée MESURE PAR MESURE (mot câble collé au
-  // nombre), plus jamais toute la phrase.
-  const nearCable = (m: RegExpMatchArray) => {
-    const i = m.index ?? 0;
-    const after = text.slice(i + m[0].length, i + m[0].length + 12);
-    const before = text.slice(Math.max(0, i - 14), i);
-    return CABLE_WORD.test(after) || /\b(cable|cord|wire|fil)\b[^.,;]{0,8}$/.test(before);
-  };
-  for (const m of text.matchAll(/\b(?:at|a|distance|gap|ecart|entrefer|range|portee|from|jusqu a|up to)\s*(?:=|:)?\s*(?:of |de |d )?(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\b/g))
-    if (!nearCable(m) && !RATE_SUFFIX.test(text.slice((m.index ?? 0) + m[0].length)))
-      out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
-  for (const m of text.matchAll(/(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\s+(?:away|de distance|d ecart|of distance|gap|loin)\b/g))
-    out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
-  return out.filter(Number.isFinite);
-}
-
 /* i18n-canonical : points de validation non bloquants. */
 export const VALIDATION_POINT = {
   tinyMagnet:
@@ -652,7 +658,7 @@ const DUAL_OUTPUT = [
 ];
 const SINGLE_OUTPUT = /\b(single output|one output|une seule sortie|un seul contact|one contact|single contact|une sortie)\b/;
 function dualOutputRequested(frags: Fragment[]): boolean {
-  return frags.some((f) => !SINGLE_OUTPUT.test(f.text) && DUAL_OUTPUT.some((p) => p.test(f.text)));
+  return frags.some((f) => !SINGLE_OUTPUT.test(f.text) && !/\b(?:form c|spdt|inverseur|changeover)\b/.test(f.text) && (DUAL_OUTPUT.some((p) => p.test(f.text)) || /\b(?:deux|two|2)\s+(?:fins de course|end positions|limit switches|entrees automate)\b/.test(f.text)));
 }
 
 function validationPoints(frags: Fragment[]): string[] {
@@ -688,6 +694,9 @@ function validationPoints(frags: Fragment[]): string[] {
     has(/\b(another|other|second|autre|second|deuxieme|weiterer|otro|altro)\b[^.]{0,30}\b(magnet|aimant|magnete|magnet|iman|magnete)\b[^.]{0,40}\b(nearby|near|close|adjacent|located|a proximite|proche|voisin\w*|in der nahe|cerca|vicino)\b/))
     out.push(VALIDATION_POINT.crosstalk);
   if (dualOutputRequested(frags)) out.push(VALIDATION_POINT.dualOutput);
+  if(has(/\b(?:nf|nc|normally closed|normalement ferme|inverseur|form c|spdt|changeover)\b/))out.push(CONTACT_REVIEW);
+  if(has(/\b(?:atex|sil\s*[1-4]|ossd|ip6[789]|explosi\w*|certifi\w*|immersion permanente|permanent immersion)\b|\b\d+(?:[.,]\d+)?\s*khz\b/))out.push(QUALIFICATION_REVIEW);
+  if(has(/\b(?:rainure|t[- ]slot|cylinder groove)\b/))out.push(SPECIAL_MOUNT_REVIEW);
   return out;
 }
 
@@ -738,6 +747,12 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
     });
   }
 
+  const quantity = frags.filter(f => !OTHER_DEVICE.test(f.text) && (
+    /\b(?:sortie|output)\b[^.;]{0,45}\b(?:4\s*[-–]\s*20\s*ma|0\s*[-–]\s*10\s*v)\b/.test(f.text) ||
+    /\b(?:mesur\w*|measur\w*)\b[^.;]{0,50}\b(?:position|courant|current|pression|pressure)\b/.test(f.text) && /\b(?:continu\w*|analog\w*|proportion\w*|courant|current)\b/.test(f.text)
+  ));
+  if(quantity.length && !hall.length && !frags.some(f=>TEMPERATURE_MEASURE.some(p=>p.test(f.text))) && !frags.some(f=>FLOW_MEASURE.some(p=>p.test(f.text)))) issues.push(clarificationIssue("continuous_quantity_review", quantity, "Votre mesure nécessite une technologie à préciser avec Standex", "Conservez votre besoin de mesure continue : Standex peut étudier la technologie et l’interface adaptées. Un contact reed seul fournit un état, pas cette mesure analogique."));
+
   /* ---- Température mesurée en continu ---- */
   const tempMeasure = anyMatch(frags, TEMPERATURE_MEASURE).filter((f) => !OTHER_DEVICE.test(f.text));
   const tempModality = tempMeasure.length > 0 && analog.length > 0 && !positiveMover && !level;
@@ -757,6 +772,7 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
         "Une mesure de température continue relève d'une autre technologie (sonde de température, thermocouple, RTD) : nous ne garantissons pas d'avance sa performance.",
       ],
       changes: [
+        { step: stepFor("electrical"), text: "Conservez votre besoin de mesure de température et précisez la plage ainsi que l’interface attendues pour une étude Standex." },
         { step: stepFor("detection_goal"), text: "Si votre besoin est en réalité un état (seuil atteint, position d'un élément mobile), décrivez cet état et l'élément qui bouge." },
         { step: stepFor("electrical"), text: "Indiquer si un signal tout-ou-rien convient à la place d'un signal analogique." },
       ],
@@ -860,6 +876,12 @@ function assessModalityAndLimits(frags: Fragment[]): FitIssue[] {
     });
   }
   return issues;
+}
+
+function clarificationIssue(id: FitIssueId, frags: Fragment[], title: string, guidance: string): FitIssue {
+  const evidence=frags.map(f=>({step:f.step,quote:f.quote}));
+  const step=frags[0]?.step ?? stepFor("detection_goal");
+  return {id,title,whatWorks:guidance,whatFails:guidance,whatFailsArgs:[],why:guidance,diagram:[],cautions:[],changes:[{step,text:guidance}],evidence,steps:orderedSteps(evidence,[step])};
 }
 
 /* i18n-canonical : textes de l'encart pédagogique, traduits au rendu. */

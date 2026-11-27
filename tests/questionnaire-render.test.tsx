@@ -568,7 +568,7 @@ describe("rendu du questionnaire guidé", () => {
       "230 VAC, 8 A motor.",
     );
     expect(within(view.container.ownerDocument.body).queryAllByTestId("pair-card")).toHaveLength(0);
-    expect(within(view.container.ownerDocument.body).getAllByText("Le capteur ne peut pas couper lui-même l'alimentation du moteur").length).toBeGreaterThan(0);
+    expect(within(view.container.ownerDocument.body).getAllByText("La commutation directe de cette charge nécessite une interface adaptée").length).toBeGreaterThan(0);
   }, 30_000);
 
   test("P0 B02 : mesure continue de température → aucune carte", async () => {
