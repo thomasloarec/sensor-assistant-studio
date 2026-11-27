@@ -35,9 +35,9 @@ describe("en-têtes adaptatifs dans les huit langues", () => {
     }
   });
 
-  test("le titre du projet et les quatre segments reviennent à la ligne seulement entre les mots sur mobile", () => {
+  test("le titre et les segments permettent aussi le retour à la ligne des noms sans espaces sur mobile", () => {
     expect(mobileWidths).toEqual([320, 390]);
-    expect(css).toContain(".project-header .project-title-display h1 {\n      overflow-wrap: normal;\n      word-break: normal;");
+    expect(css).toContain(".project-header .project-title-display h1 {\n      overflow-wrap: anywhere;\n      word-break: normal;");
     expect(css).toContain(".project-stepper-label {\n      min-width: 0;\n      overflow-wrap: anywhere;\n      word-break: normal;\n      hyphens: none;");
     expect(css).toContain("font: var(--t-label) !important;");
     expect(css).toContain("padding-inline: 0.125rem !important;");

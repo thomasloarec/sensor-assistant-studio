@@ -1321,7 +1321,7 @@
       grid-column: 2;
       grid-row: 1;
     }
-    .project-header .project-title-display {
+    .project-header .project-header-title {
       grid-column: 1;
       grid-row: 2;
     }
@@ -1352,8 +1352,15 @@
     .project-header-brand > span[aria-hidden="true"] {
       display: none;
     }
+    .project-header .project-header-title {
+      grid-column: 1 / -1;
+    }
+    .project-header-status {
+      grid-column: 1 / -1;
+      grid-row: 3;
+    }
     .project-header .project-title-display h1 {
-      overflow-wrap: normal;
+      overflow-wrap: anywhere;
       word-break: normal;
       hyphens: none;
     }

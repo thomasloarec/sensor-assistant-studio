@@ -14,6 +14,44 @@ const req = (key: string, value: string): Requirement => ({
   source: "user",
 });
 
+describe("distance and speed in the same answer", () => {
+  test.each([
+    "La pièce passe à 10 mm du capteur, à 0,5 m/s.",
+    "The magnet passes the sensor at 10 mm, at 0.5 m/s.",
+    "The magnet moves at 500 mm / s, sensor gap 10 mm.",
+    "The magnet moves at 50 cm/sec, sensor gap 10 mm.",
+    "The magnet moves at 30 m/min, sensor gap 10 mm.",
+    "The magnet moves at 1.8 m/h, sensor gap 10 mm.",
+    "The magnet moves at 0.5 m per second, sensor gap 10 mm.",
+    "L'aimant passe à 0,5 m par seconde du capteur.",
+    "The magnet moves at 0.5 m.s-1, sensor gap 10 mm.",
+    "The magnet moves at 0.5 m·s⁻¹, sensor gap 10 mm.",
+    "The magnet moves at 0.5 m s^-1, sensor gap 10 mm.",
+  ])("does not treat a rate as a gap: %s", (answer) => {
+    const fit = assessApplicationFit([req("states_motion", answer)], "");
+    expect(fit.issues).toHaveLength(0);
+    expect(fit.blocking).toBe(false);
+  });
+
+  test.each(["0.5 m", "0,5 m", "50 cm", "500 mm"])("keeps a real excessive gap (%s) even alongside a speed", (gap) => {
+    const fit = assessApplicationFit([
+      req("states_motion", `The magnet is at ${gap} from the sensor and moves at 0.8 m/s.`),
+    ], "");
+    const issue = fit.issues.find((i) => i.id === "extreme_gap_review");
+    expect(fit.blocking).toBe(true);
+    expect(issue?.whatFailsArgs).toEqual(["500"]);
+  });
+
+  test("preserves a separate no-magnet incompatibility in the reported scenario", () => {
+    const fit = assessApplicationFit([
+      req("target_object", "Entirely aluminum, no magnet can be added."),
+      req("states_motion", "La pièce passe à 10 mm du capteur, à 0,5 m/s."),
+    ], "");
+    expect(fit.issues.map((i) => i.id)).toEqual(["no_magnetic_source"]);
+    expect(fit.blocking).toBe(true);
+  });
+});
+
 /* Cas 10, mots exacts de la personne. */
 const CASE10 = [
   req(

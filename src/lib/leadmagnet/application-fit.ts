@@ -600,6 +600,10 @@ export const MAX_DOCUMENTED_GAP_MM = (() => {
 const GAP_CONTEXT = /\b(aimant|magnet|sensing|detect\w*|capteur|sensor|ecart|gap|entrefer|distance|away|loin|portee|range)\b/;
 const CABLE_WORD = /\b(cable|cables|cord|wire|wires|fil|fils|lead|leads|harness)\b/;
 
+// Check each measurement separately: a speed must not hide a real excessive
+// gap elsewhere in the same answer (m/s, m per second, m.s-1 or m·s⁻¹).
+const RATE_SUFFIX = /^\s*(?:(?:[/⁄∕]|(?:per|par|pro|por)\s+)\s*(?:s|sec|seconds?|secondes?|min|minutes?|h|hr|hours?|heures?)\b|[.·⋅*]?\s*(?:s|sec|min|h)\s*(?:\^\s*)?[-−⁻]\s*[1¹])/;
+
 function explicitGapsMm(text: string): number[] {
   if (!GAP_CONTEXT.test(text)) return [];
   const out: number[] = [];
@@ -613,7 +617,8 @@ function explicitGapsMm(text: string): number[] {
     return CABLE_WORD.test(after) || /\b(cable|cord|wire|fil)\b[^.,;]{0,8}$/.test(before);
   };
   for (const m of text.matchAll(/\b(?:at|a|distance|gap|ecart|entrefer|range|portee|from|jusqu a|up to)\s*(?:=|:)?\s*(?:of |de |d )?(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\b/g))
-    if (!nearCable(m)) out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
+    if (!nearCable(m) && !RATE_SUFFIX.test(text.slice((m.index ?? 0) + m[0].length)))
+      out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
   for (const m of text.matchAll(/(\d+(?:[.,]\d+)?)\s*(mm|cm|m)\s+(?:away|de distance|d ecart|of distance|gap|loin)\b/g))
     out.push(unit(Number(m[1]!.replace(",", ".")), m[2]!));
   return out.filter(Number.isFinite);

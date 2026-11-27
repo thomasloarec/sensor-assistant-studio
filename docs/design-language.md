@@ -1,5 +1,14 @@
 # Langage de design Standex DETECT
 
+### En-tête de projet sur petit écran — recette du 27 novembre 2026
+
+Sous 640 px, le titre et son bouton de renommage occupent toute la deuxième
+rangée ; le statut dispose de sa propre rangée. Le formulaire de renommage
+utilise le même emplacement, y compris sur tablette. Les titres sans espaces
+peuvent revenir à la ligne sans recouvrir l'action ou le statut. Les cibles
+de 44 px, la typographie, les jetons et la mesure dynamique de hauteur restent
+ceux du socle existant.
+
 ### Catalogue : commandes et guide des matériaux — 27 novembre 2026
 
 Capteurs/Aimants et Vue 3D/Vue 2D partagent une barre de commandes dans
